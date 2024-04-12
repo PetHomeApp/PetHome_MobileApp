@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class Pet {
-  final String name;
-  final String imageUrl;
-  final String shopName;
-  final double price;
-
-  Pet(
-      {required this.name,
-      required this.imageUrl,
-      required this.shopName,
-      required this.price});
-}
-
 class PetCard extends StatelessWidget {
-  final Pet pet;
-  const PetCard({super.key, required this.pet});
+  final PetInCard petInCard;
+  const PetCard({super.key, required this.petInCard});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +20,7 @@ class PetCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  pet.imageUrl,
+                  petInCard.imageUrl.toString(),
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -40,9 +28,9 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                pet.name.length > 20
-                    ? '${pet.name.substring(0, 20)}...'
-                    : pet.name,
+                petInCard.name.toString().length > 20
+                    ? '${petInCard.name.toString().substring(0, 20)}...'
+                    : petInCard.name.toString(),
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
@@ -50,9 +38,9 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                pet.shopName.length > 20
-                    ? '${pet.shopName.substring(0, 20)}...'
-                    : pet.shopName,
+                petInCard.shopName.toString().length > 20
+                    ? '${petInCard.shopName.toString().substring(0, 20)}...'
+                    : petInCard.shopName.toString(),
                 style: const TextStyle(
                     fontSize: 14, color: Color.fromARGB(255, 84, 84, 84)),
                 overflow: TextOverflow.ellipsis,
@@ -60,7 +48,7 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '\$${pet.price.toStringAsFixed(2)}',
+                '\$${petInCard.price}',
                 style: const TextStyle(
                     fontSize: 16,
                     color: priceColor,

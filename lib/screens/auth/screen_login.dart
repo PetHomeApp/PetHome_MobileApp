@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'ĐĂNG NHẬP',
                             style: TextStyle(
-                              color: Colors.white, // Màu chữ
+                              color: Colors.white,
                               fontSize: 20,
                             ),
                           ),

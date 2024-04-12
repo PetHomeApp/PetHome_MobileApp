@@ -1,5 +1,5 @@
 name: pethome_mobileapp
-description: "A new Flutter project."
+description: "Mobile application for PetHome project."
 publish_to: 'none'
 version: 0.1.0
 
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  flutter_rating_bar: ^4.0.1
+  intl: ^0.17.0
+  readmore: ^2.0.0
 
 dev_dependencies:
   flutter_test:
