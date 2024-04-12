@@ -40,9 +40,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
         userName: "Nguyễn Văn A",
         idProduct: "id_product",
         rate: 4,
-        comment: "Chú cún rất dễ thương, ngoan ngoãn, dễ chăm sóc. Tôi rất hài lòng với sản phẩm này. Tôi sẽ tiếp tục ủng hộ cửa hàng. Cảm ơn cửa hàng rất nhiều!\n"
-        // ignore: prefer_adjacent_string_concatenation
-        + "Chú cún rất dễ thương, ngoan ngoãn, dễ chăm sóc. Tôi rất hài lòng với sản phẩm này. Tôi sẽ tiếp tục ủng hộ cửa hàng. Cảm ơn cửa hàng rất nhiều!\n", 
+        comment:
+            "Chú cún rất dễ thương, ngoan ngoãn, dễ chăm sóc. Tôi rất hài lòng với sản phẩm này. Tôi sẽ tiếp tục ủng hộ cửa hàng. Cảm ơn cửa hàng rất nhiều!\n"
+                // ignore: prefer_adjacent_string_concatenation
+                +
+                "Chú cún rất dễ thương, ngoan ngoãn, dễ chăm sóc. Tôi rất hài lòng với sản phẩm này. Tôi sẽ tiếp tục ủng hộ cửa hàng. Cảm ơn cửa hàng rất nhiều!\n",
         createdAt: "2021-10-10",
       ),
       Rate(
@@ -84,7 +86,8 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
         ),
         title: const Text(
           "Thông tin sản phẩm",
-          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
@@ -171,7 +174,9 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  petDetail.inStock! ? '  Còn hàng  ' : '  Hết hàng  ',
+                                  petDetail.inStock!
+                                      ? '  Còn hàng  '
+                                      : '  Hết hàng  ',
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -251,7 +256,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -295,25 +299,27 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           Row(
                             children: [
                               // ignore: prefer_interpolation_to_compose_strings
-                              Text(petDetail.averageRate!.toStringAsFixed(1) + "/5.0",
+                              Text(
+                                petDetail.averageRate!.toStringAsFixed(1) +
+                                    "/5.0",
                                 style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: buttonBackgroundColor
-                                ),),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: buttonBackgroundColor),
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 "(${petDetail.totalRate} đánh giá)",
                                 style: const TextStyle(
-                                  color: buttonBackgroundColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15
-                                ),),
+                                    color: buttonBackgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ),
                             ],
                           ),
                           RateList(rates: petDetail.rates),
                           TextButton(
-                            onPressed:() {},
+                            onPressed: () {},
                             child: Text(
                               'Tất cả đánh giá (${petDetail.totalRate})',
                               style: const TextStyle(
@@ -339,7 +345,9 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     return SingleChildScrollView(
                                       child: Container(
                                         padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context).viewInsets.bottom,
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom,
                                         ),
                                         child: const SendRateWidget(),
                                       ),

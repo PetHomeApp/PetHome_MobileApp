@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/pets/pet_card.dart';
 
 class PetHomeScreen extends StatefulWidget {
-  const PetHomeScreen({super.key});
+  final Function(bool) updateBottomBarVisibility;
+
+  const PetHomeScreen({super.key, required this.updateBottomBarVisibility});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -88,6 +91,43 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         price: 0.0),
   ];
 
+  final ScrollController _scrollController = ScrollController();
+  bool _isBottomBarVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      if (_isBottomBarVisible) {
+        setState(() {
+          _isBottomBarVisible = false;
+          widget.updateBottomBarVisibility(
+              false); 
+        });
+      }
+    } else if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      if (!_isBottomBarVisible) {
+        setState(() {
+          _isBottomBarVisible = true;
+          widget.updateBottomBarVisibility(
+              true); 
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +174,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         ),
       ),
       body: ListView.builder(
+        controller: _scrollController,
         itemCount: pets.length,
         itemBuilder: (context, index) {
           if (index % 2 == 0) {
@@ -142,18 +183,16 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                 Expanded(
                     child: InkWell(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PetDetailScreen(),
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const PetDetailScreen(),
                           ));
                         },
                         child: PetCard(petInCard: pets[index]))),
                 Expanded(
                     child: InkWell(
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const PetDetailScreen(),
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const PetDetailScreen(),
                           ));
                         },
                         child: PetCard(petInCard: pets[index + 1]))),
