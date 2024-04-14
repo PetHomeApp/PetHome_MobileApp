@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
-import 'package:pethome_mobileapp/screens/auth/screen_register.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
+import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MyHomeScreen extends StatefulWidget {
@@ -28,7 +28,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
         const PetDetailScreen(),
         const LoginScreen(),
-        const RegisterScreen(),
+        const PetSearchAndFilterScreen(),
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
       ];
 

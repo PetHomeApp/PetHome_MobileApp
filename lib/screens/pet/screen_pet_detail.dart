@@ -95,7 +95,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [gradientAppBarColor, gradientMidAppBarColor, appColor],
+              colors: [gradientStartColor, gradientMidColor, gradientEndColor],
             ),
           ),
         ),
@@ -210,7 +210,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [gradientAppBarColor, appColor],
+                          colors: [gradientStartColor, gradientEndColor],
                         ),
                       ),
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -273,7 +273,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [gradientAppBarColor, appColor],
+                          colors: [gradientStartColor, gradientEndColor],
                         ),
                       ),
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -300,6 +300,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                             children: [
                               // ignore: prefer_interpolation_to_compose_strings
                               Text(
+                                // ignore: prefer_interpolation_to_compose_strings
                                 petDetail.averageRate!.toStringAsFixed(1) +
                                     "/5.0",
                                 style: const TextStyle(

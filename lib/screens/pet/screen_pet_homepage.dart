@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
+import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/pets/pet_card.dart';
 
@@ -17,12 +18,6 @@ class PetHomeScreen extends StatefulWidget {
 
 class _PetHomeScreenState extends State<PetHomeScreen> {
   List<PetInCard> pets = [
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
     PetInCard(
         idPet: "id_pet",
         name: "name",
@@ -112,8 +107,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
       if (_isBottomBarVisible) {
         setState(() {
           _isBottomBarVisible = false;
-          widget.updateBottomBarVisibility(
-              false); 
+          widget.updateBottomBarVisibility(false);
         });
       }
     } else if (_scrollController.position.userScrollDirection ==
@@ -121,8 +115,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
       if (!_isBottomBarVisible) {
         setState(() {
           _isBottomBarVisible = true;
-          widget.updateBottomBarVisibility(
-              true); 
+          widget.updateBottomBarVisibility(true);
         });
       }
     }
@@ -154,11 +147,14 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
             ),
             IconButton(
               onPressed: () {
-                // Thực hiện hành động khi nút tìm kiếm được nhấn
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const PetSearchAndFilterScreen(),
+                ));
               },
               icon: const Icon(
                 Icons.search,
                 size: 30,
+                color: buttonBackgroundColor,
               ),
             ),
           ],
@@ -166,7 +162,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [gradientAppBarColor, appColor],
+              colors: [gradientStartColor, gradientEndColor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -177,29 +173,52 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         controller: _scrollController,
         itemCount: pets.length,
         itemBuilder: (context, index) {
-          if (index % 2 == 0) {
+          if (index % 2 == 0 && index < pets.length - 1) {
             return Row(
               children: [
                 Expanded(
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const PetDetailScreen(),
-                          ));
-                        },
-                        child: PetCard(petInCard: pets[index]))),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PetDetailScreen(),
+                      ));
+                    },
+                    child: PetCard(petInCard: pets[index]),
+                  ),
+                ),
                 Expanded(
-                    child: InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => const PetDetailScreen(),
-                          ));
-                        },
-                        child: PetCard(petInCard: pets[index + 1]))),
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PetDetailScreen(),
+                      ));
+                    },
+                    child: PetCard(petInCard: pets[index + 1]),
+                  ),
+                ),
               ],
             );
+          } else if (index == pets.length - 1) {
+            return Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const PetDetailScreen(),
+                      ));
+                    },
+                    child: PetCard(petInCard: pets[index]),
+                  ),
+                ),
+                Expanded(
+                  child: Container(), // Phần trống
+                ),
+              ],
+            );
+          } else {
+            return Container();
           }
-          return Container();
         },
       ),
     );
