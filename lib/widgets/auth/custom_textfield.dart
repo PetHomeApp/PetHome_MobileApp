@@ -4,12 +4,14 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final bool readOnly;
 
   const CustomTextField(
       {super.key,
       required this.controller,
       required this.hintText,
-      this.obscureText = false});
+      this.obscureText = false,
+      this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        readOnly: readOnly,
         decoration: InputDecoration(
           hintText: hintText,
           border: OutlineInputBorder(

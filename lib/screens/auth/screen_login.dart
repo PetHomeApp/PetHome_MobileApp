@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_text.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
@@ -171,7 +172,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         const Text("Chưa có tài khoản?",
                             style: TextStyle(fontSize: 16)),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const EmailScreeen()),
+                            );
+                          },
                           child: const Text('Đăng kí',
                               style: TextStyle(
                                 fontSize: 16,

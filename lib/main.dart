@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/screens/screen_homepage.dart';
+import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +10,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomeScreen(),
+      theme: ThemeData(
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
+      ),
+      home: const LoginScreen(),
     );
   }
 }
