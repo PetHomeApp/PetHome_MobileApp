@@ -40,7 +40,7 @@ class RateItem extends StatelessWidget {
         const SizedBox(height: 8),
         ReadMoreText(
           rate.comment!,
-          trimLines: 3,
+          trimLength: 120,
           trimCollapsedText: "Xem thêm",
           trimExpandedText: "Rút gọn",
           delimiter: "...",

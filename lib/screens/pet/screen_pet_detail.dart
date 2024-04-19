@@ -233,7 +233,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                       padding: const EdgeInsets.all(12.0),
                       child: ReadMoreText(
                         petDetail.description!,
-                        trimLines: 10,
+                        trimLength: 250,
                         trimCollapsedText: "Xem thêm",
                         trimExpandedText: "Rút gọn",
                         delimiter: "...\n",

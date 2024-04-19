@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
-import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
+import 'package:pethome_mobileapp/screens/blog/screen_blog_homepage.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
-import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MyHomeScreen extends StatefulWidget {
@@ -26,10 +25,10 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
 
   List<Widget> get _pages => [
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
-        const PetDetailScreen(),
-        const LoginScreen(),
-        const PetSearchAndFilterScreen(),
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
+        PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
+        BlogHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
+        const LoginScreen(),
       ];
 
   @override
