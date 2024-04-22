@@ -1,11 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_register.dart';
+import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
+// ignore: must_be_immutable
 class OtpScreen extends StatefulWidget {
   final String email;
-  const OtpScreen({super.key, required this.email});
+  String expiredAt;
+  String token;
+
+  OtpScreen(
+      {super.key,
+      required this.email,
+      required this.expiredAt,
+      required this.token});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -16,6 +28,8 @@ class _OtpScreenState extends State<OtpScreen> {
   late Timer _timer;
   int _secondsRemaining = 59;
   bool _buttonEnabled = true;
+
+  List<TextEditingController?> otpController = [];
 
   @override
   void initState() {
@@ -41,6 +55,14 @@ class _OtpScreenState extends State<OtpScreen> {
       _buttonEnabled = false;
       _startTimer();
     });
+  }
+
+  String getOTP() {
+    String otp = '';
+    for (int i = 0; i < otpController.length; i++) {
+      otp += otpController[i]!.text;
+    }
+    return otp;
   }
 
   @override
@@ -114,24 +136,17 @@ class _OtpScreenState extends State<OtpScreen> {
                     const SizedBox(
                       height: 30,
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _textFieldOTP(first: true, last: false),
-                          const SizedBox(width: 10),
-                          _textFieldOTP(first: false, last: false),
-                          const SizedBox(width: 10),
-                          _textFieldOTP(first: false, last: false),
-                          const SizedBox(width: 10),
-                          _textFieldOTP(first: false, last: false),
-                          const SizedBox(width: 10),
-                          _textFieldOTP(first: false, last: false),
-                          const SizedBox(width: 10),
-                          _textFieldOTP(first: false, last: true),
-                        ],
-                      ),
+                    OtpTextField(
+                      textStyle: const TextStyle(
+                          fontSize: 18,
+                          color: buttonBackgroundColor,
+                          fontWeight: FontWeight.bold),
+                      numberOfFields: 6,
+                      borderColor: buttonBackgroundColor,
+                      focusedBorderColor: buttonBackgroundColor,
+                      handleControllers: (controllers) {
+                        otpController = controllers;
+                      },
                     ),
                     const SizedBox(
                       height: 30,
@@ -145,11 +160,58 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                       child: InkWell(
                         onTap: () async {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    RegisterScreen(email: widget.email)),
-                          );
+                          String otp = getOTP();
+                          if (otp.length < 6) {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Vui lòng nhập đủ 6 số OTP',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          } else {
+                            var dataResponse =
+                                await AuthApi().verifyOTP(otp, widget.token);
+                            if (dataResponse['isSuccess'] == true) {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.success(
+                                  message: 'Xác thực thành công!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                              Navigator.push(
+                                // ignore: use_build_context_synchronously
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RegisterScreen(
+                                    email: widget.email,
+                                  ),
+                                ),
+                              );
+                            } else if (dataResponse['error'] ==
+                                'Invalid code') {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.error(
+                                  message: 'Mã OTP không trùng khớp!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                            } else {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.error(
+                                  message: 'Có lỗi xảy ra! Vui lòng thử lại!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                            }
+                          }
                         },
                         child: const Center(
                           child: Text(
@@ -163,7 +225,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                     const SizedBox(
-                      height: 18,
+                      height: 40,
                     ),
                     const Text(
                       "Bạn không nhận được mã OTP?",
@@ -174,13 +236,35 @@ class _OtpScreenState extends State<OtpScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(
-                      height: 18,
-                    ),
                     TextButton(
                       onPressed: _buttonEnabled
-                          ? () {
+                          ? () async {
                               _resetTimer();
+                              var dataResponse =
+                                  await AuthApi().sendOTP(widget.email);
+                              if (dataResponse['isSuccess'] == true) {
+                                showTopSnackBar(
+                                  // ignore: use_build_context_synchronously
+                                  Overlay.of(context),
+                                  const CustomSnackBar.success(
+                                    message: 'Đã gửi mã OTP',
+                                  ),
+                                  displayDuration: const Duration(seconds: 0),
+                                );
+                                widget.token = dataResponse['token'].toString();
+                                widget.expiredAt =
+                                    dataResponse['expiredAt'].toString();
+                              } else {
+                                showTopSnackBar(
+                                  // ignore: use_build_context_synchronously
+                                  Overlay.of(context),
+                                  const CustomSnackBar.error(
+                                    message:
+                                        'Có lỗi xảy ra. Vui lòng thử lại sau',
+                                  ),
+                                  displayDuration: const Duration(seconds: 0),
+                                );
+                              }
                             }
                           : null,
                       child: Text(
@@ -199,44 +283,6 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _textFieldOTP({required bool first, required bool last}) {
-    return SizedBox(
-      height: 60,
-      width: 50,
-      child: AspectRatio(
-        aspectRatio: 1.0,
-        child: TextField(
-          autofocus: true,
-          onChanged: (value) {
-            if (value.length == 1 && !last) {
-              FocusScope.of(context).nextFocus();
-            }
-            if (value.isEmpty && !first) {
-              FocusScope.of(context).previousFocus();
-            }
-          },
-          showCursor: false,
-          readOnly: false,
-          textAlign: TextAlign.center,
-          textAlignVertical: TextAlignVertical.center,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          keyboardType: TextInputType.number,
-          maxLength: 1,
-          decoration: InputDecoration(
-            counter: const Offstage(),
-            enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(width: 2, color: Colors.black12),
-                borderRadius: BorderRadius.circular(12)),
-            focusedBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(width: 2, color: buttonBackgroundColor),
-                borderRadius: BorderRadius.circular(12)),
           ),
         ),
       ),

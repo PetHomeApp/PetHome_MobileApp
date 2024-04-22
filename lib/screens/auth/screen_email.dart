@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_otp.dart';
+import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class EmailScreeen extends StatefulWidget {
   const EmailScreeen({super.key});
@@ -101,13 +104,42 @@ class _EmailScreeenState extends State<EmailScreeen> {
                       ),
                       child: InkWell(
                         onTap: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OtpScreen(
-                                  email: _emailEdititngController.text),
-                            ),
-                          );
+                          var dataResponse = await AuthApi()
+                              .sendOTP(_emailEdititngController.text);
+                          if (dataResponse['isSuccess'] == true) {
+                            Navigator.push(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OtpScreen(
+                                  email: _emailEdititngController.text,
+                                  expiredAt:
+                                      dataResponse['expiredAt'].toString(),
+                                  token: dataResponse['token'].toString(),
+                                ),
+                              ),
+                            );
+                          } else if (dataResponse['message'] ==
+                              'Email đã tồn tại!') {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message:
+                                    'Email đã tồn tại! Vui lòng nhập email khác!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          } else {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Có lỗi xảy ra! Vui lòng thử lại!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          }
                         },
                         child: const Center(
                           child: Text(
