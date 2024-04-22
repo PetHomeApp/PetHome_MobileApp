@@ -21,12 +21,12 @@ class AuthApi {
       } else if (response.statusCode == 208) {
         return {
           'isSuccess': false,
-          'message': 'Email đã tồn tại',
+          'message': 'Email đã tồn tại!',
         };
       } else {
         return {
           'isSuccess': false,
-          'message': 'Có lỗi xảy ra',
+          'message': 'Có lỗi xảy ra!',
         };
       }
     } catch (e) {
@@ -67,6 +67,34 @@ class AuthApi {
       return {
         'isSuccess': false,
         'error': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> register(
+      String name, String email, String password) async {
+    try {
+      var url = Uri.parse('${apiUrl}jwt/register');
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'name': name,
+            'email': email,
+            'password': password,
+          }));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+        };
+      } else {
+        return {
+          'isSuccess': false,
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
       };
     }
   }

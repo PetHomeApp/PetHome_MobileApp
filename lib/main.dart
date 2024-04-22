@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
+import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
           },
         ),
       ),
-      home: EmailScreeen(),
+      home: const LoginScreen(),
     );
   }
 }

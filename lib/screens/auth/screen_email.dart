@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_otp.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
+import 'package:pethome_mobileapp/services/utils/validate_email.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -104,6 +105,19 @@ class _EmailScreeenState extends State<EmailScreeen> {
                       ),
                       child: InkWell(
                         onTap: () async {
+                          if (validateEmail(_emailEdititngController.text) ==
+                              false) {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message:
+                                    'Email không hợp lệ! Vui lòng nhập lại!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                            return;
+                          }
                           var dataResponse = await AuthApi()
                               .sendOTP(_emailEdititngController.text);
                           if (dataResponse['isSuccess'] == true) {
