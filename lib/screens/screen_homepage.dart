@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/blog/screen_blog_homepage.dart';
+import 'package:pethome_mobileapp/screens/my/screen_my_homepage.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class MyHomeScreen extends StatefulWidget {
-  const MyHomeScreen({super.key});
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
   // ignore: library_private_types_in_public_api
-  _MyHomeScreenState createState() => _MyHomeScreenState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _MyHomeScreenState extends State<MyHomeScreen> {
+class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _isBottomBarVisible = true;
   // ignore: prefr_final_fields
@@ -28,7 +28,7 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
         BlogHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
-        const LoginScreen(),
+        const MyHomePageScreen(),
       ];
 
   @override

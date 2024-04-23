@@ -8,4 +8,4 @@ const Color gradientEndColor = Color.fromARGB(255, 145, 245, 239);
 
 const Color buttonBackgroundColor = Color.fromARGB(255, 11, 67, 79);
 
-const Color priceColor = Color.fromARGB(255, 209, 3, 37);
+const Color priceColor = Color.fromARGB(255, 18, 77, 91);

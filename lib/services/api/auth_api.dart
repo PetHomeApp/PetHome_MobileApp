@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/setting/host_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthApi {
   Future<Map<String, Object?>> sendOTP(String email) async {
@@ -86,6 +87,105 @@ class AuthApi {
         return {
           'isSuccess': true,
         };
+      } else {
+        return {
+          'isSuccess': false,
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> login(String email, String password) async {
+    try {
+      var url = Uri.parse('${apiUrl}jwt/login');
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'email': email,
+            'password': password,
+          }));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+          'accessToken': json.decode(response.body)['accessToken'],
+          'refreshToken': json.decode(response.body)['refreshToken'],
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> refreshToken() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String refreshToken = sharedPreferences.getString('refreshToken') ?? '';
+
+    try {
+      var url = Uri.parse('${apiUrl}refresh');
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': refreshToken,
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+          'accessToken': json.decode(response.body)['accessToken'],
+          'refreshToken': json.decode(response.body)['refreshToken'],
+        };
+      } else {
+        return {
+          'isSuccess': false,
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> authorize() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      var url = Uri.parse('${apiUrl}authorize');
+      final response = await http.get(url, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      });
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+        };
+      } else if (response.statusCode == 401) {
+        Map<String, Object?> map = await refreshToken();
+
+        if (map['isSuccess'] != null && map['isSuccess'] == true) {
+          sharedPreferences.setString(
+              'accessToken', map['accessToken'].toString());
+          sharedPreferences.setString(
+              'refreshToken', map['refreshToken'].toString());
+          return {
+            'isSuccess': true,
+          };
+        } else {
+          return {
+            'isSuccess': false,
+          };
+        }
       } else {
         return {
           'isSuccess': false,

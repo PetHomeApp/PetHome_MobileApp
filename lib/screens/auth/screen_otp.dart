@@ -161,6 +161,9 @@ class _OtpScreenState extends State<OtpScreen> {
                       child: InkWell(
                         onTap: () async {
                           String otp = getOTP();
+                          DateTime now = DateTime.now();
+                          DateTime expiredAt =
+                              DateTime.parse(widget.expiredAt).toLocal();
                           if (otp.length < 6) {
                             showTopSnackBar(
                               // ignore: use_build_context_synchronously
@@ -170,7 +173,17 @@ class _OtpScreenState extends State<OtpScreen> {
                               ),
                               displayDuration: const Duration(seconds: 0),
                             );
-                          } else {
+                          } else if (now.isAfter(expiredAt)) {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Mã OTP đã hết hạn! Vui lòng thử lại!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          }
+                          else {
                             var dataResponse =
                                 await AuthApi().verifyOTP(otp, widget.token);
                             if (dataResponse['isSuccess'] == true) {

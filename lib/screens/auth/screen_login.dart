@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
+import 'package:pethome_mobileapp/screens/screen_homepage.dart';
+import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_text.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class LoginScreen extends StatefulWidget {
   // ignore: use_super_parameters
@@ -18,6 +23,26 @@ class _LoginScreenState extends State<LoginScreen> {
       TextEditingController();
   final TextEditingController _passwordEdititngController =
       TextEditingController();
+
+  late SharedPreferences sharedPreferences;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPrefs();
+  }
+
+  _initPrefs() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+  }
+
+  _saveAccessToken(String accessToken) async {
+    await sharedPreferences.setString('accessToken', accessToken);
+  }
+
+  _saveRefreshToken(String refreshToken) async {
+    await sharedPreferences.setString('refreshToken', refreshToken);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +119,55 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: buttonBackgroundColor,
                       ),
                       child: InkWell(
-                        onTap: () async {},
+                        onTap: () async {
+                          if (_emailEdititngController.text == "" ||
+                              _passwordEdititngController.text == "") {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Vui lòng nhập đầy đủ thông tin!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          } else {
+                            var dataResponse = await AuthApi().login(
+                                _emailEdititngController.text,
+                                _passwordEdititngController.text);
+
+                            if (dataResponse['isSuccess'] == true) {
+                              _saveAccessToken(
+                                  dataResponse['accessToken'].toString());
+                              _saveRefreshToken(
+                                  dataResponse['refreshToken'].toString());
+
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.success(
+                                  message: 'Đăng nhập thành công!',
+                                ),
+                                displayDuration: const Duration(seconds: 2),
+                              );
+
+                              // ignore: use_build_context_synchronously
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const MainScreen()),
+                              );
+                            } else {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.error(
+                                  message:
+                                      'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                            }
+                          }
+                        },
                         child: const Center(
                           child: Text(
                             'ĐĂNG NHẬP',
