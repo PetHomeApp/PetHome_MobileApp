@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
+import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/pet/pet_card.dart';
 
@@ -17,82 +20,21 @@ class PetHomeScreen extends StatefulWidget {
 }
 
 class _PetHomeScreenState extends State<PetHomeScreen> {
-  List<PetInCard> pets = [
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0.0),
-  ];
+  List<PetInCard> listPetInCards = List.empty(growable: true);
 
   final ScrollController _scrollController = ScrollController();
   bool _isBottomBarVisible = true;
+
+  int currentPage = 0;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _scrollController.addListener(_listenerScroll);
+
+    getListPetInCards();
   }
 
   @override
@@ -119,6 +61,30 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         });
       }
     }
+  }
+
+  void _listenerScroll() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels != 0) {
+        getListPetInCards();
+      }
+    }
+  }
+
+  Future<void> getListPetInCards() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<PetInCard> pets =
+        await PetApi().getPetsInCard(10, currentPage * 10);
+
+    setState(() {
+      listPetInCards.addAll(pets);
+      currentPage++;
+      loading = false;
+    });
   }
 
   @override
@@ -170,54 +136,72 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
         ),
       ),
       body: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
         controller: _scrollController,
-        itemCount: pets.length,
+        itemCount: listPetInCards.length,
         itemBuilder: (context, index) {
-          if (index % 2 == 0 && index < pets.length - 1) {
-            return Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
-                      ));
-                    },
-                    child: PetCard(petInCard: pets[index]),
+          if (index < listPetInCards.length) {
+            if (index % 2 == 0 && index < listPetInCards.length - 1) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const PetDetailScreen(),
+                        ));
+                      },
+                      child: PetCard(petInCard: listPetInCards[index]),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
-                      ));
-                    },
-                    child: PetCard(petInCard: pets[index + 1]),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const PetDetailScreen(),
+                        ));
+                      },
+                      child: PetCard(petInCard: listPetInCards[index + 1]),
+                    ),
                   ),
-                ),
-              ],
-            );
-          } else if (index == pets.length - 1) {
-            return Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
-                      ));
-                    },
-                    child: PetCard(petInCard: pets[index]),
+                ],
+              );
+            } else if (index % 2 == 0 && index == listPetInCards.length - 1) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const PetDetailScreen(),
+                        ));
+                      },
+                      child: PetCard(petInCard: listPetInCards[index]),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: Container(), // Phần trống
-                ),
-              ],
-            );
+                  Expanded(
+                    child: Container(),
+                  ),
+                ],
+              );
+            } else {
+              return Container();
+            }
           } else {
-            return Container();
+            Timer(const Duration(milliseconds: 30), () {
+              _scrollController.jumpTo(
+                _scrollController.position.maxScrollExtent,
+              );
+            });
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20.0),
+              child: Center(
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).primaryColor),
+              ),
+            );
           }
         },
       ),

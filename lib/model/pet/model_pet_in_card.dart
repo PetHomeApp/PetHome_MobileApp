@@ -3,7 +3,7 @@ class PetInCard {
   final String? name;
   final String? imageUrl;
   final String? shopName;
-  final double? price;
+  final int? price;
 
   PetInCard(
       {required this.idPet,
@@ -14,10 +14,10 @@ class PetInCard {
 
   factory PetInCard.fromJson(Map<String, dynamic> json) {
     return PetInCard(
-      idPet: json['idPet'],
+      idPet: json['id_pet'],
       name: json['name'],
-      imageUrl: json['imageUrl'],
-      shopName: json['shopName'],
+      imageUrl: json['picture'],
+      shopName: json['id_shop'],
       price: json['price'],
     );
   }

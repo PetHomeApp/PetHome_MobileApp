@@ -20,31 +20,31 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
         name: "name",
         imageUrl: "https://via.placeholder.com/150",
         shopName: "shopName",
-        price: 0.0),
+        price: 0),
     PetInCard(
         idPet: "id_pet",
         name: "name",
         imageUrl: "https://via.placeholder.com/150",
         shopName: "shopName",
-        price: 0.0),
+        price: 0),
     PetInCard(
         idPet: "id_pet",
         name: "name",
         imageUrl: "https://via.placeholder.com/150",
         shopName: "shopName",
-        price: 0.0),
+        price: 0),
     PetInCard(
         idPet: "id_pet",
         name: "name",
         imageUrl: "https://via.placeholder.com/150",
         shopName: "shopName",
-        price: 0.0),
+        price: 0),
     PetInCard(
         idPet: "id_pet",
         name: "name",
         imageUrl: "https://via.placeholder.com/150",
         shopName: "shopName",
-        price: 0.0),
+        price: 0),
   ];
 
   List<String> filterItems = [

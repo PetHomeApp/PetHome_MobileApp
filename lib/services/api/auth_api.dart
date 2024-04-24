@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthApi {
   Future<Map<String, Object?>> sendOTP(String email) async {
     try {
-      var url = Uri.parse('${apiUrl}jwt/send_code');
+      var url = Uri.parse('${authApiUrl}jwt/send_code');
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({'email': email}));
@@ -40,7 +40,7 @@ class AuthApi {
 
   Future<Map<String, Object?>> verifyOTP(String code, String token) async {
     try {
-      var url = Uri.parse('${apiUrl}jwt/verify_code');
+      var url = Uri.parse('${authApiUrl}jwt/verify_code');
       final response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ class AuthApi {
   Future<Map<String, Object?>> register(
       String name, String email, String password) async {
     try {
-      var url = Uri.parse('${apiUrl}jwt/register');
+      var url = Uri.parse('${authApiUrl}jwt/register');
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
@@ -102,7 +102,7 @@ class AuthApi {
 
   Future<Map<String, Object?>> login(String email, String password) async {
     try {
-      var url = Uri.parse('${apiUrl}jwt/login');
+      var url = Uri.parse('${authApiUrl}jwt/login');
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
           body: json.encode({
@@ -131,7 +131,7 @@ class AuthApi {
     String refreshToken = sharedPreferences.getString('refreshToken') ?? '';
 
     try {
-      var url = Uri.parse('${apiUrl}refresh');
+      var url = Uri.parse('${authApiUrl}refresh');
       final response = await http.get(url, headers: {
         'Content-Type': 'application/json',
         'Authorization': refreshToken,
@@ -159,8 +159,14 @@ class AuthApi {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String accessToken = sharedPreferences.getString('accessToken') ?? '';
 
+    if (accessToken.isEmpty) {
+      return {
+        'isSuccess': false,
+      };
+    }
+
     try {
-      var url = Uri.parse('${apiUrl}authorize');
+      var url = Uri.parse('${authApiUrl}authorize');
       final response = await http.get(url, headers: {
         'Content-Type': 'application/json',
         'Authorization': accessToken,

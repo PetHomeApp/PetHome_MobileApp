@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class PetCard extends StatelessWidget {
   final PetInCard petInCard;
-  const PetCard({super.key, required this.petInCard});
+  final formatter = NumberFormat("#,###", "vi_VN");
+
+  PetCard({super.key, required this.petInCard});
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +22,10 @@ class PetCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  petInCard.imageUrl.toString(),
+                child: FadeInImage(
+                  placeholder: const AssetImage(
+                      'lib/assets/pictures/placeholder_image.png'),
+                  image: NetworkImage(petInCard.imageUrl.toString()),
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -48,7 +53,7 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '\$${petInCard.price}',
+                '${formatter.format(petInCard.price)} đ',
                 style: const TextStyle(
                     fontSize: 16,
                     color: priceColor,
