@@ -23,6 +23,10 @@ class PetApi {
         return pets;
       }
 
+      if (data['data'] == null) {
+        return pets;
+      }
+
       for (var item in data['data']) {
         pets.add(PetInCard.fromJson(item));
       }

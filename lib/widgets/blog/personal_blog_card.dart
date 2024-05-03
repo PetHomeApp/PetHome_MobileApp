@@ -18,28 +18,56 @@ class PersonalBlogCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(blog.avatarAuthor),
-                  radius: 25.0, 
-                ),
-                const SizedBox(width: 12.0), 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    Text(
-                      blog.nameAuthor,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                      ),
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(blog.avatarAuthor),
+                      radius: 25.0, 
                     ),
-                    const SizedBox(height: 4.0), 
-                    Text(
-                      blog.createAt,
-                      style: const TextStyle(color: Colors.grey),
+                    const SizedBox(width: 12.0), 
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          blog.nameAuthor,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                        const SizedBox(height: 4.0), 
+                        Text(
+                          blog.createAt,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     ),
                   ],
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_horiz),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        // Handle edit action
+                      } else if (value == 'delete') {
+                        // Handle delete action
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Text('Sửa bài viết'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Text('Xóa bài viết'),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

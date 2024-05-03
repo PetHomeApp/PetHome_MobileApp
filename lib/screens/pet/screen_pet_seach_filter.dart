@@ -14,39 +14,8 @@ class PetSearchAndFilterScreen extends StatefulWidget {
 }
 
 class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
-  List<PetInCard> pets = [
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0),
-    PetInCard(
-        idPet: "id_pet",
-        name: "name",
-        imageUrl: "https://via.placeholder.com/150",
-        shopName: "shopName",
-        price: 0),
-  ];
-
+  List<PetInCard> pets = List.empty(growable: true);
+  
   List<String> filterItems = [
     'Chó',
     'Mèo',

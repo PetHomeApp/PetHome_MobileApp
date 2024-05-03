@@ -83,7 +83,7 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
             delegate: SliverChildListDelegate(
               [
                 SizedBox(
-                  height: 250.0,
+                  height: 200.0,
                   width: double.infinity,
                   child: Stack(
                     children: [
@@ -94,34 +94,41 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                         fit: BoxFit.cover,
                       ),
                       Positioned(
-                        left: 32.0,
+                        left: 24.0,
                         bottom: 60.0,
-                        child: SizedBox(
-                          width: 120.0,
-                          height: 120.0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3.0,
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 120.0,
+                              height: 120.0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 3.0,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(60.0),
+                                  child: Image.network(
+                                    'https://via.placeholder.com/150',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                               ),
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60.0),
-                              child: Image.network(
-                                'https://via.placeholder.com/150',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
+                            const SizedBox(width: 30),
+                            Image.asset('lib/assets/pictures/logo_app.png', width: 100, height: 100), 
+                            Image.asset('lib/assets/pictures/name_app.png', width: 120, height: 120),
+                          ],
                         ),
                       ),
                       const Positioned(
-                        left: 32.0,
+                        left: 30.0,
                         bottom: 20.0,
                         child: Text(
-                              'Nguyễn Văn Aaaaa',
+                              'Lê Xuân Huy',
                               style: TextStyle(
                                 color: buttonBackgroundColor,
                                 fontSize: 18.0,
