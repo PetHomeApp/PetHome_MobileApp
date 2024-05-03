@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
+import 'package:pethome_mobileapp/screens/blog/screen_personal_blog.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/blog/blog_card.dart';
 
@@ -125,7 +126,11 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
                           ),
                           child: IconButton(
                             icon: const Icon(Icons.person),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const PersonalBlogScreen(),
+                              ));
+                            },
                           ),
                         ),
                         const SizedBox(width: 30),

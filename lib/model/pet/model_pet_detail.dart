@@ -1,14 +1,15 @@
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_infor_product.dart';
 
 class PetDetail {
   final String idPet;
   final String? name;
-  final String? idPetSpecie;
+  final int? idPetSpecie;
   final int? price;
   final bool? inStock;
   final String? description;
   final String? imageUrl;
-  final String? idShop;
+  final ShopInforInProduct? shop;
   final List<Rate> rates;
   final double? averageRate;
   final int? totalRate;
@@ -21,8 +22,26 @@ class PetDetail {
       required this.inStock,
       required this.description,
       required this.imageUrl,
-      required this.idShop,
+      required this.shop,
       required this.rates,
       required this.averageRate,
       required this.totalRate});
+
+  factory PetDetail.fromJson(Map<String, dynamic> json) {
+    return PetDetail(
+      idPet: json['id_pet'] as String,
+      name: json['name'] as String?,
+      idPetSpecie: json['id_pet_spiece'],
+      price: json['price'] as int?,
+      inStock: json['instock'] as bool?,
+      description: json['description'] as String?,
+      imageUrl: json['picture'] as String?,
+      shop: ShopInforInProduct.fromJson(json['shop'] as Map<String, dynamic>),
+      rates: (json['ratings']['data'] as List<dynamic>)
+          .map((item) => Rate.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      averageRate: (json['ratings']['average_rating'] as num?)?.toDouble(),
+      totalRate: json['ratings']['rating_count'] as int?,
+    );
+  }
 }

@@ -15,4 +15,16 @@ class Rate {
       required this.rate,
       required this.comment,
       required this.createdAt});
+
+  factory Rate.fromJson(Map<String, dynamic> json) {
+    return Rate(
+      idRate: json['id_rate'] as String,
+      idUser: json['id_user'] as String?,
+      userName: json['user_name'] as String?,
+      idProduct: json['id_product'] as String?,
+      rate: json['rate'] as int?,
+      comment: json['comment'] as String?,
+      createdAt: json['created_at'] as String?,
+    );
+  }
 }

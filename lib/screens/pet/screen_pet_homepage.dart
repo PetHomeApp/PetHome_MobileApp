@@ -11,7 +11,6 @@ import 'package:pethome_mobileapp/widgets/pet/pet_card.dart';
 
 class PetHomeScreen extends StatefulWidget {
   final Function(bool) updateBottomBarVisibility;
-
   const PetHomeScreen({super.key, required this.updateBottomBarVisibility});
 
   @override
@@ -79,6 +78,11 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
     loading = true;
     final List<PetInCard> pets =
         await PetApi().getPetsInCard(10, currentPage * 10);
+
+    if (pets.isEmpty) {
+      loading = false;
+      return;
+    }
 
     setState(() {
       listPetInCards.addAll(pets);
@@ -150,7 +154,9 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const PetDetailScreen(),
+                          builder: (context) => PetDetailScreen(
+                            idPet: listPetInCards[index].idPet,
+                          ),
                         ));
                       },
                       child: PetCard(petInCard: listPetInCards[index]),
@@ -160,7 +166,9 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const PetDetailScreen(),
+                          builder: (context) => PetDetailScreen(
+                            idPet: listPetInCards[index + 1].idPet,
+                          ),
                         ));
                       },
                       child: PetCard(petInCard: listPetInCards[index + 1]),
@@ -175,7 +183,8 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const PetDetailScreen(),
+                          builder: (context) => PetDetailScreen(
+                              idPet: listPetInCards[index].idPet),
                         ));
                       },
                       child: PetCard(petInCard: listPetInCards[index]),

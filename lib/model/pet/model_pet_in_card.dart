@@ -17,7 +17,7 @@ class PetInCard {
       idPet: json['id_pet'],
       name: json['name'],
       imageUrl: json['picture'],
-      shopName: json['id_shop'],
+      shopName: json['shop_name'],
       price: json['price'],
     );
   }

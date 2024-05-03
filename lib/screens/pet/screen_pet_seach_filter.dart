@@ -110,7 +110,9 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
+                        builder: (context) => PetDetailScreen(
+                          idPet: pets[index].idPet,
+                        ),
                       ));
                     },
                     child: PetCard(petInCard: pets[index]),
@@ -120,7 +122,9 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
+                        builder: (context) => PetDetailScreen(
+                          idPet: pets[index].idPet,
+                        ),
                       ));
                     },
                     child: PetCard(petInCard: pets[index + 1]),
@@ -135,7 +139,9 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                   child: InkWell(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const PetDetailScreen(),
+                        builder: (context) => PetDetailScreen(
+                          idPet: pets[index].idPet,
+                        ),
                       ));
                     },
                     child: PetCard(petInCard: pets[index]),
