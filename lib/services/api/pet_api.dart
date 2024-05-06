@@ -40,7 +40,7 @@ class PetApi {
   }
 
   Future<PetDetail> getPetDetail(String id) async {
-    var url = Uri.parse('$pethomeApiUrl/pets/$id');
+    var url = Uri.parse('$pethomeApiUrl/pets/$id?ratingLimit=3');
 
     final response = await http.get(
       url,

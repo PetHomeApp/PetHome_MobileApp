@@ -3,6 +3,7 @@ import 'package:pethome_mobileapp/screens/blog/screen_blog_homepage.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/screen_my_homepage.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
+import 'package:pethome_mobileapp/screens/service/screen_service_homepage.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> get _pages => [
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
         ItemHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
-        PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
+        const ServiceHomeScreen(),
         BlogHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
         const MyHomePageScreen(),
       ];

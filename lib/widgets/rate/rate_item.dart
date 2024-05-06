@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:readmore/readmore.dart';
 
+// ignore: must_be_immutable
 class RateItem extends StatelessWidget {
-  final Rate rate;
+  late Rate rate;
 
-  const RateItem({super.key, 
+  RateItem({super.key, 
     required this.rate,
   });
 
   @override
   Widget build(BuildContext context) {
+    DateTime parsedDate = DateTime.parse(rate.createdAt!);
+    String formattedDate = DateFormat('hh:mm - dd/MM/yyyy').format(parsedDate);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,7 +37,7 @@ class RateItem extends StatelessWidget {
           }),
         ),
         Text(
-          rate.createdAt!,
+          formattedDate,
           style: const TextStyle(
             color: Colors.grey,
           ),

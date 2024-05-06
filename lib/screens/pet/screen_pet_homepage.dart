@@ -138,6 +138,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                   builder: (context) =>
                       PetSearchAndFilterScreen(title: searchKey),
                 ));
+                _searchController.clear();
               },
               icon: const Icon(
                 Icons.search,
