@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
@@ -22,13 +24,21 @@ class ItemCart extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: FadeInImage(
-                  placeholder: const AssetImage(
-                      'lib/assets/pictures/placeholder_image.png'),
-                  image: NetworkImage(itemInCard.imageUrl.toString()),
+                child: Image.network(
+                  itemInCard.imageUrl.toString(),
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    if (exception is HandshakeException) {
+                      return Image.asset('lib/assets/pictures/placeholder_image.png', height: 150, width: double.infinity, fit: BoxFit.cover);
+                    } else {
+                      return const SizedBox(
+                        height: 150,
+                        child: Text('Something went wrong...'),
+                      );
+                    }
+                  },
                 ),
               ),
               const SizedBox(height: 8),

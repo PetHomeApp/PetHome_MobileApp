@@ -31,7 +31,7 @@ class PetDetail {
     return PetDetail(
       idPet: json['id_pet'] as String,
       name: json['name'] as String?,
-      idPetSpecie: json['id_pet_spiece'],
+      idPetSpecie: json['id_pet_Specie'],
       price: json['price'] as int?,
       inStock: json['instock'] as bool?,
       description: json['description'] as String?,

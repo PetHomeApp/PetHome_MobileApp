@@ -8,6 +8,8 @@ import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/pet/pet_card.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class PetHomeScreen extends StatefulWidget {
   final Function(bool) updateBottomBarVisibility;
@@ -22,6 +24,8 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
   List<PetInCard> listPetInCards = List.empty(growable: true);
 
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
   bool _isBottomBarVisible = true;
 
   int currentPage = 0;
@@ -104,6 +108,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 15),
                   child: TextField(
+                    controller: _searchController,
                     decoration: InputDecoration(
                       hintText: 'Nhập để tìm kiếm...',
                       border: InputBorder.none,
@@ -117,8 +122,21 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
             ),
             IconButton(
               onPressed: () {
+                String searchKey = _searchController.text;
+                if (searchKey.isEmpty) {
+                  showTopSnackBar(
+                    // ignore: use_build_context_synchronously
+                    Overlay.of(context),
+                    const CustomSnackBar.error(
+                      message: 'Vui lòng nhập thông tin tìm kiếm!',
+                    ),
+                    displayDuration: const Duration(seconds: 0),
+                  );
+                  return;
+                }
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PetSearchAndFilterScreen(),
+                  builder: (context) =>
+                      PetSearchAndFilterScreen(title: searchKey),
                 ));
               },
               icon: const Icon(

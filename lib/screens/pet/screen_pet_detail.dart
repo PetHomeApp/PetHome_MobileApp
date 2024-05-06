@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_rate_sheet.dart';
@@ -49,9 +51,13 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Center(
-            child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor),
+        ? Scaffold(
+            backgroundColor: Colors.white,
+            body: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
           )
         : Scaffold(
             appBar: AppBar(
@@ -117,6 +123,18 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               height: 250,
                               width: double.infinity,
                               fit: BoxFit.cover,
+                              errorBuilder: (BuildContext context,
+                                  Object exception, StackTrace? stackTrace) {
+                                if (exception is HandshakeException) {
+                                  return Image.asset(
+                                      'lib/assets/pictures/placeholder_image.png',
+                                      height: 250,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover);
+                                } else {
+                                  return const Text('Something went wrong...');
+                                }
+                              },
                             ),
                           ),
                           Padding(

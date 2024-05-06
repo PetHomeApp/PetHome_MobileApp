@@ -118,7 +118,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
             IconButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PetSearchAndFilterScreen(),
+                  builder: (context) => const PetSearchAndFilterScreen(title: 'a',),
                 ));
               },
               icon: const Icon(
