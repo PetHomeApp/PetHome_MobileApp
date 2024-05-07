@@ -185,7 +185,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => PetDetailScreen(
-                          idPet: listPetsFilter[index].idPet,
+                          idPet: listPetsFilter[index + 1].idPet,
                         ),
                       ));
                     },

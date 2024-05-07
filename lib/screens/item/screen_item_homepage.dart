@@ -93,127 +93,291 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: Row(
+            children: [
+              Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 15),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Nhập để tìm kiếm...',
-                      border: InputBorder.none,
-                      hintStyle:
-                          TextStyle(color: Colors.white.withOpacity(0.7)),
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Nhập để tìm kiếm...',
+                        border: InputBorder.none,
+                        hintStyle:
+                            TextStyle(color: Colors.white.withOpacity(0.7)),
+                      ),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const PetSearchAndFilterScreen(title: 'a',),
-                ));
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-                color: buttonBackgroundColor,
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const PetSearchAndFilterScreen(
+                      title: 'a',
+                    ),
+                  ));
+                },
+                icon: const Icon(
+                  Icons.search,
+                  size: 30,
+                  color: buttonBackgroundColor,
+                ),
+              ),
+            ],
+          ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [gradientStartColor, gradientEndColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-          ],
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [gradientStartColor, gradientEndColor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              color: Colors.white,
+              child: const TabBar(
+                indicatorColor: buttonBackgroundColor,
+                labelColor: buttonBackgroundColor,
+                unselectedLabelColor: Colors.black,
+                tabs: [
+                  Tab(text: 'Tất cả'),
+                  Tab(text: 'Danh mục hàng'),
+                  Tab(text: 'Giảm giá'),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        controller: _scrollController,
-        itemCount: listItemsInCards.length,
-        itemBuilder: (context, index) {
-          if (index < listItemsInCards.length) {
-            if (index % 2 == 0 && index < listItemsInCards.length - 1) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                            idPet: listItemsInCards[index].idItem,
-                          ),
-                        ));
-                      },
-                      child: ItemCart(itemInCard: listItemsInCards[index]),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                            idPet: listItemsInCards[index + 1].idItem,
-                          ),
-                        ));
-                      },
-                      child: ItemCart(itemInCard: listItemsInCards[index + 1]),
-                    ),
-                  ),
-                ],
-              );
-            } else if (index % 2 == 0 && index == listItemsInCards.length - 1) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                              idPet: listItemsInCards[index].idItem),
-                        ));
-                      },
-                      child: ItemCart(itemInCard: listItemsInCards[index]),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                ],
-              );
-            } else {
-              return Container();
-            }
-          } else {
-            Timer(const Duration(milliseconds: 30), () {
-              _scrollController.jumpTo(
-                _scrollController.position.maxScrollExtent,
-              );
-            });
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Center(
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor),
+        body: TabBarView(
+          children: [
+            ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
               ),
-            );
-          }
-        },
+              controller: _scrollController,
+              itemCount: listItemsInCards.length,
+              itemBuilder: (context, index) {
+                if (index < listItemsInCards.length) {
+                  if (index % 2 == 0 && index < listItemsInCards.length - 1) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                  idPet: listItemsInCards[index].idItem,
+                                ),
+                              ));
+                            },
+                            child:
+                                ItemCart(itemInCard: listItemsInCards[index]),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                  idPet: listItemsInCards[index + 1].idItem,
+                                ),
+                              ));
+                            },
+                            child: ItemCart(
+                                itemInCard: listItemsInCards[index + 1]),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (index % 2 == 0 &&
+                      index == listItemsInCards.length - 1) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                    idPet: listItemsInCards[index].idItem),
+                              ));
+                            },
+                            child:
+                                ItemCart(itemInCard: listItemsInCards[index]),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                } else {
+                  Timer(const Duration(milliseconds: 30), () {
+                    _scrollController.jumpTo(
+                      _scrollController.position.maxScrollExtent,
+                    );
+                  });
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor),
+                    ),
+                  );
+                }
+              },
+            ),
+
+            // Tab 2
+            const Center(
+              child: Text('Tab 2'),
+            ),
+
+            // Tab 3
+            const Center(
+              child: Text('Tab 3'),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       titleSpacing: 0,
+  //       title: Row(
+  //         children: [
+  //           Expanded(
+  //             child: Padding(
+  //               padding: const EdgeInsets.only(left: 8.0),
+  //               child: Padding(
+  //                 padding: const EdgeInsets.only(left: 15),
+  //                 child: TextField(
+  //                   decoration: InputDecoration(
+  //                     hintText: 'Nhập để tìm kiếm...',
+  //                     border: InputBorder.none,
+  //                     hintStyle:
+  //                         TextStyle(color: Colors.white.withOpacity(0.7)),
+  //                   ),
+  //                   style: const TextStyle(color: Colors.white),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //           IconButton(
+  //             onPressed: () {
+  //               Navigator.of(context).push(MaterialPageRoute(
+  //                 builder: (context) => const PetSearchAndFilterScreen(title: 'a',),
+  //               ));
+  //             },
+  //             icon: const Icon(
+  //               Icons.search,
+  //               size: 30,
+  //               color: buttonBackgroundColor,
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //       flexibleSpace: Container(
+  //         decoration: const BoxDecoration(
+  //           gradient: LinearGradient(
+  //             colors: [gradientStartColor, gradientEndColor],
+  //             begin: Alignment.topLeft,
+  //             end: Alignment.bottomRight,
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     body: ListView.builder(
+  //       physics: const AlwaysScrollableScrollPhysics(
+  //         parent: BouncingScrollPhysics(),
+  //       ),
+  //       controller: _scrollController,
+  //       itemCount: listItemsInCards.length,
+  //       itemBuilder: (context, index) {
+  //         if (index < listItemsInCards.length) {
+  //           if (index % 2 == 0 && index < listItemsInCards.length - 1) {
+  //             return Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: InkWell(
+  //                     onTap: () {
+  //                       Navigator.of(context).push(MaterialPageRoute(
+  //                         builder: (context) => PetDetailScreen(
+  //                           idPet: listItemsInCards[index].idItem,
+  //                         ),
+  //                       ));
+  //                     },
+  //                     child: ItemCart(itemInCard: listItemsInCards[index]),
+  //                   ),
+  //                 ),
+  //                 Expanded(
+  //                   child: InkWell(
+  //                     onTap: () {
+  //                       Navigator.of(context).push(MaterialPageRoute(
+  //                         builder: (context) => PetDetailScreen(
+  //                           idPet: listItemsInCards[index + 1].idItem,
+  //                         ),
+  //                       ));
+  //                     },
+  //                     child: ItemCart(itemInCard: listItemsInCards[index + 1]),
+  //                   ),
+  //                 ),
+  //               ],
+  //             );
+  //           } else if (index % 2 == 0 && index == listItemsInCards.length - 1) {
+  //             return Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: InkWell(
+  //                     onTap: () {
+  //                       Navigator.of(context).push(MaterialPageRoute(
+  //                         builder: (context) => PetDetailScreen(
+  //                             idPet: listItemsInCards[index].idItem),
+  //                       ));
+  //                     },
+  //                     child: ItemCart(itemInCard: listItemsInCards[index]),
+  //                   ),
+  //                 ),
+  //                 Expanded(
+  //                   child: Container(),
+  //                 ),
+  //               ],
+  //             );
+  //           } else {
+  //             return Container();
+  //           }
+  //         } else {
+  //           Timer(const Duration(milliseconds: 30), () {
+  //             _scrollController.jumpTo(
+  //               _scrollController.position.maxScrollExtent,
+  //             );
+  //           });
+  //           return Padding(
+  //             padding: const EdgeInsets.symmetric(vertical: 20.0),
+  //             child: Center(
+  //               child: CircularProgressIndicator(
+  //                   color: Theme.of(context).primaryColor),
+  //             ),
+  //           );
+  //         }
+  //       },
+  //     ),
+  // );
 }

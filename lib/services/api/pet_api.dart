@@ -4,7 +4,9 @@ import 'package:pethome_mobileapp/model/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_spiece.dart';
+import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PetApi {
   Future<List<PetInCard>> getPetsInCard(int limit, int start) async {
@@ -152,6 +154,84 @@ class PetApi {
       return ages;
     } else {
       throw Exception('Failed to load pet ages');
+    }
+  }
+
+  Future<bool> checkRated(String petId) async {
+    var url = Uri.parse('$pethomeApiUrl/api/pets/$petId/rate');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return false;
+    }
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      if (data['status'] == "rated") {
+        return true;
+      }
+      return false;
+    } else {
+      throw Exception('Failed to check rating for pet');
+    }
+  }
+
+  Future<Map<String, dynamic>> sendPetRate(String petId, int rating, String comment) async {
+    var url = Uri.parse('$pethomeApiUrl/api/pets/$petId/rate');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      print(jsonEncode({
+        'rate': rating,
+        'comment': comment,
+      }));
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+          },
+          body: jsonEncode({
+            'rate': rating,
+            'comment': comment,
+          }));
+      print(url);
+      print(accessToken);
+      print(petId);
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
     }
   }
 }

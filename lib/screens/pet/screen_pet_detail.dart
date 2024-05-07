@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
-import 'package:pethome_mobileapp/widgets/rate/sent_rate_sheet.dart';
+import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
@@ -22,6 +22,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   late PetDetail petDetail;
 
   bool loading = false;
+  bool checkRated = false;
 
   @override
   void initState() {
@@ -36,6 +37,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
 
     loading = true;
     petDetail = await PetApi().getPetDetail(widget.idPet);
+    checkRated = await PetApi().checkRated(widget.idPet);
 
     // ignore: unnecessary_null_comparison
     if (petDetail == null) {
@@ -344,35 +346,50 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     borderRadius: BorderRadius.circular(20.0),
                                     color: buttonBackgroundColor,
                                   ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        builder: (BuildContext context) {
-                                          return SingleChildScrollView(
-                                            child: Container(
-                                              padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                    .viewInsets
-                                                    .bottom,
-                                              ),
-                                              child: const SendRateWidget(),
+                                  child: checkRated
+                                      ? const Center(
+                                          child: Text(
+                                            'Bạn đã đánh giá sản phẩm này!',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
                                             ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: const Center(
-                                      child: Text(
-                                        'Viết đánh giá',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
+                                          ),
+                                        )
+                                      : InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              showModalBottomSheet(
+                                                context: context,
+                                                isScrollControlled: true,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return SingleChildScrollView(
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                        bottom: MediaQuery.of(
+                                                                context)
+                                                            .viewInsets
+                                                            .bottom,
+                                                      ),
+                                                      child: SendPetRateWidget(
+                                                          petId: widget.idPet),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            });
+                                          },
+                                          child: const Center(
+                                            child: Text(
+                                              'Viết đánh giá',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
