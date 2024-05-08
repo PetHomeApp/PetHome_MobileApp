@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PetApi {
   Future<List<PetInCard>> getPetsInCard(int limit, int start) async {
-    var url = Uri.parse('$pethomeApiUrl/pets?limit=$limit&start=$start');
+    var url = Uri.parse('${pethomeApiUrl}pets?limit=$limit&start=$start');
 
     final response = await http.get(
       url,
@@ -42,7 +42,7 @@ class PetApi {
   }
 
   Future<PetDetail> getPetDetail(String id) async {
-    var url = Uri.parse('$pethomeApiUrl/pets/$id?ratingLimit=3');
+    var url = Uri.parse('${pethomeApiUrl}pets/$id?ratingLimit=3');
 
     final response = await http.get(
       url,
@@ -62,7 +62,7 @@ class PetApi {
   Future<List<PetInCard>> searchPetsInCard(
       String keyword, int limit, int start) async {
     var url = Uri.parse(
-        '$pethomeApiUrl/pets?name=$keyword&limit=$limit&start=$start');
+        '${pethomeApiUrl}pets?name=$keyword&limit=$limit&start=$start');
 
     final response = await http.get(
       url,
@@ -94,7 +94,7 @@ class PetApi {
   }
 
   Future<List<PetSpecie>> getPetSpecies() async {
-    var url = Uri.parse('$pethomeApiUrl/pet/species');
+    var url = Uri.parse('${pethomeApiUrl}pet/species');
 
     final response = await http.get(
       url,
@@ -126,7 +126,7 @@ class PetApi {
   }
 
   Future<List<PetAge>> getPetAges() async {
-    var url = Uri.parse('$pethomeApiUrl/pet/ages');
+    var url = Uri.parse('${pethomeApiUrl}pet/ages');
 
     final response = await http.get(
       url,
@@ -158,7 +158,7 @@ class PetApi {
   }
 
   Future<bool> checkRated(String petId) async {
-    var url = Uri.parse('$pethomeApiUrl/api/pets/$petId/rate');
+    var url = Uri.parse('${pethomeApiUrl}api/pets/$petId/rate');
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();
@@ -189,8 +189,9 @@ class PetApi {
     }
   }
 
-  Future<Map<String, dynamic>> sendPetRate(String petId, int rating, String comment) async {
-    var url = Uri.parse('$pethomeApiUrl/api/pets/$petId/rate');
+  Future<Map<String, dynamic>> sendPetRate(
+      String petId, int rating, String comment) async {
+    var url = Uri.parse('${pethomeApiUrl}api/pets/$petId/rate');
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();
@@ -202,10 +203,6 @@ class PetApi {
     String accessToken = sharedPreferences.getString('accessToken') ?? '';
 
     try {
-      print(jsonEncode({
-        'rate': rating,
-        'comment': comment,
-      }));
       final response = await http.post(url,
           headers: {
             'Content-Type': 'application/json',
@@ -215,10 +212,6 @@ class PetApi {
             'rate': rating,
             'comment': comment,
           }));
-      print(url);
-      print(accessToken);
-      print(petId);
-      print(response.statusCode);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {

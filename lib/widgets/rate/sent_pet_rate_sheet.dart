@@ -113,6 +113,8 @@ class _SendPetRateWidgetState extends State<SendPetRateWidget> {
                       ),
                       displayDuration: const Duration(seconds: 0),
                     );
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop(true);
                   } else {
                     showTopSnackBar(
                       // ignore: use_build_context_synchronously
@@ -122,9 +124,9 @@ class _SendPetRateWidgetState extends State<SendPetRateWidget> {
                       ),
                       displayDuration: const Duration(seconds: 0),
                     );
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
                   }
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pop();
                 } else {
                   showTopSnackBar(
                     // ignore: use_build_context_synchronously

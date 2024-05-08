@@ -112,8 +112,16 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(60.0),
                                   child: Image.network(
-                                    'https://via.placeholder.com/150',
+                                    'https://via.placeholder',
                                     fit: BoxFit.cover,
+                                    errorBuilder: (BuildContext context,
+                                        Object exception,
+                                        StackTrace? stackTrace) {
+                                      return Image.asset(
+                                        'lib/assets/pictures/placeholder_image.png',
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
                                   ),
                                 ),
                               ),

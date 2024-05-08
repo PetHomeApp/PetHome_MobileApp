@@ -158,67 +158,96 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
           ),
         ],
       ),
-      body: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        controller: _scrollController,
-        itemCount: listPetsFilter.length,
-        itemBuilder: (context, index) {
-          if (index % 2 == 0 && index < listPetsFilter.length - 1) {
-            return Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PetDetailScreen(
-                          idPet: listPetsFilter[index].idPet,
-                        ),
-                      ));
-                    },
-                    child: PetCard(petInCard: listPetsFilter[index]),
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(buttonBackgroundColor),
+              ),
+            )
+          : listPetsFilter.isEmpty
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 50,
+                        color: buttonBackgroundColor,
+                      ),
+                      Text(
+                        'Không có kết quả tìm kiếm phù hợp!',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: buttonBackgroundColor),
+                      ),
+                    ],
                   ),
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PetDetailScreen(
-                          idPet: listPetsFilter[index + 1].idPet,
-                        ),
-                      ));
-                    },
-                    child: PetCard(petInCard: listPetsFilter[index + 1]),
+                )
+              : ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
                   ),
+                  controller: _scrollController,
+                  itemCount: listPetsFilter.length,
+                  itemBuilder: (context, index) {
+                    if (index % 2 == 0 && index < listPetsFilter.length - 1) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => PetDetailScreen(
+                                    idPet: listPetsFilter[index].idPet,
+                                  ),
+                                ));
+                              },
+                              child: PetCard(petInCard: listPetsFilter[index]),
+                            ),
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => PetDetailScreen(
+                                    idPet: listPetsFilter[index + 1].idPet,
+                                  ),
+                                ));
+                              },
+                              child:
+                                  PetCard(petInCard: listPetsFilter[index + 1]),
+                            ),
+                          ),
+                        ],
+                      );
+                    } else if (index % 2 == 0 &&
+                        index == listPetsFilter.length - 1) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => PetDetailScreen(
+                                    idPet: listPetsFilter[index].idPet,
+                                  ),
+                                ));
+                              },
+                              child: PetCard(petInCard: listPetsFilter[index]),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(),
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
                 ),
-              ],
-            );
-          } else if (index % 2 == 0 && index == listPetsFilter.length - 1) {
-            return Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => PetDetailScreen(
-                          idPet: listPetsFilter[index].idPet,
-                        ),
-                      ));
-                    },
-                    child: PetCard(petInCard: listPetsFilter[index]),
-                  ),
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-              ],
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
       endDrawer: FractionallySizedBox(
         widthFactor: 0.85,
         // ignore: deprecated_member_use

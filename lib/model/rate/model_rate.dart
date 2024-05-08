@@ -20,7 +20,7 @@ class Rate {
     return Rate(
       idRate: json['id_rate'] as String,
       idUser: json['id_user'] as String?,
-      userName: json['user_name'] as String?,
+      userName: json['username'] as String?,
       idProduct: json['id_product'] as String?,
       rate: json['rate'] as int?,
       comment: json['comment'] as String?,

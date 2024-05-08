@@ -5,7 +5,7 @@ import 'package:pethome_mobileapp/setting/host_api.dart';
 
 class ItemApi {
   Future<List<ItemInCard>> getItemsInCard(int limit, int start) async {
-    var url = Uri.parse('$pethomeApiUrl/items?limit=$limit&start=$start');
+    var url = Uri.parse('${pethomeApiUrl}items?limit=$limit&start=$start');
 
     final response = await http.get(
       url,

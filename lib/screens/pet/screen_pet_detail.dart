@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
@@ -127,15 +125,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               fit: BoxFit.cover,
                               errorBuilder: (BuildContext context,
                                   Object exception, StackTrace? stackTrace) {
-                                if (exception is HandshakeException) {
-                                  return Image.asset(
-                                      'lib/assets/pictures/placeholder_image.png',
-                                      height: 250,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover);
-                                } else {
-                                  return const Text('Something went wrong...');
-                                }
+                                return Image.asset(
+                                  'lib/assets/pictures/placeholder_image.png',
+                                  height: 250,
+                                  fit: BoxFit.cover,
+                                );
                               },
                             ),
                           ),
@@ -357,28 +351,34 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                           ),
                                         )
                                       : InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              showModalBottomSheet(
-                                                context: context,
-                                                isScrollControlled: true,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return SingleChildScrollView(
-                                                    child: Container(
-                                                      padding: EdgeInsets.only(
-                                                        bottom: MediaQuery.of(
-                                                                context)
-                                                            .viewInsets
-                                                            .bottom,
-                                                      ),
-                                                      child: SendPetRateWidget(
-                                                          petId: widget.idPet),
+                                          onTap: () async {
+                                            final result =
+                                                await showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              builder: (BuildContext context) {
+                                                return SingleChildScrollView(
+                                                  child: Container(
+                                                    padding: EdgeInsets.only(
+                                                      bottom:
+                                                          MediaQuery.of(context)
+                                                              .viewInsets
+                                                              .bottom,
                                                     ),
-                                                  );
-                                                },
-                                              );
-                                            });
+                                                    child: SendPetRateWidget(
+                                                        petId: widget.idPet),
+                                                  ),
+                                                );
+                                              },
+                                            );
+
+                                            if (result != null &&
+                                                result == true) {
+                                              setState(() {
+                                                checkRated = true;
+                                                getPetDetail();
+                                              });
+                                            }
                                           },
                                           child: const Center(
                                             child: Text(
