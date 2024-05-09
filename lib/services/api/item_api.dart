@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
 
@@ -33,6 +34,24 @@ class ItemApi {
       return items;
     } else {
       throw Exception('Failed to load items');
+    }
+  }
+
+  Future<ItemDetail> getItemDetail(String id) async {
+    var url = Uri.parse('${pethomeApiUrl}items/$id?ratingLimit=3');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return ItemDetail.fromJson(data);
+    } else {
+      throw Exception('Failed to load item detail');
     }
   }
 }

@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _isBottomBarVisible = isVisible;
     });
-  }
+  }  
 
   List<Widget> get _pages => [
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
