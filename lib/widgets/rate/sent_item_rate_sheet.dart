@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class SentPetRateWidget extends StatefulWidget {
-  final String petId;
-  const SentPetRateWidget({super.key, required this.petId});
+class SentItemRateWidget extends StatefulWidget {
+  final String idItem;
+  const SentItemRateWidget({super.key, required this.idItem});
 
   @override
   // ignore: library_private_types_in_public_api
-  _SentPetRateWidgetState createState() => _SentPetRateWidgetState();
+  _SentItemRateWidgetState createState() => _SentItemRateWidgetState();
 }
 
-class _SentPetRateWidgetState extends State<SentPetRateWidget> {
+class _SentItemRateWidgetState extends State<SentItemRateWidget> {
   final TextEditingController _textEditingController = TextEditingController();
   final int maxLength = 200;
 
@@ -100,9 +100,9 @@ class _SentPetRateWidgetState extends State<SentPetRateWidget> {
             child: InkWell(
               onTap: () async {
                 if (_textEditingController.text.isNotEmpty && rating != 0) {
-                  PetApi petApi = PetApi();
-                  var response = await petApi.sendPetRate(
-                      widget.petId, rating, _textEditingController.text);
+                  ItemApi itemApi = ItemApi();
+                  var response = await itemApi.sendItemRate(
+                      widget.idItem, rating, _textEditingController.text);
 
                   if (response['isSuccess'] == true) {
                     showTopSnackBar(

@@ -5,7 +5,7 @@ import 'package:pethome_mobileapp/model/item/model_item_detail_type.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
-import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
+import 'package:pethome_mobileapp/widgets/rate/sent_item_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
 
 class ItemDetailScreen extends StatefulWidget {
@@ -39,7 +39,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
 
     loading = true;
     itemDetail = await ItemApi().getItemDetail(widget.idItem);
-    //checkRated = await PetApi().checkRated(widget.idItem);
+    checkRated = await ItemApi().checkRated(widget.idItem);
 
     // ignore: unnecessary_null_comparison
     if (itemDetail == null) {
@@ -428,15 +428,15 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                               builder: (BuildContext context) {
                                                 return SingleChildScrollView(
                                                   child: Container(
-                                                    padding: EdgeInsets.only(
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                              .viewInsets
-                                                              .bottom,
-                                                    ),
-                                                    child: SendPetRateWidget(
-                                                        petId: widget.idItem),
-                                                  ),
+                                                      padding: EdgeInsets.only(
+                                                        bottom: MediaQuery.of(
+                                                                context)
+                                                            .viewInsets
+                                                            .bottom,
+                                                      ),
+                                                      child: SentItemRateWidget(
+                                                        idItem: widget.idItem,
+                                                      )),
                                                 );
                                               },
                                             );

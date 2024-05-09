@@ -365,7 +365,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                                               .viewInsets
                                                               .bottom,
                                                     ),
-                                                    child: SendPetRateWidget(
+                                                    child: SentPetRateWidget(
                                                         petId: widget.idPet),
                                                   ),
                                                 );
@@ -405,7 +405,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
               direction: Axis.horizontal,
               children: <Widget>[
                 Expanded(
-                  flex: 1, 
+                  flex: 1,
                   child: InkWell(
                     onTap: () {
                       // ignore: avoid_print
@@ -419,15 +419,12 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Icon(
-                              Icons.chat, 
-                              color:
-                                  buttonBackgroundColor, 
+                              Icons.chat,
+                              color: buttonBackgroundColor,
                             ),
                             Text(
                               'Liên hệ Shop',
-                              style: TextStyle(
-                                  color:
-                                      buttonBackgroundColor), 
+                              style: TextStyle(color: buttonBackgroundColor),
                             ),
                           ],
                         ),
@@ -436,30 +433,26 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   ),
                 ),
                 Expanded(
-                  flex: 1, 
+                  flex: 1,
                   child: InkWell(
                     onTap: () {
                       // ignore: avoid_print
                       print('Add to cart');
                     },
                     child: Container(
-                      color:
-                          buttonBackgroundColor, 
+                      color: buttonBackgroundColor,
                       child: const Padding(
                         padding: EdgeInsets.all(4.0),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Icon(
-                              Icons
-                                  .shopping_cart,
-                              color: Colors.white, 
+                              Icons.shopping_cart,
+                              color: Colors.white,
                             ),
                             Text(
                               'Thêm vào Giỏ hàng',
-                              style: TextStyle(
-                                  color: Colors
-                                      .white), 
+                              style: TextStyle(color: Colors.white),
                             ),
                           ],
                         ),
