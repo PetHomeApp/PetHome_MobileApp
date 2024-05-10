@@ -3,11 +3,11 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class ItemCart extends StatelessWidget {
+class ItemCard extends StatelessWidget {
   final ItemInCard itemInCard;
   final formatter = NumberFormat("#,###", "vi_VN");
 
-  ItemCart({super.key, required this.itemInCard});
+  ItemCard({super.key, required this.itemInCard});
 
   @override
   Widget build(BuildContext context) {

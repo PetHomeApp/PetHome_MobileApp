@@ -4,6 +4,7 @@ class ItemInCard {
   final String name;
   final String shopName;
   final int minPrice;
+  final List<String> areas;
 
   ItemInCard({
     required this.idItem,
@@ -11,6 +12,7 @@ class ItemInCard {
     required this.name,
     required this.shopName,
     required this.minPrice,
+    required this.areas,
   });
 
   factory ItemInCard.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class ItemInCard {
       name: json['name'],
       shopName: json['shop_name'],
       minPrice: json['min_price'],
+      areas: json['areas'].cast<String>(),
     );
   }
 }

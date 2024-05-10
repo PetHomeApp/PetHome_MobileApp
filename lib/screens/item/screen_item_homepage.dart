@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_detail.dart';
-import 'package:pethome_mobileapp/screens/pet/screen_pet_seach_filter.dart';
+import 'package:pethome_mobileapp/screens/item/screen_item_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/item/item_card.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ItemHomeScreen extends StatefulWidget {
   final Function(bool) updateBottomBarVisibility;
@@ -22,6 +24,8 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
   List<ItemInCard> listItemsInCards = List.empty(growable: true);
 
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+
   bool _isBottomBarVisible = true;
 
   int currentPage = 0;
@@ -106,6 +110,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15),
                     child: TextField(
+                      controller: _searchController,
                       decoration: InputDecoration(
                         hintText: 'Nhập để tìm kiếm...',
                         border: InputBorder.none,
@@ -119,11 +124,23 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
               ),
               IconButton(
                 onPressed: () {
+                  String searchKey = _searchController.text;
+                  if (searchKey.isEmpty) {
+                    showTopSnackBar(
+                      // ignore: use_build_context_synchronously
+                      Overlay.of(context),
+                      const CustomSnackBar.error(
+                        message: 'Vui lòng nhập thông tin tìm kiếm!',
+                      ),
+                      displayDuration: const Duration(seconds: 0),
+                    );
+                    return;
+                  }
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const PetSearchAndFilterScreen(
-                      title: 'a',
-                    ),
+                    builder: (context) =>
+                        ItemSearchAndFilterScreen(title: searchKey),
                   ));
+                  _searchController.clear();
                 },
                 icon: const Icon(
                   Icons.search,
@@ -182,7 +199,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                               ));
                             },
                             child:
-                                ItemCart(itemInCard: listItemsInCards[index]),
+                                ItemCard(itemInCard: listItemsInCards[index]),
                           ),
                         ),
                         Expanded(
@@ -194,7 +211,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                                 ),
                               ));
                             },
-                            child: ItemCart(
+                            child: ItemCard(
                                 itemInCard: listItemsInCards[index + 1]),
                           ),
                         ),
@@ -213,7 +230,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                               ));
                             },
                             child:
-                                ItemCart(itemInCard: listItemsInCards[index]),
+                                ItemCard(itemInCard: listItemsInCards[index]),
                           ),
                         ),
                         Expanded(
