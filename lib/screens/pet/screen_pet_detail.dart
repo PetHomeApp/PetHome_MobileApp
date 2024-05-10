@@ -425,6 +425,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                             Text(
                               'Liên hệ Shop',
                               style: TextStyle(color: buttonBackgroundColor),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -453,6 +454,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                             Text(
                               'Thêm vào Giỏ hàng',
                               style: TextStyle(color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),

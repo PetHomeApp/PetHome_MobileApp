@@ -245,7 +245,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        itemDetail.instock
+                                        instock
                                             ? '  Còn hàng  '
                                             : '  Hết hàng  ',
                                         style: const TextStyle(
@@ -469,6 +469,109 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   ],
                 ),
               ),
+            ),
+            bottomNavigationBar: Flex(
+              direction: Axis.horizontal,
+              children: <Widget>[
+                Expanded(
+                  flex: 10,
+                  child: InkWell(
+                    onTap: () {
+                      // ignore: avoid_print
+                      print('Chat with shop');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Container(
+                        color: Colors.grey[100],
+                        child: const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                Icons.chat,
+                                color: buttonBackgroundColor,
+                              ),
+                              Text(
+                                'Liên hệ Shop',
+                                style: TextStyle(color: buttonBackgroundColor),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  color: Colors.grey[100],
+                  child: const VerticalDivider(color: buttonBackgroundColor),
+                ),
+                Expanded(
+                  flex: 10,
+                  child: InkWell(
+                    onTap: () {
+                      // ignore: avoid_print
+                      print('Add to cart');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: Container(
+                        color: Colors.grey[100],
+                        child: const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Icon(
+                                Icons.shopping_cart,
+                                color: buttonBackgroundColor,
+                              ),
+                              Text(
+                                'Thêm vào Giỏ hàng',
+                                style: TextStyle(color: buttonBackgroundColor),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 15,
+                  child: InkWell(
+                    onTap: () {
+                      // ignore: avoid_print
+                      print('Add to cart');
+                    },
+                    child: Container(
+                      color: buttonBackgroundColor,
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.shopping_bag,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              'Mua ngay',
+                              style: TextStyle(color: Colors.white),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
   }
