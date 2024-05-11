@@ -56,7 +56,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -64,7 +64,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 5,
+                          spreadRadius: 4,
                           blurRadius: 7,
                           offset: const Offset(0, 3),
                         ),
@@ -141,29 +141,201 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle 'Tin nhắn' tap
-                  },
-                  child: const Text('Tin nhắn'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle 'Giỏ hàng' tap
-                  },
-                  child: const Text('Giỏ hàng'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle 'Đơn hàng của tôi' tap
-                  },
-                  child: const Text('Đơn hàng của tôi'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle 'Quản lí cửa hàng' tap
-                  },
-                  child: const Text('Quản lí cửa hàng'),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, right: 15),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[100],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: InkWell(
+                                onTap: () {
+                                  // Handle 'Tin nhắn' tap
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset(
+                                          'lib/assets/pictures/icon_chat.png'),
+                                    ),
+                                    const Text(
+                                      'Tin nhắn',
+                                      style: TextStyle(
+                                        color: buttonBackgroundColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width: 15), 
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[100],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: InkWell(
+                                onTap: () {
+                                  // Handle 'Tin nhắn' tap
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset(
+                                          'lib/assets/pictures/icon_cart.png'),
+                                    ),
+                                    const Text(
+                                      'Giỏ hàng',
+                                      style: TextStyle(
+                                        color: buttonBackgroundColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[100],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: InkWell(
+                                onTap: () {
+                                  // Handle 'Tin nhắn' tap
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset(
+                                          'lib/assets/pictures/icon_order.png'),
+                                    ),
+                                    const Text(
+                                      'Đơn hàng của tôi',
+                                      style: TextStyle(
+                                        color: buttonBackgroundColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                              width: 15), 
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[100],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 7,
+                                    offset: const Offset(
+                                        0, 3), 
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: InkWell(
+                                onTap: () {
+                                  // Handle 'Tin nhắn' tap
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset(
+                                          'lib/assets/pictures/icon_shop.png'),
+                                    ),
+                                    const Text(
+                                      'Quản lí cửa hàng',
+                                      style: TextStyle(
+                                        color: buttonBackgroundColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -171,7 +343,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Container(
                 width: double.infinity,
-                height: 40,
+                height: 45,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.0),
                   color: buttonBackgroundColor,

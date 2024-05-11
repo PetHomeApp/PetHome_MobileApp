@@ -34,7 +34,7 @@ class _ServiceHomeScreenState extends State<ServiceHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Dịch vụ thú cưng - PetHome",
+          "Dịch vụ thú cưng",
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),

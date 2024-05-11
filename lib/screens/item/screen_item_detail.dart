@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
-import 'package:pethome_mobileapp/model/item/model_item_detail_type.dart';
+import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
@@ -179,16 +179,16 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                               .entries
                                               .map((entry) {
                                             int index = entry.key;
-                                            DetailForItemType detailItemType =
+                                            DetailItemClassify detailItemClassify =
                                                 entry.value;
 
                                             return InkWell(
                                               onTap: () {
                                                 setState(() {
                                                   selectedDetail = index;
-                                                  price = detailItemType.price;
+                                                  price = detailItemClassify.price;
                                                   instock =
-                                                      detailItemType.instock;
+                                                      detailItemClassify.instock;
                                                 });
                                               },
                                               child: Container(
@@ -205,7 +205,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                                   ),
                                                 ),
                                                 child: Text(
-                                                  '${detailItemType.size} ${itemDetail.unit}',
+                                                  '${detailItemClassify.size} ${itemDetail.unit}',
                                                   style: TextStyle(
                                                     color: selectedDetail ==
                                                             index

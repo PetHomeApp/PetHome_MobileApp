@@ -1,4 +1,4 @@
-import 'package:pethome_mobileapp/model/item/model_item_detail_type.dart';
+import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor_product.dart';
 
@@ -13,7 +13,7 @@ class ItemDetail {
   final String idShop;
   final bool instock;
   final ShopInforInProduct shop;
-  final List<DetailForItemType> details;
+  final List<DetailItemClassify> details;
   final List<Rate> rates;
   final double averageRating;
   final int totalRate;
@@ -49,7 +49,7 @@ class ItemDetail {
       shop: ShopInforInProduct.fromJson(json['shop'] as Map<String, dynamic>),
       details: (json['details'] as List<dynamic>)
           .map((item) =>
-              DetailForItemType.fromJson(item as Map<String, dynamic>))
+              DetailItemClassify.fromJson(item as Map<String, dynamic>))
           .toList(),
       rates: (json['ratings']['data'] as List<dynamic>)
           .map((item) => Rate.fromJson(item as Map<String, dynamic>))

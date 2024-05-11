@@ -1,4 +1,4 @@
-class DetailForItemType {
+class DetailItemClassify {
   final String idItemDetail;
   final String idItem;
   final String size;
@@ -6,7 +6,7 @@ class DetailForItemType {
   final int quantity;
   final bool instock;
 
-  DetailForItemType({
+  DetailItemClassify({
     required this.idItemDetail,
     required this.idItem,
     required this.size,
@@ -15,8 +15,8 @@ class DetailForItemType {
     required this.instock,
   });
 
-  factory DetailForItemType.fromJson(Map<String, dynamic> json) {
-    return DetailForItemType(
+  factory DetailItemClassify.fromJson(Map<String, dynamic> json) {
+    return DetailItemClassify(
       idItemDetail: json['id_item_detail'],
       idItem: json['id_item'],
       size: json['size'],
