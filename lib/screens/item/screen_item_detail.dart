@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
+import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
@@ -57,11 +58,11 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Scaffold(
+        ? const Scaffold(
             backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: buttonBackgroundColor,
               ),
             ),
           )
@@ -102,7 +103,11 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 IconButton(
                   icon: const Icon(Icons.shopping_cart,
                       color: buttonBackgroundColor, size: 30),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CartHomePageScreen(),
+                    ));
+                  },
                 ),
               ],
             ),

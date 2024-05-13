@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
@@ -17,7 +18,12 @@ class PetDetailScreen extends StatefulWidget {
 }
 
 class _PetDetailScreenState extends State<PetDetailScreen> {
+  final _controller = PageController();
+  final _currentPageNotifier = ValueNotifier<int>(1);
+
   late PetDetail petDetail;
+
+  late List<String> imageUrlDescriptions;
 
   bool loading = false;
   bool checkRated = false;
@@ -25,6 +31,9 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   @override
   void initState() {
     super.initState();
+    _controller.addListener(() {
+      _currentPageNotifier.value = (_controller.page!.round() + 1);
+    });
     getPetDetail();
   }
 
@@ -44,6 +53,9 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     }
 
     setState(() {
+      imageUrlDescriptions = [];
+      imageUrlDescriptions.add(petDetail.imageUrl.toString());
+      imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions!);
       loading = false;
     });
   }
@@ -51,11 +63,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Scaffold(
+        ? const Scaffold(
             backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).primaryColor,
+                color: buttonBackgroundColor,
               ),
             ),
           )
@@ -96,7 +108,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                 IconButton(
                   icon: const Icon(Icons.shopping_cart,
                       color: buttonBackgroundColor, size: 30),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const CartHomePageScreen(),
+                    ));
+                  },
                 ),
               ],
             ),
@@ -118,19 +134,57 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               topLeft: Radius.circular(15.0),
                               topRight: Radius.circular(15.0),
                             ),
-                            child: Image.network(
-                              petDetail.imageUrl.toString(),
+                            child: SizedBox(
                               height: 250,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                                return Image.asset(
-                                  'lib/assets/pictures/placeholder_image.png',
-                                  height: 250,
-                                  fit: BoxFit.cover,
-                                );
-                              },
+                              child: Stack(
+                                children: [
+                                  PageView.builder(
+                                    controller: _controller,
+                                    itemCount: imageUrlDescriptions.length,
+                                    itemBuilder: (context, index) {
+                                      return Image.network(
+                                        imageUrlDescriptions[index],
+                                        height: 250,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace? stackTrace) {
+                                          return Image.asset(
+                                            'lib/assets/pictures/placeholder_image.png',
+                                            height: 250,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: ValueListenableBuilder<int>(
+                                        valueListenable: _currentPageNotifier,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            '$value/${imageUrlDescriptions.length}',
+                                            style: const TextStyle(
+                                              color: buttonBackgroundColor,
+                                              fontSize: 18,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Padding(

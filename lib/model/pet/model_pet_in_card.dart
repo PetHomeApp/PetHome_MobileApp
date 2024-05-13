@@ -7,6 +7,7 @@ class PetInCard {
   final int? ageID;
   final int? specieID;
   final List<String>? areas;
+  final bool inStock;
 
   PetInCard({
     required this.idPet,
@@ -17,6 +18,7 @@ class PetInCard {
     this.ageID,
     this.specieID,
     this.areas,
+    this.inStock = false,
   });
 
   factory PetInCard.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class PetInCard {
       ageID: json['age_id'],
       specieID: json['specie_id'],
       areas: json['areas'].cast<String>(),
+      inStock: json['instock'] ?? false,
     );
   }
 }
