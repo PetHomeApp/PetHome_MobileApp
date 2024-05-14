@@ -33,6 +33,7 @@ class _MyAppState extends State<MyApp> {
     var dataResponse = await AuthApi().authorize();
 
     if (dataResponse['isSuccess'] == true) {
+      //print(sharedPreferences.getString('accessToken'));
       setState(() {
         isLoading = false;
         isLogin = true;
