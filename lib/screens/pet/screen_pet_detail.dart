@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
+import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
@@ -7,6 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class PetDetailScreen extends StatefulWidget {
   const PetDetailScreen(
@@ -495,9 +498,37 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                 Expanded(
                   flex: 1,
                   child: InkWell(
-                    onTap: () {
-                      // ignore: avoid_print
-                      print('Add to cart');
+                    onTap: () async {
+                      var result = await CartApi().addPetToCart(widget.idPet);
+                      if (result['isSuccess'] == true) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.success(
+                            message: 'Đã thêm vào giỏ hàng',
+                          ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      } else if (result['isSuccess'] == false &&
+                          result['message'] == 'Pet already in cart') {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Thú cưng đã có trong giỏ hàng',
+                          ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      } else {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Lỗi khi thêm vào giỏ hàng',
+                          ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      }
                     },
                     child: Container(
                       color: buttonBackgroundColor,

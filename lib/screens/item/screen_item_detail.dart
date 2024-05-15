@@ -3,11 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
+import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_item_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ItemDetailScreen extends StatefulWidget {
   const ItemDetailScreen(
@@ -494,63 +497,89 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       // ignore: avoid_print
                       print('Chat with shop');
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Container(
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Colors.grey[100],
-                        child: const Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(
-                                Icons.chat,
-                                color: buttonBackgroundColor,
-                              ),
-                              Text(
-                                'Liên hệ Shop',
-                                style: TextStyle(color: buttonBackgroundColor),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
+                        border: const Border(
+                          right: BorderSide(color: buttonBackgroundColor, width: 1.0),
+                        ),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.chat,
+                              color: buttonBackgroundColor,
+                            ),
+                            Text(
+                              'Liên hệ Shop',
+                              style: TextStyle(color: buttonBackgroundColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  height: 50,
-                  color: Colors.grey[100],
-                  child: const VerticalDivider(color: buttonBackgroundColor),
-                ),
+
                 Expanded(
                   flex: 10,
                   child: InkWell(
-                    onTap: () {
-                      // ignore: avoid_print
-                      print('Add to cart');
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Container(
-                        color: Colors.grey[100],
-                        child: const Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Icon(
-                                Icons.shopping_cart,
-                                color: buttonBackgroundColor,
-                              ),
-                              Text(
-                                'Thêm vào Giỏ hàng',
-                                style: TextStyle(color: buttonBackgroundColor),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                    onTap: () async {
+                      var result = await CartApi().addItemToCart(
+                        widget.idItem,
+                        detailItemClassifyList[selectedDetail].idItemDetail,
+                      );
+                      if (result['isSuccess'] == true) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.success(
+                            message: 'Đã thêm vào giỏ hàng',
                           ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      } else if (result['isSuccess'] == false &&
+                          result['message'] == 'Item already in cart') {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Sản phẩm đã có trong giỏ hàng',
+                          ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      } else {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Lỗi khi thêm vào giỏ hàng',
+                          ),
+                          displayDuration: const Duration(seconds: 2),
+                        );
+                      }
+                    },
+                    child: Container(
+                      color: Colors.grey[100],
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.shopping_cart,
+                              color: buttonBackgroundColor,
+                            ),
+                            Text(
+                              'Thêm vào Giỏ hàng',
+                              style: TextStyle(color: buttonBackgroundColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -559,10 +588,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 Expanded(
                   flex: 15,
                   child: InkWell(
-                    onTap: () {
-                      // ignore: avoid_print
-                      print('Add to cart');
-                    },
+                    onTap: () {},
                     child: Container(
                       color: buttonBackgroundColor,
                       child: const Padding(

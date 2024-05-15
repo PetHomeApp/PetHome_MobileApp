@@ -8,6 +8,8 @@ import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/cart/item_cart_widget.dart';
 import 'package:pethome_mobileapp/widgets/cart/pet_cart_widget.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CartHomePageScreen extends StatefulWidget {
   const CartHomePageScreen({super.key});
@@ -163,12 +165,40 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                                     255, 84, 84, 84))),
                                       ),
                                       TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            pets.removeAt(index);
-                                            countPetsCart--;
-                                          });
-                                          Navigator.of(context).pop();
+                                        onPressed: () async {
+                                          var res = await CartApi()
+                                              .deletePetInCart(
+                                                  pets[index].idPet);
+
+                                          if (res['isSuccess'] == true) {
+                                            showTopSnackBar(
+                                              // ignore: use_build_context_synchronously
+                                              Overlay.of(context),
+                                              const CustomSnackBar.success(
+                                                message:
+                                                    'Đã xóa thú cưng khỏi giỏ hàng',
+                                              ),
+                                              displayDuration:
+                                                  const Duration(seconds: 2),
+                                            );
+                                            setState(() {
+                                              pets.removeAt(index);
+                                              countPetsCart--;
+                                            });
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            showTopSnackBar(
+                                              // ignore: use_build_context_synchronously
+                                              Overlay.of(context),
+                                              const CustomSnackBar.error(
+                                                message:
+                                                    'Đã xảy ra lỗi, vui lòng thử lại sau',
+                                              ),
+                                              displayDuration:
+                                                  const Duration(seconds: 2),
+                                            );
+                                          }
                                         },
                                         child: const Text("Xóa",
                                             style: TextStyle(
@@ -363,12 +393,33 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                       style: TextStyle(color: Color.fromARGB(255, 84, 84, 84))),
                 ),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      items.removeAt(index);
-                      countItemsCart--;
-                      total = calculateTotal(items);
-                    });
+                  onPressed: () async {
+                    var res = await CartApi().deleteItemInCart(item.idItemDetail);
+                    if (res['isSuccess'] == true) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.success(
+                          message: 'Đã xóa vật phẩm khỏi giỏ hàng',
+                        ),
+                        displayDuration: const Duration(seconds: 2),
+                      );
+                      setState(() {
+                        items.removeAt(index);
+                        countItemsCart--;
+                        total = calculateTotal(items);
+                      });
+                    } else {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Đã xảy ra lỗi, vui lòng thử lại sau',
+                        ),
+                        displayDuration: const Duration(seconds: 2),
+                      );
+                    }
+                    // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                   },
                   child: const Text("Xóa",
