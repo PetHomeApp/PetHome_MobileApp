@@ -201,6 +201,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index].idPet,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },
@@ -213,6 +214,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index + 1].idPet,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },
@@ -232,6 +234,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index].idPet,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },

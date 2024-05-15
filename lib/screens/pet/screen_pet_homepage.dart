@@ -175,6 +175,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => PetDetailScreen(
                             idPet: listPetInCards[index].idPet,
+                            showCartIcon: true,
                           ),
                         ));
                       },
@@ -187,6 +188,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => PetDetailScreen(
                             idPet: listPetInCards[index + 1].idPet,
+                            showCartIcon: true,
                           ),
                         ));
                       },
@@ -203,7 +205,9 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => PetDetailScreen(
-                              idPet: listPetInCards[index].idPet),
+                            idPet: listPetInCards[index].idPet,
+                            showCartIcon: true,
+                          ),
                         ));
                       },
                       child: PetCard(petInCard: listPetInCards[index]),

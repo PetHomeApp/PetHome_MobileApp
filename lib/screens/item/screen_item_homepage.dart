@@ -88,11 +88,13 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
       return;
     }
 
-    setState(() {
-      listItemsInCards.addAll(items);
-      currentPage++;
-      loading = false;
-    });
+    if(mounted) {
+      setState(() {
+        listItemsInCards.addAll(items);
+        currentPage++;
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -195,6 +197,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ItemDetailScreen(
                                   idItem: listItemsInCards[index].idItem,
+                                  showCartIcon: true,
                                 ),
                               ));
                             },
@@ -208,6 +211,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ItemDetailScreen(
                                   idItem: listItemsInCards[index + 1].idItem,
+                                  showCartIcon: true,
                                 ),
                               ));
                             },
@@ -226,7 +230,8 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ItemDetailScreen(
-                                    idItem: listItemsInCards[index].idItem),
+                                    idItem: listItemsInCards[index].idItem,
+                                    showCartIcon: true),
                               ));
                             },
                             child:

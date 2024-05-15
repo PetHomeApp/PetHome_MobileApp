@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
+import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +215,9 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                               padding: const EdgeInsets.all(15),
                               child: InkWell(
                                 onTap: () {
-                                  // Handle 'Tin nhắn' tap
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => const CartHomePageScreen(),
+                                  ));
                                 },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,

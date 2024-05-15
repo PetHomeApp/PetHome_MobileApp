@@ -9,8 +9,10 @@ import 'package:pethome_mobileapp/model/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class PetDetailScreen extends StatefulWidget {
-  const PetDetailScreen({super.key, required this.idPet});
+  const PetDetailScreen(
+      {super.key, required this.idPet, required this.showCartIcon});
   final String idPet;
+  final bool showCartIcon;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -52,12 +54,14 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
       return;
     }
 
-    setState(() {
-      imageUrlDescriptions = [];
-      imageUrlDescriptions.add(petDetail.imageUrl.toString());
-      imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions!);
-      loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        imageUrlDescriptions = [];
+        imageUrlDescriptions.add(petDetail.imageUrl.toString());
+        imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions!);
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -105,15 +109,16 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                 ),
               ),
               actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart,
-                      color: buttonBackgroundColor, size: 30),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const CartHomePageScreen(),
-                    ));
-                  },
-                ),
+                if (widget.showCartIcon)
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart,
+                        color: buttonBackgroundColor, size: 30),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const CartHomePageScreen(),
+                      ));
+                    },
+                  ),
               ],
             ),
             body: SingleChildScrollView(

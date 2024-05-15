@@ -5,6 +5,7 @@ class DetailItemClassify {
   final int price;
   final int quantity;
   final bool instock;
+  final int orderItem;
 
   DetailItemClassify({
     required this.idItemDetail,
@@ -13,6 +14,7 @@ class DetailItemClassify {
     required this.price,
     required this.quantity,
     required this.instock,
+    required this.orderItem,
   });
 
   factory DetailItemClassify.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class DetailItemClassify {
       price: json['price'],
       quantity: json['quantity'],
       instock: json['instock'],
+      orderItem: json['order_item'],
     );
   }
 }

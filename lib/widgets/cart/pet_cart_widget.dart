@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/pet/model_pet_cart.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class PetCartWidget extends StatelessWidget {
-  final PetInCard petInCard;
+  final PetCart petCart;
   final VoidCallback onRemove;
   final formatter = NumberFormat("#,###", "vi_VN");
 
-  PetCartWidget({super.key, required this.petInCard, required this.onRemove});
+  PetCartWidget({super.key, required this.onRemove, required this.petCart});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class PetCartWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
               child: Image.network(
-                petInCard.imageUrl.toString(),
+                petCart.imageUrl.toString(),
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -55,9 +55,9 @@ class PetCartWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    petInCard.name.toString().length > 30
-                        ? '${petInCard.name.toString().substring(0, 30)}...'
-                        : petInCard.name.toString(),
+                    petCart.name.toString().length > 30
+                        ? '${petCart.name.toString().substring(0, 30)}...'
+                        : petCart.name.toString(),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
@@ -65,9 +65,9 @@ class PetCartWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    petInCard.shopName.toString().length > 20
-                        ? '${petInCard.shopName.toString().substring(0, 20)}...'
-                        : petInCard.shopName.toString(),
+                    petCart.shopName.toString().length > 20
+                        ? '${petCart.shopName.toString().substring(0, 20)}...'
+                        : petCart.shopName.toString(),
                     style: const TextStyle(
                         fontSize: 15, color: Color.fromARGB(255, 84, 84, 84)),
                     overflow: TextOverflow.ellipsis,
@@ -78,7 +78,7 @@ class PetCartWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${NumberFormat('#,##0', 'vi').format(petInCard.price)} đ',
+                        '${NumberFormat('#,##0', 'vi').format(petCart.price)} đ',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -92,11 +92,11 @@ class PetCartWidget extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: petInCard.inStock ? Colors.green : Colors.red,
+                            color: petCart.inStock ? Colors.green : Colors.red,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            petInCard.inStock ? '  Còn hàng  ' : '  Hết hàng  ',
+                            petCart.inStock ? '  Còn hàng  ' : '  Hết hàng  ',
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,

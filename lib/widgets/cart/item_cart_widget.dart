@@ -76,10 +76,10 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Card(
-            child: Row(
+      child: Card(
+        child: Column(
+          children: [
+            Row(
               children: [
                 Checkbox(
                   value: widget.itemCart.isCheckBox,
@@ -125,11 +125,17 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                       ),
                       const SizedBox(height: 2),
                       Text(
+                        '${widget.itemCart.size} ${widget.itemCart.unit}',
+                        style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 84, 84, 84)),
+                      ),
+                      Text(
                         widget.itemCart.shopName.toString().length > 20
                             ? '${widget.itemCart.shopName.toString().substring(0, 20)}...'
                             : widget.itemCart.shopName.toString(),
                         style: const TextStyle(
-                            fontSize: 15,
+                            fontSize: 14,
                             color: Color.fromARGB(255, 84, 84, 84)),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -177,19 +183,19 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 5, right: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                _buildSquareButton('-', _decrementCounter),
-                _buildSquareTextField(),
-                _buildSquareButton('+', _incrementCounter),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(top: 5, right: 15, bottom: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  _buildSquareButton('-', _decrementCounter),
+                  _buildSquareTextField(),
+                  _buildSquareButton('+', _incrementCounter),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

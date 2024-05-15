@@ -10,8 +10,10 @@ import 'package:pethome_mobileapp/widgets/rate/sent_item_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
 
 class ItemDetailScreen extends StatefulWidget {
-  const ItemDetailScreen({super.key, required this.idItem});
+  const ItemDetailScreen(
+      {super.key, required this.idItem, required this.showCartIcon});
   final String idItem;
+  final bool showCartIcon;
 
   @override
   State<ItemDetailScreen> createState() => _ItemDetailScreenState();
@@ -19,6 +21,7 @@ class ItemDetailScreen extends StatefulWidget {
 
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
   late ItemDetail itemDetail;
+  List<DetailItemClassify> detailItemClassifyList = [];
 
   bool loading = false;
   bool checkRated = false;
@@ -49,8 +52,11 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     }
 
     setState(() {
-      price = itemDetail.details[selectedDetail].price;
-      instock = itemDetail.details[selectedDetail].instock;
+      detailItemClassifyList = itemDetail.details;
+      detailItemClassifyList.sort((a, b) => a.orderItem.compareTo(b.orderItem));
+
+      price = detailItemClassifyList[selectedDetail].price;
+      instock = detailItemClassifyList[selectedDetail].instock;
       loading = false;
     });
   }
@@ -100,15 +106,16 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 ),
               ),
               actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart,
-                      color: buttonBackgroundColor, size: 30),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const CartHomePageScreen(),
-                    ));
-                  },
-                ),
+                if (widget.showCartIcon)
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart,
+                        color: buttonBackgroundColor, size: 30),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const CartHomePageScreen(),
+                      ));
+                    },
+                  ),
               ],
             ),
             body: SingleChildScrollView(
@@ -179,21 +186,23 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                         Wrap(
                                           spacing: 8.0,
                                           runSpacing: 8.0,
-                                          children: itemDetail.details
+                                          children: detailItemClassifyList
                                               .asMap()
                                               .entries
                                               .map((entry) {
                                             int index = entry.key;
-                                            DetailItemClassify detailItemClassify =
+                                            DetailItemClassify
+                                                detailItemClassify =
                                                 entry.value;
 
                                             return InkWell(
                                               onTap: () {
                                                 setState(() {
                                                   selectedDetail = index;
-                                                  price = detailItemClassify.price;
-                                                  instock =
-                                                      detailItemClassify.instock;
+                                                  price =
+                                                      detailItemClassify.price;
+                                                  instock = detailItemClassify
+                                                      .instock;
                                                 });
                                               },
                                               child: Container(

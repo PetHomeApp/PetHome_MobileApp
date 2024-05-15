@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_cart.dart';
-import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/pet/model_pet_cart.dart';
+import 'package:pethome_mobileapp/screens/item/screen_item_detail.dart';
+import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
+import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/cart/item_cart_widget.dart';
 import 'package:pethome_mobileapp/widgets/cart/pet_cart_widget.dart';
@@ -18,116 +21,47 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
   bool isCheckAllItem = false;
   int total = 0;
 
-  List<PetInCard> pets = [
-    PetInCard(
-      idPet: '1',
-      name: 'Cún cưng cực kỳ dễ thương - siêu cute',
-      imageUrl: 'https://via.placeholder.com/150',
-      shopName: 'Shop 1',
-      price: 1000000,
-      ageID: 1,
-      specieID: 1,
-      areas: ['Hà Nội'],
-      inStock: true,
-    ),
-    PetInCard(
-      idPet: '2',
-      name: 'Mèo cưng',
-      imageUrl: 'https://via.placeholder.com/150',
-      shopName: 'Shop 2',
-      price: 2000000,
-      ageID: 2,
-      specieID: 2,
-      areas: ['Hà Nội'],
-      inStock: false,
-    ),
-    PetInCard(
-      idPet: '3',
-      name: 'Chó cưng',
-      imageUrl: 'https://via.placeholder.com/150',
-      shopName: 'Shop 3',
-      price: 3000000,
-      ageID: 3,
-      specieID: 3,
-      areas: ['Hà Nội'],
-      inStock: true,
-    ),
-  ];
+  int countPetsCart = 0;
+  int countItemsCart = 0;
 
-  List<ItemCart> items = [
-    ItemCart(
-      idItem: '1',
-      idItemDetail: '1',
-      name: 'Thức ăn cho chó',
-      unit: 'gói',
-      shopId: '1',
-      shopName: 'Shop 1',
-      price: 100000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: true,
-    ),
-    ItemCart(
-      idItem: '2',
-      idItemDetail: '2',
-      name: 'Thức ăn cho mèo',
-      unit: 'gói',
-      shopId: '2',
-      shopName: 'Shop 2',
-      price: 200000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: false,
-    ),
-    ItemCart(
-      idItem: '3',
-      idItemDetail: '3',
-      name: 'Thức ăn cho thỏ',
-      unit: 'gói',
-      shopId: '3',
-      shopName: 'Shop 3',
-      price: 300000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: true,
-    ),
-    ItemCart(
-      idItem: '1',
-      idItemDetail: '1',
-      name: 'Thức ăn cho chó',
-      unit: 'gói',
-      shopId: '1',
-      shopName: 'Shop 1',
-      price: 100000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: true,
-    ),
-    ItemCart(
-      idItem: '2',
-      idItemDetail: '2',
-      name: 'Thức ăn cho mèo',
-      unit: 'gói',
-      shopId: '2',
-      shopName: 'Shop 2',
-      price: 200000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: false,
-    ),
-    ItemCart(
-      idItem: '3',
-      idItemDetail: '3',
-      name: 'Thức ăn cho thỏ',
-      unit: 'gói',
-      shopId: '3',
-      shopName: 'Shop 3',
-      price: 300000,
-      picture: 'https://via.placeholder.com/150',
-      size: '1kg',
-      inStock: true,
-    ),
-  ];
+  List<PetCart> pets = List.empty(growable: true);
+  List<ItemCart> items = List.empty(growable: true);
+
+  @override
+  void initState() {
+    super.initState();
+    getListPetsAndItemsCart();
+  }
+
+  Future<void> getListPetsAndItemsCart() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final dataResPet = await CartApi().getListPetsCart();
+    final dataResItem = await CartApi().getListItemsCart();
+
+    if (dataResPet['isSuccess'] == false) {
+      loading = false;
+      return;
+    }
+
+    if (dataResItem['isSuccess'] == false) {
+      loading = false;
+      return;
+    }
+
+    setState(() {
+      pets = dataResPet['pets'];
+      countPetsCart = dataResPet['countPets'];
+
+      items = dataResItem['items'];
+      countItemsCart = dataResItem['countItems'];
+
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,13 +113,13 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                   preferredSize: const Size.fromHeight(kToolbarHeight),
                   child: Container(
                     color: Colors.white,
-                    child: const TabBar(
+                    child: TabBar(
                       indicatorColor: buttonBackgroundColor,
                       labelColor: buttonBackgroundColor,
                       unselectedLabelColor: Colors.black,
                       tabs: [
-                        Tab(text: 'Thú cưng'),
-                        Tab(text: 'Vật phẩm'),
+                        Tab(text: 'Thú cưng ($countPetsCart)'),
+                        Tab(text: 'Vật phẩm ($countItemsCart)'),
                       ],
                     ),
                   ),
@@ -201,43 +135,52 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                       padding: const EdgeInsets.only(top: 16),
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
-                        return PetCartWidget(
-                          petInCard: pets[index],
-                          onRemove: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text("Xác nhận"),
-                                  content: const Text(
-                                      "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("Không",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 84, 84, 84))),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          pets.removeAt(index);
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("Xóa",
-                                          style: TextStyle(
-                                              color: Color.fromARGB(
-                                                  255, 209, 87, 78))),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                    idPet: pets[index].idPet,
+                                    showCartIcon: false)));
                           },
+                          child: PetCartWidget(
+                            petCart: pets[index],
+                            onRemove: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("Xác nhận"),
+                                    content: const Text(
+                                        "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("Không",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 84, 84, 84))),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            pets.removeAt(index);
+                                            countPetsCart--;
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text("Xóa",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 209, 87, 78))),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -253,17 +196,25 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                             padding: const EdgeInsets.only(top: 16),
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  StatefulBuilder(
-                                    builder: (BuildContext context,
-                                        StateSetter setState) {
-                                      return _buildItemCartWidget(
-                                          context, items[index], index);
-                                    },
-                                  ),
-                                  const SizedBox(height: 10)
-                                ],
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ItemDetailScreen(
+                                          idItem: items[index].idItem,
+                                          showCartIcon: false)));
+                                },
+                                child: Column(
+                                  children: [
+                                    StatefulBuilder(
+                                      builder: (BuildContext context,
+                                          StateSetter setState) {
+                                        return _buildItemCartWidget(
+                                            context, items[index], index);
+                                      },
+                                    ),
+                                    const SizedBox(height: 10)
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -415,6 +366,7 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                   onPressed: () {
                     setState(() {
                       items.removeAt(index);
+                      countItemsCart--;
                       total = calculateTotal(items);
                     });
                     Navigator.of(context).pop();

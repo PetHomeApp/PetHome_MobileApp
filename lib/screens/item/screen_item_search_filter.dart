@@ -165,6 +165,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ItemDetailScreen(
                                     idItem: listItemsFilter[index].idItem,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },
@@ -178,6 +179,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ItemDetailScreen(
                                     idItem: listItemsFilter[index + 1].idItem,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },
@@ -197,6 +199,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ItemDetailScreen(
                                     idItem: listItemsFilter[index].idItem,
+                                    showCartIcon: true,
                                   ),
                                 ));
                               },

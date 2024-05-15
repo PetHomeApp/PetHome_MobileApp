@@ -27,16 +27,16 @@ class ItemCart {
 
   factory ItemCart.fromJson(Map<String, dynamic> json) {
     return ItemCart(
-      idItem: json['idItem'],
-      idItemDetail: json['idItemDetail'],
+      idItem: json['id_item'],
+      idItemDetail: json['id_item_detail'],
       name: json['name'],
       unit: json['unit'],
       price: json['price'],
       picture: json['picture'],
       size: json['size'],
-      inStock: json['inStock'],
-      shopId: json['shopId'],
-      shopName: json['shopName'],
+      inStock: json['instock'],
+      shopId: json['id_shop'],
+      shopName: json['shop_name'],
     );
   }
 }
