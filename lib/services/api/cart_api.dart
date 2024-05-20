@@ -38,6 +38,14 @@ class CartApi {
           return {'isSuccess': false};
         }
 
+        if (data['data'] == null) {
+          return {
+            'isSuccess': true,
+            'pets': pets,
+            'countPets': count,
+          };
+        }
+
         for (var pet in data['data']) {
           try {
             PetCart petCart = PetCart.fromJson(pet);
@@ -57,7 +65,7 @@ class CartApi {
     } catch (e) {
       return {
         'isSuccess': false,
-        'message': 'Failed to load pets',
+        'message': e.toString(),
       };
     }
   }
@@ -92,6 +100,15 @@ class CartApi {
         if (data == null) {
           return {'isSuccess': false};
         }
+
+        if (data['data'] == null) {
+          return {
+            'isSuccess': true,
+            'items': items,
+            'countItems': count,
+          };
+        }
+
 
         for (var item in data['data']) {
           try {
@@ -147,7 +164,8 @@ class CartApi {
       } else {
         return {
           'isSuccess': false,
-          'message': 'Pet already in cart',};
+          'message': 'Pet already in cart',
+        };
       }
     } catch (e) {
       return {
@@ -157,7 +175,8 @@ class CartApi {
     }
   }
 
-  Future<Map<String, dynamic>> addItemToCart(String itemId, String itemDetailId) async {
+  Future<Map<String, dynamic>> addItemToCart(
+      String itemId, String itemDetailId) async {
     var url = Uri.parse('${pethomeApiUrl}api/items/cart');
 
     AuthApi authApi = AuthApi();

@@ -7,7 +7,9 @@ import 'package:pethome_mobileapp/screens/service/screen_service_homepage.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, required this.initialIndex});
+
+  final int initialIndex;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -18,6 +20,12 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   bool _isBottomBarVisible = true;
   // ignore: prefr_final_fields
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   void updateBottomBarVisibility(bool isVisible) {
     setState(() {

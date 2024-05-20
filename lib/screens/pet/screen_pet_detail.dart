@@ -61,7 +61,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
       setState(() {
         imageUrlDescriptions = [];
         imageUrlDescriptions.add(petDetail.imageUrl.toString());
-        imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions!);
+        imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions);
         loading = false;
       });
     }
@@ -201,7 +201,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  petDetail.name!,
+                                  petDetail.name,
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  petDetail.shop!.name,
+                                  petDetail.shop.name,
                                   style: const TextStyle(
                                     fontSize: 16,
                                   ),
@@ -232,13 +232,13 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: petDetail.inStock!
+                                        color: petDetail.inStock
                                             ? Colors.green
                                             : Colors.red,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        petDetail.inStock!
+                                        petDetail.inStock
                                             ? '  Còn hàng  '
                                             : '  Hết hàng  ',
                                         style: const TextStyle(
@@ -296,7 +296,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: ReadMoreText(
-                              petDetail.description!,
+                              petDetail.description,
                               trimLength: 250,
                               trimCollapsedText: "Xem thêm",
                               trimExpandedText: "Rút gọn",
@@ -365,7 +365,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     // ignore: prefer_interpolation_to_compose_strings
                                     Text(
                                       // ignore: prefer_interpolation_to_compose_strings
-                                      petDetail.averageRate!
+                                      petDetail.averageRate
                                               .toStringAsFixed(1) +
                                           "/5.0",
                                       style: const TextStyle(
@@ -507,7 +507,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           const CustomSnackBar.success(
                             message: 'Đã thêm vào giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       } else if (result['isSuccess'] == false &&
                           result['message'] == 'Pet already in cart') {
@@ -517,7 +517,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           const CustomSnackBar.error(
                             message: 'Thú cưng đã có trong giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       } else {
                         showTopSnackBar(
@@ -526,7 +526,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           const CustomSnackBar.error(
                             message: 'Lỗi khi thêm vào giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       }
                     },

@@ -55,11 +55,19 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
     }
 
     setState(() {
-      pets = dataResPet['pets'];
-      countPetsCart = dataResPet['countPets'];
+      if (dataResPet['pets'] != null) {
+        pets = dataResPet['pets'];
+        countPetsCart = dataResPet['countPets'];
+      } else {
+        countPetsCart = 0;
+      }
 
-      items = dataResItem['items'];
-      countItemsCart = dataResItem['countItems'];
+      if (dataResItem['items'] != null) {
+        items = dataResItem['items'];
+        countItemsCart = dataResItem['countItems'];
+      } else {
+        countItemsCart = 0;
+      }
 
       loading = false;
     });
@@ -129,99 +137,42 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
               ),
               body: TabBarView(
                 children: [
-                  SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: ListView.builder(
-                      itemCount: pets.length,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.only(top: 16),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => PetDetailScreen(
-                                    idPet: pets[index].idPet,
-                                    showCartIcon: false)));
-                          },
-                          child: PetCartWidget(
-                            petCart: pets[index],
-                            onRemove: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text("Xác nhận"),
-                                    content: const Text(
-                                        "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text("Không",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 84, 84, 84))),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          var res = await CartApi()
-                                              .deletePetInCart(
-                                                  pets[index].idPet);
-
-                                          if (res['isSuccess'] == true) {
-                                            showTopSnackBar(
-                                              // ignore: use_build_context_synchronously
-                                              Overlay.of(context),
-                                              const CustomSnackBar.success(
-                                                message:
-                                                    'Đã xóa thú cưng khỏi giỏ hàng',
-                                              ),
-                                              displayDuration:
-                                                  const Duration(seconds: 2),
-                                            );
-                                            setState(() {
-                                              pets.removeAt(index);
-                                              countPetsCart--;
-                                            });
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.of(context).pop();
-                                          } else {
-                                            showTopSnackBar(
-                                              // ignore: use_build_context_synchronously
-                                              Overlay.of(context),
-                                              const CustomSnackBar.error(
-                                                message:
-                                                    'Đã xảy ra lỗi, vui lòng thử lại sau',
-                                              ),
-                                              displayDuration:
-                                                  const Duration(seconds: 2),
-                                            );
-                                          }
-                                        },
-                                        child: const Text("Xóa",
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 209, 87, 78))),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                  countPetsCart == 0
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(
+                                image: AssetImage(
+                                    'lib/assets/pictures/icon_empty_cart.png'),
+                                width: 50,
+                                height: 50,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Giỏ hàng của bạn trống',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Hãy thêm thú cưng vào giỏ hàng của bạn',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
+                        )
+                      : SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),
                           child: ListView.builder(
-                            itemCount: items.length,
+                            itemCount: pets.length,
                             shrinkWrap: true,
                             padding: const EdgeInsets.only(top: 16),
                             physics: const NeverScrollableScrollPhysics(),
@@ -229,133 +180,264 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                               return InkWell(
                                 onTap: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ItemDetailScreen(
-                                          idItem: items[index].idItem,
+                                      builder: (context) => PetDetailScreen(
+                                          idPet: pets[index].idPet,
                                           showCartIcon: false)));
                                 },
-                                child: Column(
-                                  children: [
-                                    StatefulBuilder(
-                                      builder: (BuildContext context,
-                                          StateSetter setState) {
-                                        return _buildItemCartWidget(
-                                            context, items[index], index);
+                                child: PetCartWidget(
+                                  petCart: pets[index],
+                                  onRemove: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text("Xác nhận"),
+                                          content: const Text(
+                                              "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Không",
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 84, 84, 84))),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                var res = await CartApi()
+                                                    .deletePetInCart(
+                                                        pets[index].idPet);
+
+                                                if (res['isSuccess'] == true) {
+                                                  showTopSnackBar(
+                                                    // ignore: use_build_context_synchronously
+                                                    Overlay.of(context),
+                                                    const CustomSnackBar
+                                                        .success(
+                                                      message:
+                                                          'Đã xóa thú cưng khỏi giỏ hàng',
+                                                    ),
+                                                    displayDuration:
+                                                        const Duration(
+                                                            seconds: 0),
+                                                  );
+                                                  setState(() {
+                                                    pets.removeAt(index);
+                                                    countPetsCart--;
+                                                  });
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  showTopSnackBar(
+                                                    // ignore: use_build_context_synchronously
+                                                    Overlay.of(context),
+                                                    const CustomSnackBar.error(
+                                                      message:
+                                                          'Đã xảy ra lỗi, vui lòng thử lại sau',
+                                                    ),
+                                                    displayDuration:
+                                                        const Duration(
+                                                            seconds: 0),
+                                                  );
+                                                }
+                                              },
+                                              child: const Text("Xóa",
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 209, 87, 78))),
+                                            ),
+                                          ],
+                                        );
                                       },
-                                    ),
-                                    const SizedBox(height: 10)
-                                  ],
+                                    );
+                                  },
                                 ),
                               );
                             },
                           ),
                         ),
-                      ),
-                      // Footer
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 5, vertical: 5),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 5.0,
+                  countItemsCart == 0
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(
+                                image: AssetImage(
+                                    'lib/assets/pictures/icon_empty_cart.png'),
+                                width: 50,
+                                height: 50,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Giỏ hàng của bạn trống',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Hãy thêm vật phẩm vào giỏ hàng của bạn',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: ListView.builder(
+                                  itemCount: items.length,
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(top: 16),
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ItemDetailScreen(
+                                                        idItem:
+                                                            items[index].idItem,
+                                                        showCartIcon: false)));
+                                      },
+                                      child: Column(
+                                        children: [
+                                          StatefulBuilder(
+                                            builder: (BuildContext context,
+                                                StateSetter setState) {
+                                              return _buildItemCartWidget(
+                                                  context, items[index], index);
+                                            },
+                                          ),
+                                          const SizedBox(height: 10)
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 5),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              ),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            value: isCheckAllItem,
+                                            checkColor: Colors.white,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                isCheckAllItem = value!;
+                                                if (isCheckAllItem) {
+                                                  for (var element in items) {
+                                                    element.isCheckBox = true;
+                                                  }
+                                                } else {
+                                                  for (var element in items) {
+                                                    element.isCheckBox = false;
+                                                  }
+                                                }
+                                                total = calculateTotal(items);
+                                              });
+                                            },
+                                            activeColor: buttonBackgroundColor,
+                                          ),
+                                          const Text(
+                                            'Tất cả',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromARGB(
+                                                  255, 84, 84, 84),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            'Tổng cộng:',
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              color: Color.fromARGB(
+                                                  255, 84, 84, 84),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            '${NumberFormat('#,##0', 'vi').format(total)} đ',
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: buttonBackgroundColor,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 20),
+                                          GestureDetector(
+                                            onTap: () {
+                                              // Điều hướng đến màn hình thanh toán
+                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CheckoutScreen()));
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: buttonBackgroundColor,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5),
+                                              child: const Center(
+                                                child: Text(
+                                                  'Mua hàng',
+                                                  style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: isCheckAllItem,
-                                      checkColor: Colors.white,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isCheckAllItem = value!;
-                                          if (isCheckAllItem) {
-                                            for (var element in items) {
-                                              element.isCheckBox = true;
-                                            }
-                                          } else {
-                                            for (var element in items) {
-                                              element.isCheckBox = false;
-                                            }
-                                          }
-                                          total = calculateTotal(items);
-                                        });
-                                      },
-                                      activeColor: buttonBackgroundColor,
-                                    ),
-                                    const Text(
-                                      'Tất cả',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color.fromARGB(255, 84, 84, 84),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Tổng cộng:',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Color.fromARGB(255, 84, 84, 84),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      '${NumberFormat('#,##0', 'vi').format(total)} đ',
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: buttonBackgroundColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 20),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Điều hướng đến màn hình thanh toán
-                                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CheckoutScreen()));
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: buttonBackgroundColor,
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 5),
-                                        child: const Center(
-                                          child: Text(
-                                            'Mua hàng',
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -394,7 +476,8 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    var res = await CartApi().deleteItemInCart(item.idItemDetail);
+                    var res =
+                        await CartApi().deleteItemInCart(item.idItemDetail);
                     if (res['isSuccess'] == true) {
                       showTopSnackBar(
                         // ignore: use_build_context_synchronously
@@ -402,7 +485,7 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                         const CustomSnackBar.success(
                           message: 'Đã xóa vật phẩm khỏi giỏ hàng',
                         ),
-                        displayDuration: const Duration(seconds: 2),
+                        displayDuration: const Duration(seconds: 0),
                       );
                       setState(() {
                         items.removeAt(index);
@@ -416,7 +499,7 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                         const CustomSnackBar.error(
                           message: 'Đã xảy ra lỗi, vui lòng thử lại sau',
                         ),
-                        displayDuration: const Duration(seconds: 2),
+                        displayDuration: const Duration(seconds: 0),
                       );
                     }
                     // ignore: use_build_context_synchronously

@@ -262,7 +262,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: 100,
+                  height: 150,
                   child: DrawerHeader(
                     decoration: const BoxDecoration(
                       color: buttonBackgroundColor,

@@ -3,17 +3,17 @@ import 'package:pethome_mobileapp/model/shop/model_shop_infor_product.dart';
 
 class PetDetail {
   final String idPet;
-  final String? name;
-  final int? idPetSpecie;
-  final int? price;
-  final bool? inStock;
-  final String? description;
-  final String? imageUrl;
-  final List<String>? imageUrlDescriptions;
-  final ShopInforInProduct? shop;
+  final String name;
+  final int idPetSpecie;
+  final int price;
+  final bool inStock;
+  final String description;
+  final String imageUrl;
+  final List<String> imageUrlDescriptions;
+  final ShopInforInProduct shop;
   final List<Rate> rates;
-  final double? averageRate;
-  final int? totalRate;
+  final double averageRate;
+  final int totalRate;
 
   PetDetail(
       {required this.idPet,
@@ -32,12 +32,12 @@ class PetDetail {
   factory PetDetail.fromJson(Map<String, dynamic> json) {
     return PetDetail(
       idPet: json['id_pet'] as String,
-      name: json['name'] as String?,
-      idPetSpecie: json['id_pet_Specie'],
-      price: json['price'] as int?,
-      inStock: json['instock'] as bool?,
-      description: json['description'] as String?,
-      imageUrl: json['picture'] as String?,
+      name: json['name'] as String,
+      idPetSpecie: json['id_pet_specie'] as int,
+      price: json['price'] as int,
+      inStock: json['instock'] as bool,
+      description: json['description'] as String,
+      imageUrl: json['picture'] as String,
       imageUrlDescriptions: (json['images'] as List<dynamic>)
           .map((item) => item as String)
           .toList(),
@@ -45,8 +45,8 @@ class PetDetail {
       rates: (json['ratings']['data'] as List<dynamic>)
           .map((item) => Rate.fromJson(item as Map<String, dynamic>))
           .toList(),
-      averageRate: (json['ratings']['average_rating'] as num?)?.toDouble(),
-      totalRate: json['ratings']['rating_count'] as int?,
+      averageRate: (json['ratings']['average_rating'] as num).toDouble(),
+      totalRate: json['ratings']['rating_count'] as int,
     );
   }
 }

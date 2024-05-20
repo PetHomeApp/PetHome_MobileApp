@@ -33,7 +33,6 @@ class _MyAppState extends State<MyApp> {
     var dataResponse = await AuthApi().authorize();
 
     if (dataResponse['isSuccess'] == true) {
-      //print(sharedPreferences.getString('accessToken'));
       setState(() {
         isLoading = false;
         isLogin = true;
@@ -61,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       home: isLoading
           ? const LoadingScreen()
           : isLogin
-              ? const MainScreen()
+              ? const MainScreen(initialIndex: 0,)
               : const LoginScreen(),
     );
   }

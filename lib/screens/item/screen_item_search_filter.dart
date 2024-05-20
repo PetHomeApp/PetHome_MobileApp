@@ -228,7 +228,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: 100,
+                  height: 15,
                   child: DrawerHeader(
                     decoration: const BoxDecoration(
                       color: buttonBackgroundColor,

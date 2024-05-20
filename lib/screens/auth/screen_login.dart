@@ -147,13 +147,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const CustomSnackBar.success(
                                   message: 'Đăng nhập thành công!',
                                 ),
-                                displayDuration: const Duration(seconds: 2),
+                                displayDuration: const Duration(seconds: 0),
                               );
 
                               // ignore: use_build_context_synchronously
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => const MainScreen()),
+                                    builder: (context) => const MainScreen(initialIndex: 4,)),
                               );
                             } else {
                               showTopSnackBar(

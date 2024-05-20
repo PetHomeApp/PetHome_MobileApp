@@ -540,7 +540,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           const CustomSnackBar.success(
                             message: 'Đã thêm vào giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       } else if (result['isSuccess'] == false &&
                           result['message'] == 'Item already in cart') {
@@ -550,7 +550,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           const CustomSnackBar.error(
                             message: 'Sản phẩm đã có trong giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       } else {
                         showTopSnackBar(
@@ -559,7 +559,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           const CustomSnackBar.error(
                             message: 'Lỗi khi thêm vào giỏ hàng',
                           ),
-                          displayDuration: const Duration(seconds: 2),
+                          displayDuration: const Duration(seconds: 0),
                         );
                       }
                     },

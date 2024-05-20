@@ -113,6 +113,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                     padding: const EdgeInsets.only(left: 15),
                     child: TextField(
                       controller: _searchController,
+                      cursorColor: buttonBackgroundColor,
                       decoration: InputDecoration(
                         hintText: 'Nhập để tìm kiếm...',
                         border: InputBorder.none,
