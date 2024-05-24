@@ -35,12 +35,6 @@ class UserApi {
           return {'isSuccess': false};
         }
 
-        if (data == null) {
-          return {
-            'isSuccess': true,
-          };
-        }
-
         UserInfor userInfor = UserInfor.fromJson(data);
         return {
           'isSuccess': true,
