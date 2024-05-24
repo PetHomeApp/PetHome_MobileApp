@@ -55,6 +55,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
     loading = true;
     final List<ItemInCard> items =
         await ItemApi().searchItemsInCard(widget.title, 10, currentPage * 10);
+    
     if (items.isEmpty) {
       loading = false;
       return;
@@ -115,7 +116,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.filter_alt,
-                color: buttonBackgroundColor, size: 30),
+                color: iconButtonColor, size: 30),
             onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();
             },
@@ -228,7 +229,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                  height: 15,
+                  height: 150,
                   child: DrawerHeader(
                     decoration: const BoxDecoration(
                       color: buttonBackgroundColor,

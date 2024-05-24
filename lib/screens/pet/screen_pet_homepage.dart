@@ -109,7 +109,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                   padding: const EdgeInsets.only(left: 15),
                   child: TextField(
                     controller: _searchController,
-                    cursorColor: buttonBackgroundColor,
+                    cursorColor: Colors.white,
                     decoration: InputDecoration(
                       hintText: 'Nhập để tìm kiếm...',
                       border: InputBorder.none,
@@ -144,7 +144,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
               icon: const Icon(
                 Icons.search,
                 size: 30,
-                color: buttonBackgroundColor,
+                color: iconButtonColor,
               ),
             ),
           ],

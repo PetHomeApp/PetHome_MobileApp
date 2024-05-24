@@ -10,6 +10,8 @@ class ChatDetailScreen extends StatefulWidget {
 }
 
 class _ChatDetailScreenState extends State<ChatDetailScreen> {
+  final ScrollController _scrollController = ScrollController();
+
   List<ChatMessage> messages = [
     ChatMessage(messageContent: "Hello, Will", messageType: "receiver"),
     ChatMessage(messageContent: "How have you been?", messageType: "receiver"),
@@ -38,6 +40,18 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
+  }
+
+  void _scrollToBottom() {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -53,7 +67,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ),
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
-          padding: const EdgeInsets.only(right: 16),
+          padding: const EdgeInsets.only(left: 50, bottom: 10, right: 10),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
@@ -61,8 +75,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               colors: [gradientStartColor, gradientMidColor, gradientEndColor],
             ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 40, top: 25, bottom: 10),
+          child: SafeArea(
             child: Row(
               children: <Widget>[
                 SizedBox(
@@ -119,6 +132,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 60),
             child: ListView.builder(
+              controller: _scrollController,
               itemCount: messages.length,
               shrinkWrap: true,
               padding: const EdgeInsets.only(top: 10, bottom: 10),

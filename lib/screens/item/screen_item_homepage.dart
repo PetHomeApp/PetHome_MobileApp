@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/model/item/model_item_type.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_detail.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
@@ -20,8 +22,10 @@ class ItemHomeScreen extends StatefulWidget {
   _ItemHomeScreenState createState() => _ItemHomeScreenState();
 }
 
-class _ItemHomeScreenState extends State<ItemHomeScreen> {
+class _ItemHomeScreenState extends State<ItemHomeScreen>
+    with SingleTickerProviderStateMixin {
   List<ItemInCard> listItemsInCards = List.empty(growable: true);
+  List<ItemType> listItemTypes = List.empty(growable: true);
 
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
@@ -31,11 +35,16 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
   int currentPage = 0;
   bool loading = false;
 
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     _scrollController.addListener(_listenerScroll);
+
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(_onTabChanged);
 
     getListItemsInCards();
   }
@@ -43,6 +52,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -74,6 +84,14 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
     }
   }
 
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      if (_tabController.index == 1) {
+        getListItemType();
+      } else if (_tabController.index == 2) {}
+    }
+  }
+
   Future<void> getListItemsInCards() async {
     if (loading) {
       return;
@@ -88,10 +106,31 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
       return;
     }
 
-    if(mounted) {
+    if (mounted) {
       setState(() {
         listItemsInCards.addAll(items);
         currentPage++;
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> getListItemType() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<ItemType> itemTypes = await ItemApi().getItemTypes();
+
+    if (itemTypes.isEmpty) {
+      loading = false;
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        listItemTypes = itemTypes;
         loading = false;
       });
     }
@@ -113,7 +152,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                     padding: const EdgeInsets.only(left: 15),
                     child: TextField(
                       controller: _searchController,
-                      cursorColor: buttonBackgroundColor,
+                      cursorColor: Colors.white,
                       decoration: InputDecoration(
                         hintText: 'Nhập để tìm kiếm...',
                         border: InputBorder.none,
@@ -148,7 +187,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
                 icon: const Icon(
                   Icons.search,
                   size: 30,
-                  color: buttonBackgroundColor,
+                  color: iconButtonColor,
                 ),
               ),
             ],
@@ -166,11 +205,12 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Container(
               color: Colors.white,
-              child: const TabBar(
+              child: TabBar(
+                controller: _tabController,
                 indicatorColor: buttonBackgroundColor,
                 labelColor: buttonBackgroundColor,
                 unselectedLabelColor: Colors.black,
-                tabs: [
+                tabs: const [
                   Tab(text: 'Tất cả'),
                   Tab(text: 'Danh mục hàng'),
                   Tab(text: 'Giảm giá'),
@@ -180,94 +220,151 @@ class _ItemHomeScreenState extends State<ItemHomeScreen> {
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
-            ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
-              controller: _scrollController,
-              itemCount: listItemsInCards.length,
-              itemBuilder: (context, index) {
-                if (index < listItemsInCards.length) {
-                  if (index % 2 == 0 && index < listItemsInCards.length - 1) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ItemDetailScreen(
-                                  idItem: listItemsInCards[index].idItem,
-                                  showCartIcon: true,
-                                ),
-                              ));
-                            },
-                            child:
-                                ItemCard(itemInCard: listItemsInCards[index]),
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ItemDetailScreen(
-                                  idItem: listItemsInCards[index + 1].idItem,
-                                  showCartIcon: true,
-                                ),
-                              ));
-                            },
-                            child: ItemCard(
-                                itemInCard: listItemsInCards[index + 1]),
-                          ),
-                        ),
-                      ],
-                    );
-                  } else if (index % 2 == 0 &&
-                      index == listItemsInCards.length - 1) {
-                    return Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ItemDetailScreen(
-                                    idItem: listItemsInCards[index].idItem,
-                                    showCartIcon: true),
-                              ));
-                            },
-                            child:
-                                ItemCard(itemInCard: listItemsInCards[index]),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Container();
-                  }
-                } else {
-                  Timer(const Duration(milliseconds: 30), () {
-                    _scrollController.jumpTo(
-                      _scrollController.position.maxScrollExtent,
-                    );
-                  });
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor),
+            loading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: buttonBackgroundColor,
                     ),
-                  );
-                }
-              },
-            ),
+                  )
+                : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    controller: _scrollController,
+                    itemCount: listItemsInCards.length,
+                    itemBuilder: (context, index) {
+                      if (index < listItemsInCards.length) {
+                        if (index % 2 == 0 &&
+                            index < listItemsInCards.length - 1) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => ItemDetailScreen(
+                                        idItem: listItemsInCards[index].idItem,
+                                        showCartIcon: true,
+                                      ),
+                                    ));
+                                  },
+                                  child: ItemCard(
+                                      itemInCard: listItemsInCards[index]),
+                                ),
+                              ),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => ItemDetailScreen(
+                                        idItem:
+                                            listItemsInCards[index + 1].idItem,
+                                        showCartIcon: true,
+                                      ),
+                                    ));
+                                  },
+                                  child: ItemCard(
+                                      itemInCard: listItemsInCards[index + 1]),
+                                ),
+                              ),
+                            ],
+                          );
+                        } else if (index % 2 == 0 &&
+                            index == listItemsInCards.length - 1) {
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => ItemDetailScreen(
+                                          idItem:
+                                              listItemsInCards[index].idItem,
+                                          showCartIcon: true),
+                                    ));
+                                  },
+                                  child: ItemCard(
+                                      itemInCard: listItemsInCards[index]),
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(),
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Container();
+                        }
+                      } else {
+                        Timer(const Duration(milliseconds: 30), () {
+                          _scrollController.jumpTo(
+                            _scrollController.position.maxScrollExtent,
+                          );
+                        });
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        );
+                      }
+                    },
+                  ),
 
-            // Tab 2
-            const Center(
-              child: Text('Tab 2'),
-            ),
+            loading
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: buttonBackgroundColor,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: listItemTypes.length,
+                    itemBuilder: (context, index) {
+                      final itemType = listItemTypes[index];
+                      return ExpansionTile(
+                        iconColor: buttonBackgroundColor,
+                        title: Row(
+                          children: [
+                            Image.network(
+                              itemType.picture,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                itemType.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        children: itemType.itemTypeDetail.map((detail) {
+                          return ListTile(
+                            title: Text('${detail.name}. (${detail.count})', style: const TextStyle(
+                              fontSize: 15,
+                            )),
+                            onTap: () {
+                              // Handle tap on itemTypeDetail
+                              print('Tapped on: ${detail.name}');
+                            },
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
 
             // Tab 3
             const Center(

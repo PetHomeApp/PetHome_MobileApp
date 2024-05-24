@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/model/item/model_item_type.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,6 +10,40 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ItemApi {
   Future<List<ItemInCard>> getItemsInCard(int limit, int start) async {
     var url = Uri.parse('${pethomeApiUrl}items?limit=$limit&start=$start');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ItemInCard> items = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return items;
+      }
+
+      if (data['data'] == null) {
+        return items;
+      }
+
+      for (var item in data['data']) {
+        items.add(ItemInCard.fromJson(item));
+      }
+
+      return items;
+    } else {
+      throw Exception('Failed to load items');
+    }
+  }
+
+  Future<List<ItemInCard>> getItemsByTypeInCard(
+      int detailTypeID, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}items?detailTypeID=$detailTypeID&limit=$limit&start=$start');
 
     final response = await http.get(
       url,
@@ -59,8 +94,11 @@ class ItemApi {
 
   Future<List<ItemInCard>> searchItemsInCard(
       String keyword, int limit, int start) async {
+        
     var url = Uri.parse(
         '${pethomeApiUrl}items?name=$keyword&limit=$limit&start=$start');
+
+    print(url);
 
     final response = await http.get(
       url,
@@ -68,6 +106,8 @@ class ItemApi {
         'Content-Type': 'application/json',
       },
     );
+
+    print(response.statusCode);
 
     if (response.statusCode == 200) {
       List<ItemInCard> items = [];
@@ -160,6 +200,36 @@ class ItemApi {
         'message': e.toString(),
       };
     }
-  
+  }
+
+  Future<List<ItemType>> getItemTypes() async {
+    var url = Uri.parse('${pethomeApiUrl}item/types');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return [];
+      }
+      List<ItemType> itemTypes = [];
+
+      for (var item in data) {
+        itemTypes.add(ItemType.fromJson(item));
+      }
+
+      itemTypes.sort((a, b) => a.idItemType.compareTo(b.idItemType));
+
+      return itemTypes;
+    } else {
+      throw Exception('Failed to load item types'); 
+      
+    }
   }
 }

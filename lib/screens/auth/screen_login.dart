@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               // ignore: use_build_context_synchronously
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => const MainScreen(initialIndex: 4,)),
+                                    builder: (context) => const MainScreen(initialIndex: 0)),
                               );
                             } else {
                               showTopSnackBar(

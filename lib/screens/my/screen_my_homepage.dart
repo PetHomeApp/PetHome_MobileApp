@@ -96,7 +96,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(60.0),
                                   child: Image.network(
-                                    'https://via.placeholder.co',
+                                    'https://via.placeholder.com/150',
                                     fit: BoxFit.cover,
                                     errorBuilder: (BuildContext context,
                                         Object exception,

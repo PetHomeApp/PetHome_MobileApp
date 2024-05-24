@@ -79,6 +79,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
     loading = true;
     final List<PetInCard> pets =
         await PetApi().searchPetsInCard(widget.title, 10, currentPage * 10);
+        
     if (pets.isEmpty) {
       loading = false;
       return;
@@ -151,7 +152,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.filter_alt,
-                color: buttonBackgroundColor, size: 30),
+                color: iconButtonColor, size: 30),
             onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();
             },
@@ -496,7 +497,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                         child: Container(
                           padding: const EdgeInsets.fromLTRB(12, 5, 12, 5),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 218, 217, 217),
+                            color: const Color.fromARGB(255, 249, 249, 249),
                             border: Border.all(
                               color: buttonBackgroundColor,
                               width: 2,
