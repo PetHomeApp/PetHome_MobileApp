@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
+import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,12 +17,16 @@ class MyHomePageScreen extends StatefulWidget {
 }
 
 class _MyHomePageScreenState extends State<MyHomePageScreen> {
+  bool loading = false;
+  late UserInfor userInfor;
+  
   late SharedPreferences sharedPreferences;
 
   @override
   void initState() {
     super.initState();
     _initPrefs();
+    getUserInfor();
   }
 
   _initPrefs() async {
@@ -29,6 +35,26 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
 
   _resetPrefs() async {
     await sharedPreferences.clear();
+  }
+
+  Future<void> getUserInfor() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final dataResponse = await UserApi().getUser();
+
+    if (dataResponse['isSuccess'] == true) {
+      setState(() {
+        loading = false;
+        userInfor = dataResponse['userInfor'];
+      });
+    } else {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -51,7 +77,14 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
           ),
         ),
       ),
-      body: Center(
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: appColor,
+              ),
+            )
+          :
+      Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -96,7 +129,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(60.0),
                                   child: Image.network(
-                                    'https://via.placeholder.com/150',
+                                    userInfor.avatar,
                                     fit: BoxFit.cover,
                                     errorBuilder: (BuildContext context,
                                         Object exception,
@@ -110,13 +143,13 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    'Tên: Nguyễn Văn A',
-                                    style: TextStyle(
+                                    'Tên: ${userInfor.name}',
+                                    style: const TextStyle(
                                       fontSize: 20.0,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -124,8 +157,8 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         true, // enable text to wrap onto the next line
                                   ),
                                   Text(
-                                    'ID: 30086f0e-f2bf-4a1c-b579-691a06bd8970',
-                                    style: TextStyle(
+                                    'ID: ${userInfor.idUser}',
+                                    style: const TextStyle(
                                       fontSize: 16.0,
                                       fontStyle: FontStyle.italic,
                                     ),

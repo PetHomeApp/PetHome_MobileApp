@@ -94,11 +94,9 @@ class ItemApi {
 
   Future<List<ItemInCard>> searchItemsInCard(
       String keyword, int limit, int start) async {
-        
+
     var url = Uri.parse(
         '${pethomeApiUrl}items?name=$keyword&limit=$limit&start=$start');
-
-    print(url);
 
     final response = await http.get(
       url,
@@ -106,8 +104,6 @@ class ItemApi {
         'Content-Type': 'application/json',
       },
     );
-
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
       List<ItemInCard> items = [];

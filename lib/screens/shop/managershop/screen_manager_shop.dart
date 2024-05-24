@@ -54,7 +54,7 @@ class ShopManagementScreen extends StatelessWidget {
                     color: Colors.blue.shade400,
                     onTap: () {
                       // Điều hướng đến màn hình quản lý đơn hàng
-                      print('Navigate to Order Management');
+                      //print('Navigate to Order Management');
                     },
                   ),
                   _buildManagementButton(
@@ -64,7 +64,7 @@ class ShopManagementScreen extends StatelessWidget {
                     color: Colors.orange.shade400,
                     onTap: () {
                       // Điều hướng đến màn hình quản lý sản phẩm
-                      print('Navigate to Product Management');
+                      //print('Navigate to Product Management');
                     },
                   ),
                   _buildManagementButton(
@@ -74,7 +74,7 @@ class ShopManagementScreen extends StatelessWidget {
                     color: Colors.green.shade400,
                     onTap: () {
                       // Điều hướng đến màn hình quản lý doanh thu
-                      print('Navigate to Revenue Management');
+                      //print('Navigate to Revenue Management');
                     },
                   ),
                   _buildManagementButton(
@@ -84,7 +84,7 @@ class ShopManagementScreen extends StatelessWidget {
                     color: Colors.purple.shade400,
                     onTap: () {
                       // Điều hướng đến màn hình thông tin cửa hàng
-                      print('Navigate to Store Information');
+                      //print('Navigate to Store Information');
                     },
                   ),
                 ],

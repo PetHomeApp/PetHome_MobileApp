@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/item/model_item_type.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_detail.dart';
@@ -358,7 +357,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                             )),
                             onTap: () {
                               // Handle tap on itemTypeDetail
-                              print('Tapped on: ${detail.name}');
+                              //print('Tapped on: ${detail.name}');
                             },
                           );
                         }).toList(),
