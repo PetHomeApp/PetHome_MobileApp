@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/model/chat/chat_user.dart';
+import 'package:pethome_mobileapp/model/chat/room_chat_user.dart';
+import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/chat/conversation_list.dart';
 
@@ -11,104 +12,33 @@ class ChatHomeScreen extends StatefulWidget {
 }
 
 class _ChatHomeScreenState extends State<ChatHomeScreen> {
-  List<ChatUsers> chatUsers = [
-    ChatUsers(
-        name: "Jane Russel",
-        messageText: "Awesome Setup",
-        imageURL: "images/userImage1.jpeg",
-        time: "Now",
-        isMessageRead: true),
-    ChatUsers(
-        name: "Glady's Murphy",
-        messageText: "That's Great",
-        imageURL: "images/userImage2.jpeg",
-        time: "Now",
-        isMessageRead: true),
-    ChatUsers(
-        name: "Jorge Henry",
-        messageText: "Hey where are you?",
-        imageURL: "images/userImage3.jpeg",
-        time: "Now",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Philip Fox",
-        messageText: "Busy! Call me in 20 mins",
-        imageURL: "images/userImage4.jpeg",
-        time: "28 Mar",
-        isMessageRead: true),
-    ChatUsers(
-        name: "Debra Hawkins",
-        messageText: "Thankyou, It's awesome",
-        imageURL: "images/userImage5.jpeg",
-        time: "23 Mar",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Jacob Pena",
-        messageText: "will update you in evening",
-        imageURL: "images/userImage6.jpeg",
-        time: "17 Mar",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Andrey Jones",
-        messageText: "Can you please share the file?",
-        imageURL: "images/userImage7.jpeg",
-        time: "24 Feb",
-        isMessageRead: false),
-    ChatUsers(
-        name: "John Wick",
-        messageText: "How are you?",
-        imageURL: "images/userImage8.jpeg",
-        time: "18 Feb",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Jane Russel",
-        messageText: "Awesome Setup",
-        imageURL: "images/userImage1.jpeg",
-        time: "Now",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Glady's Murphy",
-        messageText: "That's Great",
-        imageURL: "images/userImage2.jpeg",
-        time: "Now",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Jorge Henry",
-        messageText: "Hey where are you?",
-        imageURL: "images/userImage3.jpeg",
-        time: "Now",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Philip Fox",
-        messageText: "Busy! Call me in 20 mins",
-        imageURL: "images/userImage4.jpeg",
-        time: "28 Mar",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Debra Hawkins",
-        messageText: "Thankyou, It's awesome",
-        imageURL: "images/userImage5.jpeg",
-        time: "23 Mar",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Jacob Pena",
-        messageText: "will update you in evening",
-        imageURL: "images/userImage6.jpeg",
-        time: "17 Mar",
-        isMessageRead: false),
-    ChatUsers(
-        name: "Andrey Jones",
-        messageText: "Can you please share the file?",
-        imageURL: "images/userImage7.jpeg",
-        time: "24 Feb",
-        isMessageRead: false),
-    ChatUsers(
-        name: "John Wick",
-        messageText: "How are you?",
-        imageURL: "images/userImage8.jpeg",
-        time: "18 Feb",
-        isMessageRead: false),
-  ];
+  List<ChatRoomUser> chatRoomUser = List.empty(growable: true);
+
+  bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getChatRoomUser();
+  }
+
+  Future<void> getChatRoomUser() async {
+    if (loading) {
+      return;
+    }
+    var dataResponse = await ChatApi().getChatRoomUser();
+
+    if (dataResponse['isSuccess'] == true) {
+      setState(() {
+        chatRoomUser = dataResponse['listChatRoomUser'];
+        loading = false;
+      });
+    } else {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,21 +93,27 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         ),
         body: TabBarView(
           children: [
-            // Replace with your chat pages
-            SingleChildScrollView(
+            loading
+            ? const Center(
+              child: CircularProgressIndicator(
+                color: appColor,
+              ),
+            )
+            :SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: ListView.builder(
-                itemCount: chatUsers.length,
+                itemCount: chatRoomUser.length,
                 shrinkWrap: true,
                 padding: const EdgeInsets.only(top: 16),
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return ConversationList(
-                    name: chatUsers[index].name,
-                    messageText: chatUsers[index].messageText,
-                    imageUrl: chatUsers[index].imageURL,
-                    time: chatUsers[index].time,
-                    isMessageRead: chatUsers[index].isMessageRead,
+                    idShop: chatRoomUser[index].idShop,
+                    name: chatRoomUser[index].shopName,
+                    messageText: chatRoomUser[index].lastMessage,
+                    imageUrl: chatRoomUser[index].shopAvatar,
+                    time: chatRoomUser[index].createdAt,
+                    isMessageRead: chatRoomUser[index].isRead,
                   );
                 },
               ),

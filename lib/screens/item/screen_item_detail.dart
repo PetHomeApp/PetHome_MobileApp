@@ -112,7 +112,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 if (widget.showCartIcon)
                   IconButton(
                     icon: const Icon(Icons.shopping_cart,
-                        color: buttonBackgroundColor, size: 30),
+                        color: iconButtonColor, size: 30),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => const CartHomePageScreen(),

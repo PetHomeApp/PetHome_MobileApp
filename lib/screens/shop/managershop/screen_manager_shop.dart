@@ -81,7 +81,7 @@ class ShopManagementScreen extends StatelessWidget {
                     context,
                     title: 'Thông tin cửa hàng',
                     icon: Icons.store,
-                    color: Colors.purple.shade400,
+                    color: const Color.fromARGB(255, 207, 83, 98),
                     onTap: () {
                       // Điều hướng đến màn hình thông tin cửa hàng
                       //print('Navigate to Store Information');

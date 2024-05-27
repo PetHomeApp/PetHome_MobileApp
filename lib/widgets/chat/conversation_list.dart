@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/screens/chat/sceen_chat_detail.dart';
 
 // ignore: must_be_immutable
 class ConversationList extends StatefulWidget {
+  String idShop;
   String name;
   String messageText;
   String imageUrl;
@@ -11,6 +13,7 @@ class ConversationList extends StatefulWidget {
 
   ConversationList(
       {super.key,
+      required this.idShop,
       required this.name,
       required this.messageText,
       required this.imageUrl,
@@ -30,7 +33,7 @@ class _ConversationListState extends State<ConversationList> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const ChatDetailScreen(),
+            builder: (context) => ChatDetailScreen(avatar: widget.imageUrl, name: widget.name, idShop: widget.idShop,),
           ),
         );
       },
@@ -52,7 +55,7 @@ class _ConversationListState extends State<ConversationList> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(60.0),
                         child: Image.network(
-                          'https://via.placeholder.co',
+                          widget.imageUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (BuildContext context, Object exception,
                               StackTrace? stackTrace) {
@@ -99,7 +102,7 @@ class _ConversationListState extends State<ConversationList> {
               ),
             ),
             Text(
-              widget.time,
+              formatDateTime(widget.time),
               style: TextStyle(
                   fontSize: 12,
                   color: widget.isMessageRead
@@ -113,5 +116,18 @@ class _ConversationListState extends State<ConversationList> {
         ),
       ),
     );
+  }
+
+  String formatDateTime(String dateTimeString) {
+    DateTime dateTime = DateTime.parse(dateTimeString);
+    DateTime now = DateTime.now();
+
+    if (dateTime.year == now.year &&
+        dateTime.month == now.month &&
+        dateTime.day == now.day) {
+      return DateFormat('HH:mm').format(dateTime);
+    } else {
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    }
   }
 }
