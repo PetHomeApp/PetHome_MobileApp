@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
@@ -26,6 +28,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
   late bool isActiveShop = false;
 
   late SharedPreferences sharedPreferences;
+  late ShopInforRegister shopInforRegister;
 
   @override
   void initState() {
@@ -198,9 +201,9 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Text(
-                                          'Tên: ${userInfor.name}',
+                                          userInfor.name,
                                           style: const TextStyle(
-                                            fontSize: 20.0,
+                                            fontSize: 24.0,
                                             fontWeight: FontWeight.bold,
                                           ),
                                           softWrap:
@@ -419,11 +422,24 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                             ));
                                           }
                                         } else {
+                                          shopInforRegister = ShopInforRegister(
+                                            email: userInfor.email,
+                                            shopName: '',
+                                            shopAddress: '',
+                                            area: '',
+                                            logo: XFile(''),
+                                            taxCode: '',
+                                            bussinessType: '',
+                                            ownerName: '',
+                                            idCard: '',
+                                            idCardFront: XFile(''),
+                                            idCardBack: XFile(''),
+                                          );
                                           // ignore: use_build_context_synchronously
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                             builder: (context) =>
-                                                const CreateShopScreen1(),
+                                                CreateShopScreen1(shopInforRegister: shopInforRegister),
                                           ));
                                         }
                                       },

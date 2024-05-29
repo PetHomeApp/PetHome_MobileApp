@@ -26,8 +26,24 @@ class _CreateShopScreen4State extends State<CreateShopScreen4> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                  builder: (context) => const MainScreen(initialIndex: 4)),
+              PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) =>
+                    const MainScreen(initialIndex: 4
+                ),
+                transitionsBuilder: (context, animation1, animation2, child) {
+                  const begin = Offset(-1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOut;
+                  final tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
+                  final offsetAnimation = animation1.drive(tween);
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
               (route) => false,
             );
           },
@@ -131,11 +147,27 @@ class _CreateShopScreen4State extends State<CreateShopScreen4> {
             child: InkWell(
               onTap: () {
                 Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MainScreen(initialIndex: 4)),
-                  (route) => false,
-                );
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) =>
+                    const MainScreen(initialIndex: 4
+                ),
+                transitionsBuilder: (context, animation1, animation2, child) {
+                  const begin = Offset(-1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOut;
+                  final tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
+                  final offsetAnimation = animation1.drive(tween);
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
+              (route) => false,
+            );
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),

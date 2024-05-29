@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
+import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_2.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/circle_widget.dart';
@@ -9,17 +11,32 @@ import 'package:pethome_mobileapp/widgets/shop/dash_widget.dart';
 import 'package:pethome_mobileapp/widgets/shop/enter_infor_widget.dart';
 
 class CreateShopScreen3 extends StatefulWidget {
-  const CreateShopScreen3({super.key});
+  const CreateShopScreen3({super.key, required this.shopInforRegister});
+  final ShopInforRegister shopInforRegister;
 
   @override
   State<CreateShopScreen3> createState() => _CreateShopScreen3State();
 }
 
 class _CreateShopScreen3State extends State<CreateShopScreen3> {
+  late ShopInforRegister lateShopInforRegister;
+
+  final TextEditingController _ownerNameController = TextEditingController();
+  final TextEditingController _idCardController = TextEditingController();
+
   // ignore: non_constant_identifier_names
   XFile? _image_front;
   // ignore: non_constant_identifier_names
   XFile? _image_back;
+
+  @override
+  void initState() {
+    super.initState();
+    _ownerNameController.text = widget.shopInforRegister.ownerName;
+    _idCardController.text = widget.shopInforRegister.idCard;
+    _image_front = widget.shopInforRegister.idCardFront;
+    _image_back = widget.shopInforRegister.idCardBack;
+  }
 
   Future<void> _pickImageFront() async {
     // ignore: no_leading_underscores_for_local_identifiers
@@ -111,7 +128,42 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
             color: Color.fromARGB(232, 255, 255, 255),
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            lateShopInforRegister = ShopInforRegister(
+              email: widget.shopInforRegister.email,
+              shopName: widget.shopInforRegister.shopName,
+              shopAddress: widget.shopInforRegister.shopAddress,
+              area: widget.shopInforRegister.area,
+              logo: widget.shopInforRegister.logo,
+              taxCode: widget.shopInforRegister.taxCode,
+              bussinessType: widget.shopInforRegister.bussinessType,
+              ownerName: _ownerNameController.text,
+              idCard: _idCardController.text,
+              idCardFront: _image_front!,
+              idCardBack: _image_back!,
+            );
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation1, animation2) =>
+                    CreateShopScreen2(
+                  shopInforRegister: lateShopInforRegister,
+                ),
+                transitionsBuilder: (context, animation1, animation2, child) {
+                  const begin = Offset(-1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeInOut;
+                  final tween = Tween(begin: begin, end: end)
+                      .chain(CurveTween(curve: curve));
+                  final offsetAnimation = animation1.drive(tween);
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+                transitionDuration: const Duration(milliseconds: 200),
+              ),
+              (route) => false,
+            );
           },
         ),
         title: const Text(
@@ -177,14 +229,14 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                           InfoInputField(
                             label: 'Họ và tên : (*)',
                             hintText: '',
-                            controller: TextEditingController(),
+                            controller: _ownerNameController,
                           ),
                           const SizedBox(height: 20.0),
                           InfoInputField(
                             label: 'Mã số CCCD: (*)',
                             hintText: '',
                             keyboardType: TextInputType.number,
-                            controller: TextEditingController(),
+                            controller: _idCardController,
                           ),
                           const SizedBox(height: 20.0),
                           const Align(
@@ -209,7 +261,7 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                                 ),
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              child: _image_front == null
+                              child: _image_front!.path == ''
                                   ? const Center(
                                       child: Text(
                                         '+',
@@ -251,7 +303,7 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                                 ),
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
-                              child: _image_back == null
+                              child: _image_back?.path == ''
                                   ? const Center(
                                       child: Text(
                                         '+',

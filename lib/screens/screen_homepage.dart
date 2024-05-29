@@ -8,7 +8,6 @@ import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key, required this.initialIndex});
-
   final int initialIndex;
 
   @override
