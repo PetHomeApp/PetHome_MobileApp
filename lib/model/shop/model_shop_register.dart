@@ -7,7 +7,7 @@ class ShopInforRegister {
   String area;
   XFile logo;
   String taxCode;
-  String bussinessType;
+  String businessType;
   String ownerName;
   String idCard;
   XFile idCardFront;
@@ -20,7 +20,7 @@ class ShopInforRegister {
     required this.area,
     required this.logo,
     required this.taxCode,
-    required this.bussinessType,
+    required this.businessType,
     required this.ownerName,
     required this.idCard,
     required this.idCardFront,

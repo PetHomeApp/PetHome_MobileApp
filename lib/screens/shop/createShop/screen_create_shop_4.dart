@@ -28,8 +28,7 @@ class _CreateShopScreen4State extends State<CreateShopScreen4> {
               context,
               PageRouteBuilder(
                 pageBuilder: (context, animation1, animation2) =>
-                    const MainScreen(initialIndex: 4
-                ),
+                    const MainScreen(initialIndex: 4),
                 transitionsBuilder: (context, animation1, animation2, child) {
                   const begin = Offset(-1.0, 0.0);
                   const end = Offset.zero;
@@ -74,9 +73,17 @@ class _CreateShopScreen4State extends State<CreateShopScreen4> {
                     Padding(
                       padding: EdgeInsets.only(top: 15, bottom: 15),
                       child: Center(
-                        child: Text(
-                          "Tài khoản của bạn chưa được đăng kí cửa hàng. \n Hãy hoàn thành các bước để thực hiện đăng kí",
-                          style: TextStyle(fontSize: 16),
+                        child: Column(
+                          children: [
+                            Text(
+                              "Tài khoản của bạn chưa được đăng kí cửa hàng.",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              "Đang trong thời gian kiểm duyệt.",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -147,27 +154,27 @@ class _CreateShopScreen4State extends State<CreateShopScreen4> {
             child: InkWell(
               onTap: () {
                 Navigator.pushAndRemoveUntil(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation1, animation2) =>
-                    const MainScreen(initialIndex: 4
-                ),
-                transitionsBuilder: (context, animation1, animation2, child) {
-                  const begin = Offset(-1.0, 0.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOut;
-                  final tween = Tween(begin: begin, end: end)
-                      .chain(CurveTween(curve: curve));
-                  final offsetAnimation = animation1.drive(tween);
-                  return SlideTransition(
-                    position: offsetAnimation,
-                    child: child,
-                  );
-                },
-                transitionDuration: const Duration(milliseconds: 200),
-              ),
-              (route) => false,
-            );
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation1, animation2) =>
+                        const MainScreen(initialIndex: 4),
+                    transitionsBuilder:
+                        (context, animation1, animation2, child) {
+                      const begin = Offset(-1.0, 0.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
+                      final tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      final offsetAnimation = animation1.drive(tween);
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                    transitionDuration: const Duration(milliseconds: 200),
+                  ),
+                  (route) => false,
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),

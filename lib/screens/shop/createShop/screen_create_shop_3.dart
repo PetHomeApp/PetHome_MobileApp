@@ -5,10 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_2.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/circle_widget.dart';
 import 'package:pethome_mobileapp/widgets/shop/dash_widget.dart';
 import 'package:pethome_mobileapp/widgets/shop/enter_infor_widget.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CreateShopScreen3 extends StatefulWidget {
   const CreateShopScreen3({super.key, required this.shopInforRegister});
@@ -135,7 +138,7 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
               area: widget.shopInforRegister.area,
               logo: widget.shopInforRegister.logo,
               taxCode: widget.shopInforRegister.taxCode,
-              bussinessType: widget.shopInforRegister.bussinessType,
+              businessType: widget.shopInforRegister.businessType,
               ownerName: _ownerNameController.text,
               idCard: _idCardController.text,
               idCardFront: _image_front!,
@@ -326,11 +329,58 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      const CreateShopScreen4(),
-                                ));
+                              onTap: () async {
+                                if (_ownerNameController.text.isEmpty ||
+                                    _idCardController.text.isEmpty ||
+                                    _image_front?.path == '' ||
+                                    _image_back?.path == '') {
+                                  showTopSnackBar(
+                                    // ignore: use_build_context_synchronously
+                                    Overlay.of(context),
+                                    const CustomSnackBar.error(
+                                      message:
+                                          'Vui lòng điền đầy đủ thông tin cửa hàng',
+                                    ),
+                                    displayDuration: const Duration(seconds: 0),
+                                  );
+                                  return;
+                                }
+                                lateShopInforRegister = ShopInforRegister(
+                                  email: widget.shopInforRegister.email,
+                                  shopName: widget.shopInforRegister.shopName,
+                                  shopAddress:
+                                      widget.shopInforRegister.shopAddress,
+                                  area: widget.shopInforRegister.area,
+                                  logo: widget.shopInforRegister.logo,
+                                  taxCode: widget.shopInforRegister.taxCode,
+                                  businessType:
+                                      widget.shopInforRegister.businessType,
+                                  ownerName: _ownerNameController.text,
+                                  idCard: _idCardController.text,
+                                  idCardFront: _image_front!,
+                                  idCardBack: _image_back!,
+                                );
+
+                                var result = await ShopApi()
+                                    .registerShop(lateShopInforRegister);
+
+                                if (result['isSuccess'] == false) {
+                                  showTopSnackBar(
+                                    // ignore: use_build_context_synchronously
+                                    Overlay.of(context),
+                                    const CustomSnackBar.error(
+                                      message:
+                                          'Đăng kí cửa hàng không thành công',
+                                    ),
+                                    displayDuration: const Duration(seconds: 0),
+                                  );
+                                  return;
+                                } else {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CreateShopScreen4(),
+                                  ));
+                                }
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(

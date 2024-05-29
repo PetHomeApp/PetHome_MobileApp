@@ -429,7 +429,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                             area: '',
                                             logo: XFile(''),
                                             taxCode: '',
-                                            bussinessType: '',
+                                            businessType: '',
                                             ownerName: '',
                                             idCard: '',
                                             idCardFront: XFile(''),

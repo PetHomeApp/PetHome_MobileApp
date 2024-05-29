@@ -30,7 +30,7 @@ class _CreateShopScreen2State extends State<CreateShopScreen2> {
   void initState() {
     super.initState();
     taxCodeController.text = widget.shopInforRegister.taxCode;
-    businessType = widget.shopInforRegister.bussinessType;
+    businessType = widget.shopInforRegister.businessType;
     if (businessType == '' || businessType == 'Cá nhân') {
       _selectedUserType = UserType.individual;
     } else if (businessType == 'Hộ gia đình') {
@@ -65,7 +65,7 @@ class _CreateShopScreen2State extends State<CreateShopScreen2> {
               area: widget.shopInforRegister.area,
               logo: widget.shopInforRegister.logo,
               taxCode: taxCodeController.text,
-              bussinessType: _selectedUserType == UserType.individual
+              businessType: _selectedUserType == UserType.individual
                   ? 'Cá nhân'
                   : _selectedUserType == UserType.household
                       ? 'Hộ gia đình'
@@ -257,7 +257,7 @@ class _CreateShopScreen2State extends State<CreateShopScreen2> {
                   area: widget.shopInforRegister.area,
                   logo: widget.shopInforRegister.logo,
                   taxCode: taxCodeController.text,
-                  bussinessType: _selectedUserType == UserType.individual
+                  businessType: _selectedUserType == UserType.individual
                       ? 'Cá nhân'
                       : _selectedUserType == UserType.household
                           ? 'Hộ gia đình'

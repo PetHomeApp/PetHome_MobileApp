@@ -325,7 +325,7 @@ class _CreateShopScreen1State extends State<CreateShopScreen1> {
                     area: selectedArea!,
                     logo: logo!,
                     taxCode: widget.shopInforRegister.taxCode,
-                    bussinessType: widget.shopInforRegister.bussinessType,
+                    businessType: widget.shopInforRegister.businessType,
                     ownerName: widget.shopInforRegister.ownerName,
                     idCard: widget.shopInforRegister.idCard,
                     idCardFront: widget.shopInforRegister.idCardFront,
