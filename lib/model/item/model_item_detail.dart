@@ -8,7 +8,8 @@ class ItemDetail {
   final int idItemTypeDetail;
   final String unit;
   final String description;
-  final String picture;
+  final String imageUrl;
+  final List<String> imageUrlDescriptions;
   final String status;
   final String idShop;
   final bool instock;
@@ -24,7 +25,8 @@ class ItemDetail {
     required this.idItemTypeDetail,
     required this.unit,
     required this.description,
-    required this.picture,
+    required this.imageUrl,
+    required this.imageUrlDescriptions,
     required this.status,
     required this.idShop,
     required this.instock,
@@ -42,7 +44,10 @@ class ItemDetail {
       idItemTypeDetail: json['id_item_type_detail'] as int,
       unit: json['unit'] as String,
       description: json['description'] as String,
-      picture: json['picture'] as String,
+      imageUrl: json['picture'] as String,
+      imageUrlDescriptions: (json['images'] as List<dynamic>)
+          .map((item) => item as String)
+          .toList(),
       status: json['status'] as String,
       idShop: json['id_shop'] as String,
       instock: json['instock'] as bool,

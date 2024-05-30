@@ -95,6 +95,16 @@ class _AllRatingScreenState extends State<AllRatingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: Color.fromARGB(232, 255, 255, 255),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: const Text(
           "Tất cả đánh giá",
           style: TextStyle(

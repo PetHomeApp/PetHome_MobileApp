@@ -24,7 +24,11 @@ class ItemDetailScreen extends StatefulWidget {
 }
 
 class _ItemDetailScreenState extends State<ItemDetailScreen> {
+  final _controller = PageController();
+  final _currentPageNotifier = ValueNotifier<int>(1);
+
   late ItemDetail itemDetail;
+  late List<String> imageUrlDescriptions;
   List<DetailItemClassify> detailItemClassifyList = [];
 
   bool loading = false;
@@ -37,6 +41,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   @override
   void initState() {
     super.initState();
+    _controller.addListener(() {
+      _currentPageNotifier.value = _controller.page!.round() + 1;
+    });
     getItemDetail();
   }
 
@@ -55,7 +62,12 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       return;
     }
 
-    setState(() {
+   if (mounted) {
+     setState(() {
+      imageUrlDescriptions = [];
+      imageUrlDescriptions.add(itemDetail.imageUrl.toString());
+      imageUrlDescriptions.addAll(itemDetail.imageUrlDescriptions);
+
       detailItemClassifyList = itemDetail.details;
       detailItemClassifyList.sort((a, b) => a.orderItem.compareTo(b.orderItem));
 
@@ -63,6 +75,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       instock = detailItemClassifyList[selectedDetail].instock;
       loading = false;
     });
+   }
   }
 
   @override
@@ -140,19 +153,57 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               topLeft: Radius.circular(15.0),
                               topRight: Radius.circular(15.0),
                             ),
-                            child: Image.network(
-                              itemDetail.picture.toString(),
+                            child: SizedBox(
                               height: 250,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (BuildContext context,
-                                  Object exception, StackTrace? stackTrace) {
-                                return Image.asset(
-                                  'lib/assets/pictures/placeholder_image.png',
-                                  height: 250,
-                                  fit: BoxFit.cover,
-                                );
-                              },
+                              child: Stack(
+                                children: [
+                                  PageView.builder(
+                                    controller: _controller,
+                                    itemCount: imageUrlDescriptions.length,
+                                    itemBuilder: (context, index) {
+                                      return Image.network(
+                                        imageUrlDescriptions[index],
+                                        height: 250,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace? stackTrace) {
+                                          return Image.asset(
+                                            'lib/assets/pictures/placeholder_image.png',
+                                            height: 250,
+                                            fit: BoxFit.cover,
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Positioned(
+                                    bottom: 10,
+                                    right: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: ValueListenableBuilder<int>(
+                                        valueListenable: _currentPageNotifier,
+                                        builder: (context, value, child) {
+                                          return Text(
+                                            '$value/${imageUrlDescriptions.length}',
+                                            style: const TextStyle(
+                                              color: buttonBackgroundColor,
+                                              fontSize: 18,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Padding(
@@ -416,7 +467,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                       builder: (context) => AllRatingScreen(
                                           id: itemDetail.idItem,
                                           name: itemDetail.name,
-                                          imageUrl: itemDetail.picture,
+                                          imageUrl: itemDetail.imageUrl,
                                           productType: 'item',
                                           averageRate: itemDetail.averageRating,
                                           totalRate: itemDetail.totalRate),
