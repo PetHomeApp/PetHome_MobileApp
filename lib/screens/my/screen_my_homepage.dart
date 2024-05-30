@@ -26,6 +26,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
   late UserInfor userInfor;
   late bool isShop = false;
   late bool isActiveShop = false;
+  late String idShop;
 
   late SharedPreferences sharedPreferences;
   late ShopInforRegister shopInforRegister;
@@ -99,11 +100,13 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
     if (dataResponse['isSuccess'] == true) {
       setState(() {
         isActiveShop = true;
+        idShop = dataResponse['shopId'];
         loading = false;
       });
     } else {
       setState(() {
         isActiveShop = false;
+        idShop = '';
         loading = false;
       });
     }
@@ -411,7 +414,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                             Navigator.of(context)
                                                 .push(MaterialPageRoute(
                                               builder: (context) =>
-                                                  const ShopManagementScreen(),
+                                                  ShopManagementScreen(idShop: idShop),
                                             ));
                                           } else {
                                             // ignore: use_build_context_synchronously

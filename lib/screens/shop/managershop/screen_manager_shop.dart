@@ -1,8 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/screen_main_manager_product.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class ShopManagementScreen extends StatelessWidget {
-  const ShopManagementScreen({super.key});
+class ShopManagementScreen extends StatefulWidget {
+  const ShopManagementScreen({super.key, required this.idShop});
+  final String idShop;
+
+  @override
+  State<ShopManagementScreen> createState() => _ShopManagementScreenState();
+}
+
+class _ShopManagementScreenState extends State<ShopManagementScreen> {
+  bool loading = false;
+  late ShopInfor shopInfor;
+  late String shopName;
+
+  @override
+  void initState() {
+    super.initState();
+    getShopInfo();
+  }
+
+  Future<void> getShopInfo() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final dataResponse = await ShopApi().getShopInfo(widget.idShop);
+
+    if (dataResponse['isSuccess'] == true) {
+      setState(() {
+        shopInfor = ShopInfor.fromJson(dataResponse['shopInfor']);
+        shopName = shopInfor.name;
+        loading = false;
+      });
+    } else {
+      setState(() {
+        shopInfor = ShopInfor(
+          idShop: '',
+          name: '',
+          logo: '',
+          areas: [],
+        );
+        shopName = '';
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,65 +81,79 @@ class ShopManagementScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context),  
-            const SizedBox(height: 20.0),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2, 
-                crossAxisSpacing: 16.0, 
-                mainAxisSpacing: 16.0, 
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: appColor,
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildManagementButton(
-                    context,
-                    title: 'Quản lý đơn hàng',
-                    icon: Icons.receipt_long,
-                    color: Colors.blue.shade400,
-                    onTap: () {
-                      // Điều hướng đến màn hình quản lý đơn hàng
-                      //print('Navigate to Order Management');
-                    },
-                  ),
-                  _buildManagementButton(
-                    context,
-                    title: 'Quản lý sản phẩm',
-                    icon: Icons.inventory,
-                    color: Colors.orange.shade400,
-                    onTap: () {
-                      // Điều hướng đến màn hình quản lý sản phẩm
-                      //print('Navigate to Product Management');
-                    },
-                  ),
-                  _buildManagementButton(
-                    context,
-                    title: 'Quản lý doanh thu',
-                    icon: Icons.bar_chart,
-                    color: Colors.green.shade400,
-                    onTap: () {
-                      // Điều hướng đến màn hình quản lý doanh thu
-                      //print('Navigate to Revenue Management');
-                    },
-                  ),
-                  _buildManagementButton(
-                    context,
-                    title: 'Thông tin cửa hàng',
-                    icon: Icons.store,
-                    color: const Color.fromARGB(255, 207, 83, 98),
-                    onTap: () {
-                      // Điều hướng đến màn hình thông tin cửa hàng
-                      //print('Navigate to Store Information');
-                    },
+                  _buildHeader(context),
+                  const SizedBox(height: 20.0),
+                  Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16.0,
+                      mainAxisSpacing: 16.0,
+                      children: [
+                        _buildManagementButton(
+                          context,
+                          title: 'Quản lý đơn hàng',
+                          icon: Icons.receipt_long,
+                          color: Colors.blue.shade400,
+                          onTap: () {
+                            // Điều hướng đến màn hình quản lý đơn hàng
+                            //print('Navigate to Order Management');
+                          },
+                        ),
+                        _buildManagementButton(
+                          context,
+                          title: 'Quản lý sản phẩm',
+                          icon: Icons.inventory,
+                          color: Colors.orange.shade400,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    MainManagerProductScreen(
+                                  initialIndex: 0,
+                                  shopId: widget.idShop,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildManagementButton(
+                          context,
+                          title: 'Quản lý doanh thu',
+                          icon: Icons.bar_chart,
+                          color: Colors.green.shade400,
+                          onTap: () {
+                            // Điều hướng đến màn hình quản lý doanh thu
+                            //print('Navigate to Revenue Management');
+                          },
+                        ),
+                        _buildManagementButton(
+                          context,
+                          title: 'Thông tin cửa hàng',
+                          icon: Icons.store,
+                          color: const Color.fromARGB(255, 207, 83, 98),
+                          onTap: () {
+                            // Điều hướng đến màn hình thông tin cửa hàng
+                            //print('Navigate to Store Information');
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -106,12 +167,14 @@ class ShopManagementScreen extends StatelessWidget {
       child: Row(
         children: [
           ClipOval(
-            child: Image.network(
-              'https://via.placeholder.com/150', // Đường dẫn đến hình ảnh đại diện
-              width: 80.0,
-              height: 80.0,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(shopInfor.logo,
+                width: 80.0,
+                height: 80.0,
+                fit: BoxFit.cover, errorBuilder: (BuildContext context,
+                    Object exception, StackTrace? stackTrace) {
+              return Image.asset('lib/assets/pictures/placeholder_image.png',
+                  fit: BoxFit.cover);
+            }),
           ),
           const SizedBox(width: 16.0),
           Expanded(
@@ -119,7 +182,7 @@ class ShopManagementScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'PetHome xin chào!',
+                  'Xin chào, $shopName!',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: buttonBackgroundColor,
                         fontWeight: FontWeight.bold,
@@ -127,7 +190,7 @@ class ShopManagementScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Chúc bạn một ngày làm việc hiệu quả!',
+                  'Chúc một ngày làm việc hiệu quả!',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.teal[900],
                         fontSize: 16,

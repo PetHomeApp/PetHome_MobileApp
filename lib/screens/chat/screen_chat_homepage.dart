@@ -94,30 +94,53 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         body: TabBarView(
           children: [
             loading
-            ? const Center(
-              child: CircularProgressIndicator(
-                color: appColor,
-              ),
-            )
-            :SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: ListView.builder(
-                itemCount: chatRoomUser.length,
-                shrinkWrap: true,
-                padding: const EdgeInsets.only(top: 16),
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ConversationList(
-                    idShop: chatRoomUser[index].idShop,
-                    name: chatRoomUser[index].shopName,
-                    messageText: chatRoomUser[index].lastMessage,
-                    imageUrl: chatRoomUser[index].shopAvatar,
-                    time: chatRoomUser[index].createdAt,
-                    isMessageRead: chatRoomUser[index].isRead,
-                  );
-                },
-              ),
-            ),
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: appColor,
+                    ),
+                  )
+                : chatRoomUser.isEmpty
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                  'lib/assets/pictures/icon_empty_chat.png'),
+                              width: 70,
+                              height: 70,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Không có cuộc trò chuyện Cá nhân nào',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: buttonBackgroundColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: ListView.builder(
+                          itemCount: chatRoomUser.length,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(top: 16),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return ConversationList(
+                              idShop: chatRoomUser[index].idShop,
+                              name: chatRoomUser[index].shopName,
+                              messageText: chatRoomUser[index].lastMessage,
+                              imageUrl: chatRoomUser[index].shopAvatar,
+                              time: chatRoomUser[index].createdAt,
+                              isMessageRead: chatRoomUser[index].isRead,
+                            );
+                          },
+                        ),
+                      ),
             const Center(child: Text('Cửa hàng')),
           ],
         ),

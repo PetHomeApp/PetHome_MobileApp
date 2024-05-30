@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -81,6 +82,7 @@ class ShopApi {
         if (data['status'] == 'active') {
           return {
             'isSuccess': true,
+            'shopId': data['id_shop'],
           };
         } else {
           return {'isSuccess': false};
@@ -130,34 +132,81 @@ class ShopApi {
           'back_id_card', shopInforRegister.idCardBack.path),
     );
 
-    print(shopInforRegister.shopName);
-    print(shopInforRegister.shopAddress);
-    print(shopInforRegister.area);
-    print(shopInforRegister.taxCode);
-    print(shopInforRegister.businessType);
-    print(shopInforRegister.ownerName);
-    print(shopInforRegister.idCard);
-    print(shopInforRegister.logo.path);
-    print(shopInforRegister.idCardFront.path);
-    print(shopInforRegister.idCardBack.path);
-
     try {
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
-
-      print(response.statusCode);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {'isSuccess': true};
       } else {
         // Handle error
-        var jsonResponse = json.decode(responseBody);
-        print('Upload failed with status: ${response.statusCode}');
-        print('Error response: $jsonResponse');
+        json.decode(responseBody);
         return {'isSuccess': false};
       }
     } catch (e) {
       return {'isSuccess': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getShopInfo(String shopId) async {
+    var url = Uri.parse('${pethomeApiUrl}shops/$shopId');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = json.decode(response.body);
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+
+        return {
+          'isSuccess': true,
+          'shopInfor': data,
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  Future<List<PetInCard>> getListPetInShop(String shopId, int limit, int start) async {
+    var url = Uri.parse('${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<PetInCard> pets = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return pets;
+      }
+
+      if (data['data'] == null) {
+        return pets;
+      }
+
+      for (var item in data['data']) {
+        pets.add(PetInCard.fromJson(item));
+      }
+
+      return pets;
+    } else {
+      throw Exception('Failed to load pets');
     }
   }
 }
