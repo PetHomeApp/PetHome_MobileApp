@@ -376,6 +376,7 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                                   );
                                   return;
                                 } else {
+                                  // ignore: use_build_context_synchronously
                                   Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) =>
                                         const CreateShopScreen4(),

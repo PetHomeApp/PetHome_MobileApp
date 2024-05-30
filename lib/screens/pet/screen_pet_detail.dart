@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
+import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
@@ -27,7 +28,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   final _currentPageNotifier = ValueNotifier<int>(1);
 
   late PetDetail petDetail;
-
   late List<String> imageUrlDescriptions;
 
   bool loading = false;
@@ -362,12 +362,8 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    // ignore: prefer_interpolation_to_compose_strings
                                     Text(
-                                      // ignore: prefer_interpolation_to_compose_strings
-                                      petDetail.averageRate
-                                              .toStringAsFixed(1) +
-                                          "/5.0",
+                                      "${petDetail.averageRate.toStringAsFixed(1)}/5.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -385,7 +381,19 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                 ),
                                 RateList(rates: petDetail.rates),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => AllRatingScreen(
+                                        id: petDetail.idPet,
+                                        name: petDetail.name,
+                                        imageUrl: petDetail.imageUrl,
+                                        productType: 'pet',
+                                        averageRate: petDetail.averageRate,
+                                        totalRate: petDetail.totalRate,
+                                      ),
+                                    ));
+                                  },
                                   child: Text(
                                     'Tất cả đánh giá (${petDetail.totalRate})',
                                     style: const TextStyle(

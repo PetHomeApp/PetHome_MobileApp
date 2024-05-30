@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
+import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -409,7 +410,18 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                 ),
                                 RateList(rates: itemDetail.rates),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => AllRatingScreen(
+                                          id: itemDetail.idItem,
+                                          name: itemDetail.name,
+                                          imageUrl: itemDetail.picture,
+                                          productType: 'item',
+                                          averageRate: itemDetail.averageRating,
+                                          totalRate: itemDetail.totalRate),
+                                    ));
+                                  },
                                   child: Text(
                                     'Tất cả đánh giá (${itemDetail.totalRate})',
                                     style: const TextStyle(

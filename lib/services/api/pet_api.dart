@@ -4,6 +4,7 @@ import 'package:pethome_mobileapp/model/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/pet/model_pet_spiece.dart';
+import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -225,6 +226,37 @@ class PetApi {
         'isSuccess': false,
         'message': e.toString(),
       };
+    }
+  }
+
+  Future<List<Rate>> getPetRates(String petId, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}pets/$petId/ratings?limit=$limit&start=$start');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<Rate> rates = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return rates;
+      }
+
+      if (data['data'] == null) {
+        return rates;
+      }
+      for (var item in data['data']) {
+        rates.add(Rate.fromJson(item));
+      }
+      return rates;
+    } else {
+      throw Exception('Failed to load pet rates');
     }
   }
 }
