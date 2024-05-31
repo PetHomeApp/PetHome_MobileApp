@@ -8,8 +8,8 @@ import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChatDetailScreen extends StatefulWidget {
-  const ChatDetailScreen(
+class ChatDetailWithShopScreen extends StatefulWidget {
+  const ChatDetailWithShopScreen(
       {super.key,
       required this.avatar,
       required this.name,
@@ -20,10 +20,10 @@ class ChatDetailScreen extends StatefulWidget {
   final String idShop;
 
   @override
-  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+  State<ChatDetailWithShopScreen> createState() => _ChatDetailWithShopScreenState();
 }
 
-class _ChatDetailScreenState extends State<ChatDetailScreen> {
+class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
   List<ChatMessage> messages = [];

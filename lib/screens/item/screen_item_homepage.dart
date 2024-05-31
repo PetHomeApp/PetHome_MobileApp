@@ -178,8 +178,10 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                     return;
                   }
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        ItemSearchAndFilterScreen(title: searchKey, searchType: 'search', detailTypeID: 0),
+                    builder: (context) => ItemSearchAndFilterScreen(
+                        title: searchKey,
+                        searchType: 'search',
+                        detailTypeID: 0),
                   ));
                   _searchController.clear();
                 },
@@ -352,9 +354,10 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                         ),
                         children: itemType.itemTypeDetail.map((detail) {
                           return ListTile(
-                            title: Text('${detail.name}. (${detail.count})', style: const TextStyle(
-                              fontSize: 15,
-                            )),
+                            title: Text('${detail.name}. (${detail.count})',
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                )),
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => ItemSearchAndFilterScreen(

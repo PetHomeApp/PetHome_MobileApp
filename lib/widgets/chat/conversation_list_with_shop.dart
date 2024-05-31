@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/screens/chat/sceen_chat_detail.dart';
+import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
 
 // ignore: must_be_immutable
-class ConversationList extends StatefulWidget {
+class ConversationListWithShop extends StatefulWidget {
   String idShop;
   String name;
   String messageText;
@@ -11,7 +11,7 @@ class ConversationList extends StatefulWidget {
   String time;
   bool isMessageRead;
 
-  ConversationList(
+  ConversationListWithShop(
       {super.key,
       required this.idShop,
       required this.name,
@@ -22,10 +22,10 @@ class ConversationList extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _ConversationListState createState() => _ConversationListState();
+  _ConversationListWithShopState createState() => _ConversationListWithShopState();
 }
 
-class _ConversationListState extends State<ConversationList> {
+class _ConversationListWithShopState extends State<ConversationListWithShop> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -33,7 +33,7 @@ class _ConversationListState extends State<ConversationList> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatDetailScreen(avatar: widget.imageUrl, name: widget.name, idShop: widget.idShop,),
+            builder: (context) => ChatDetailWithShopScreen(avatar: widget.imageUrl, name: widget.name, idShop: widget.idShop,),
           ),
         );
       },
