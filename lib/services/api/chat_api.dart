@@ -140,4 +140,46 @@ class ChatApi {
     }
   }
 
+  Future<Map<String, dynamic>> shopJoinRoomChat(String idUser) async {
+    var url = Uri.parse('${chatApiUrl}api/shop/createRoom?id_user=$idUser');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = json.decode(response.body);
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+
+        RoomInfor roomInfor = RoomInfor.fromJson(data);
+
+        return {
+          'isSuccess': true,
+          'roomInfor': roomInfor,
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
 }

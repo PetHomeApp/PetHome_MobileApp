@@ -76,7 +76,7 @@ class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 50),
           curve: Curves.easeOut,
         );
       }

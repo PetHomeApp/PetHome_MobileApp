@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/chat/room_chat_shop.dart';
 import 'package:pethome_mobileapp/model/chat/room_chat_user.dart';
+import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
+import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_user.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -33,7 +35,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     if (loading) {
       return;
     }
-    loading = true;
+    setState(() {
+      loading = true;
+    });
 
     var checkIsActiveShop = await ShopApi().checkIsActiveShop();
     var dataResponseUser = await ChatApi().getChatRoomUser();
@@ -158,13 +162,29 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                             padding: const EdgeInsets.only(top: 16),
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return ConversationListWithShop(
-                                idShop: chatRoomUser[index].idShop,
-                                name: chatRoomUser[index].shopName,
-                                messageText: chatRoomUser[index].lastMessage,
-                                imageUrl: chatRoomUser[index].shopAvatar,
-                                time: chatRoomUser[index].createdAt,
-                                isMessageRead: chatRoomUser[index].isRead,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ChatDetailWithShopScreen(
+                                        avatar: chatRoomUser[index].shopAvatar,
+                                        name: chatRoomUser[index].shopName,
+                                        idShop: chatRoomUser[index].idShop,
+                                      ),
+                                    ),
+                                  ).then(
+                                      (_) => getChatRoomUserandChatRoomShop());
+                                },
+                                child: ConversationListWithShop(
+                                  idShop: chatRoomUser[index].idShop,
+                                  name: chatRoomUser[index].shopName,
+                                  messageText: chatRoomUser[index].lastMessage,
+                                  imageUrl: chatRoomUser[index].shopAvatar,
+                                  time: chatRoomUser[index].createdAt,
+                                  isMessageRead: chatRoomUser[index].isRead,
+                                ),
                               );
                             },
                           ),
@@ -223,14 +243,32 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                                 padding: const EdgeInsets.only(top: 16),
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
-                                  return ConversationListWithUser(
-                                    idUser: chatRoomShop[index].idUser,
-                                    name: chatRoomShop[index].userName,
-                                    messageText:
-                                        chatRoomShop[index].lastMessage,
-                                    imageUrl: chatRoomShop[index].userAvatar,
-                                    time: chatRoomShop[index].createdAt,
-                                    isMessageRead: chatRoomShop[index].isRead,
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ChatDetailWithUserScreen(
+                                                  idUser: chatRoomShop[index]
+                                                      .idUser,
+                                                  name: chatRoomShop[index]
+                                                      .userName,
+                                                  avatar: chatRoomShop[index]
+                                                      .userAvatar),
+                                        ),
+                                      ).then((_) =>
+                                          getChatRoomUserandChatRoomShop());
+                                    },
+                                    child: ConversationListWithUser(
+                                      idUser: chatRoomShop[index].idUser,
+                                      name: chatRoomShop[index].userName,
+                                      messageText:
+                                          chatRoomShop[index].lastMessage,
+                                      imageUrl: chatRoomShop[index].userAvatar,
+                                      time: chatRoomShop[index].createdAt,
+                                      isMessageRead: chatRoomShop[index].isRead,
+                                    ),
                                   );
                                 },
                               ),
