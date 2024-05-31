@@ -7,9 +7,14 @@ import 'package:pethome_mobileapp/setting/list_area.dart';
 import 'package:pethome_mobileapp/widgets/item/item_card.dart';
 
 class ItemSearchAndFilterScreen extends StatefulWidget {
-  const ItemSearchAndFilterScreen({super.key, required this.title});
-
+  const ItemSearchAndFilterScreen(
+      {super.key,
+      required this.title,
+      required this.searchType,
+      required this.detailTypeID});
   final String title;
+  final String searchType;
+  final int detailTypeID;
 
   @override
   State<ItemSearchAndFilterScreen> createState() =>
@@ -21,13 +26,12 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
   List<ItemInCard> listItemsFilter = List.empty(growable: true);
 
   List<String> filterArea = area;
-
   Set<String> selectedAreaFilters = {};
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
   bool showAll = false;
-
   bool loading = false;
+
   int currentPage = 0;
   final ScrollController _scrollController = ScrollController();
 
@@ -35,19 +39,26 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_listenerScroll);
-
-    getListItemsInCards();
+    if (widget.searchType == 'search') {
+      getListItemsBySearchInCards();
+    } else {
+      getListItemsByCategoryInCards();
+    }
   }
 
   void _listenerScroll() {
     if (_scrollController.position.atEdge) {
       if (_scrollController.position.pixels != 0) {
-        getListItemsInCards();
+        if (widget.searchType == 'search') {
+          getListItemsBySearchInCards();
+        } else {
+          getListItemsByCategoryInCards();
+        }
       }
     }
   }
 
-  Future<void> getListItemsInCards() async {
+  Future<void> getListItemsBySearchInCards() async {
     if (loading) {
       return;
     }
@@ -55,7 +66,43 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
     loading = true;
     final List<ItemInCard> items =
         await ItemApi().searchItemsInCard(widget.title, 10, currentPage * 10);
-    
+
+    if (items.isEmpty) {
+      loading = false;
+      return;
+    }
+
+    setState(() {
+      listItemsInCard.addAll(items);
+      if (selectedAreaFilters.isEmpty) {
+        listItemsFilter.addAll(items);
+      } else {
+        List<ItemInCard> addFilterList = List.empty(growable: true);
+        addFilterList = items.where((item) {
+          if ((selectedAreaFilters.isEmpty ||
+              selectedAreaFilters
+                  .any((element) => item.areas.contains(element)))) {
+            return true;
+          }
+          return false;
+        }).toList();
+        listItemsFilter.addAll(addFilterList);
+      }
+
+      currentPage++;
+      loading = false;
+    });
+  }
+
+  Future<void> getListItemsByCategoryInCards() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<ItemInCard> items = await ItemApi()
+        .getItemsByTypeInCard(widget.detailTypeID, 10, currentPage * 10);
+
     if (items.isEmpty) {
       loading = false;
       return;
@@ -115,8 +162,8 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.filter_alt,
-                color: iconButtonColor, size: 30),
+            icon:
+                const Icon(Icons.filter_alt, color: iconButtonColor, size: 30),
             onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();
             },

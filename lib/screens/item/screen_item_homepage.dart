@@ -179,7 +179,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                   }
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) =>
-                        ItemSearchAndFilterScreen(title: searchKey),
+                        ItemSearchAndFilterScreen(title: searchKey, searchType: 'search', detailTypeID: 0),
                   ));
                   _searchController.clear();
                 },
@@ -356,8 +356,13 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                               fontSize: 15,
                             )),
                             onTap: () {
-                              // Handle tap on itemTypeDetail
-                              //print('Tapped on: ${detail.name}');
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ItemSearchAndFilterScreen(
+                                  title: detail.name,
+                                  searchType: 'type',
+                                  detailTypeID: detail.idItemTypeDetail,
+                                ),
+                              ));
                             },
                           );
                         }).toList(),
