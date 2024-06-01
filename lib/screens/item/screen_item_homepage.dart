@@ -334,8 +334,8 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                           children: [
                             Image.network(
                               itemType.picture,
-                              width: 50,
-                              height: 50,
+                              width: 60,
+                              height: 60,
                               fit: BoxFit.cover,
                             ),
                             const SizedBox(width: 10),
@@ -345,6 +345,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: buttonBackgroundColor,
+                                  fontSize: 18,
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -354,9 +355,10 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                         ),
                         children: itemType.itemTypeDetail.map((detail) {
                           return ListTile(
-                            title: Text('${detail.name}. (${detail.count})',
+                            title: Text('${detail.name}  -  (${detail.count})',
                                 style: const TextStyle(
                                   fontSize: 15,
+                                  fontWeight: FontWeight.w400,
                                 )),
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(

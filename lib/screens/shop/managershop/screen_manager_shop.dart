@@ -29,7 +29,7 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
     }
 
     loading = true;
-    final dataResponse = await ShopApi().getShopInfo(widget.idShop);
+    final dataResponse = await ShopApi().getShopInfor(widget.idShop);
 
     if (dataResponse['isSuccess'] == true) {
       setState(() {

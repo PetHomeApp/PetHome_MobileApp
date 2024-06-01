@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/screens/service/screen_list_service.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/service/service_card.dart';
 
@@ -59,7 +60,10 @@ class _ServiceHomeScreenState extends State<ServiceHomeScreen> {
                   Expanded(
                     child: InkWell(
                       onTap: () {
-                        
+                        Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      const ListServiceScreen(idServiceType: 1, title: 'Spa cho thú cưng'),
+                ));
                       },
                       child: ServiceCard(
                         title: categories[index]['title'],

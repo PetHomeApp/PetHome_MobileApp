@@ -148,7 +148,7 @@ class ShopApi {
     }
   }
 
-  Future<Map<String, dynamic>> getShopInfo(String shopId) async {
+  Future<Map<String, dynamic>> getShopInfor(String shopId) async {
     var url = Uri.parse('${pethomeApiUrl}shops/$shopId');
 
     try {

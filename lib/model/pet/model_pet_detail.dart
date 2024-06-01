@@ -7,6 +7,7 @@ class PetDetail {
   final int idPetSpecie;
   final int price;
   final bool inStock;
+  final String idShop;
   final String description;
   final String imageUrl;
   final List<String> imageUrlDescriptions;
@@ -21,6 +22,7 @@ class PetDetail {
       required this.idPetSpecie,
       required this.price,
       required this.inStock,
+      required this.idShop,
       required this.description,
       required this.imageUrl,
       required this.imageUrlDescriptions,
@@ -36,6 +38,7 @@ class PetDetail {
       idPetSpecie: json['id_pet_specie'] as int,
       price: json['price'] as int,
       inStock: json['instock'] as bool,
+      idShop: json['id_shop'] as String,
       description: json['description'] as String,
       imageUrl: json['picture'] as String,
       imageUrlDescriptions: (json['images'] as List<dynamic>)
