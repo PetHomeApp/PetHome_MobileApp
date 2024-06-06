@@ -159,85 +159,91 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
           ),
         ),
       ),
-      body: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        controller: _scrollController,
-        itemCount: listPetInCards.length,
-        itemBuilder: (context, index) {
-          if (index < listPetInCards.length) {
-            if (index % 2 == 0 && index < listPetInCards.length - 1) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                            idPet: listPetInCards[index].idPet,
-                            showCartIcon: true,
-                          ),
-                        ));
-                      },
-                      child: PetCard(petInCard: listPetInCards[index]),
-                    ),
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                            idPet: listPetInCards[index + 1].idPet,
-                            showCartIcon: true,
-                          ),
-                        ));
-                      },
-                      child: PetCard(petInCard: listPetInCards[index + 1]),
-                    ),
-                  ),
-                ],
-              );
-            } else if (index % 2 == 0 && index == listPetInCards.length - 1) {
-              return Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PetDetailScreen(
-                            idPet: listPetInCards[index].idPet,
-                            showCartIcon: true,
-                          ),
-                        ));
-                      },
-                      child: PetCard(petInCard: listPetInCards[index]),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(),
-                  ),
-                ],
-              );
-            } else {
-              return Container();
-            }
-          } else {
-            Timer(const Duration(milliseconds: 30), () {
-              _scrollController.jumpTo(
-                _scrollController.position.maxScrollExtent,
-              );
-            });
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0),
-              child: Center(
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor),
+      body: loading
+          ? const Center(
+              child: CircularProgressIndicator(color: appColor),
+            )
+          : ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
               ),
-            );
-          }
-        },
-      ),
+              controller: _scrollController,
+              itemCount: listPetInCards.length,
+              itemBuilder: (context, index) {
+                if (index < listPetInCards.length) {
+                  if (index % 2 == 0 && index < listPetInCards.length - 1) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                  idPet: listPetInCards[index].idPet,
+                                  showCartIcon: true,
+                                ),
+                              ));
+                            },
+                            child: PetCard(petInCard: listPetInCards[index]),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                  idPet: listPetInCards[index + 1].idPet,
+                                  showCartIcon: true,
+                                ),
+                              ));
+                            },
+                            child:
+                                PetCard(petInCard: listPetInCards[index + 1]),
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (index % 2 == 0 &&
+                      index == listPetInCards.length - 1) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PetDetailScreen(
+                                  idPet: listPetInCards[index].idPet,
+                                  showCartIcon: true,
+                                ),
+                              ));
+                            },
+                            child: PetCard(petInCard: listPetInCards[index]),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                } else {
+                  Timer(const Duration(milliseconds: 30), () {
+                    _scrollController.jumpTo(
+                      _scrollController.position.maxScrollExtent,
+                    );
+                  });
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                          color: Theme.of(context).primaryColor),
+                    ),
+                  );
+                }
+              },
+            ),
     );
   }
 }

@@ -27,7 +27,8 @@ class ItemCard extends StatelessWidget {
                   height: 150,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
                     return Image.asset(
                       'lib/assets/pictures/placeholder_image.png',
                       height: 150,
@@ -38,9 +39,7 @@ class ItemCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                itemInCard.name.toString().length > 20
-                    ? '${itemInCard.name.toString().substring(0, 20)}...'
-                    : itemInCard.name.toString(),
+                itemInCard.name.toString(),
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
@@ -48,9 +47,7 @@ class ItemCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                itemInCard.shopName.toString().length > 20
-                    ? '${itemInCard.shopName.toString().substring(0, 20)}...'
-                    : itemInCard.shopName.toString(),
+                itemInCard.shopName.toString(),
                 style: const TextStyle(
                     fontSize: 14, color: Color.fromARGB(255, 84, 84, 84)),
                 overflow: TextOverflow.ellipsis,

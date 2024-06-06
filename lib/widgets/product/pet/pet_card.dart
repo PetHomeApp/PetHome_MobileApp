@@ -38,9 +38,7 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                petInCard.name.toString().length > 20
-                    ? '${petInCard.name.toString().substring(0, 20)}...'
-                    : petInCard.name.toString(),
+                petInCard.name.toString(),
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
@@ -48,9 +46,7 @@ class PetCard extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                petInCard.shopName.toString().length > 20
-                    ? '${petInCard.shopName.toString().substring(0, 20)}...'
-                    : petInCard.shopName.toString(),
+                petInCard.shopName.toString(),
                 style: const TextStyle(
                     fontSize: 14, color: Color.fromARGB(255, 84, 84, 84)),
                 overflow: TextOverflow.ellipsis,
