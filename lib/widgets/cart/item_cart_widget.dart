@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/item/model_item_cart.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_cart.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class ItemCartWidget extends StatefulWidget {

@@ -92,7 +92,7 @@ class _ConversationListWithShopState extends State<ConversationListWithShop> {
             ),
           ),
           Text(
-            formatDateTime(widget.time),
+            widget.time.isEmpty ? '' : formatDateTime(widget.time),
             style: TextStyle(
                 fontSize: 12,
                 color:

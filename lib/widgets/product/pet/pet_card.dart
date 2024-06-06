@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class PetCard extends StatelessWidget {

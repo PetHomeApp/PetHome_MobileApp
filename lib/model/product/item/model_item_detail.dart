@@ -1,4 +1,4 @@
-import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor_product.dart';
 

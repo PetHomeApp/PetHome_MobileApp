@@ -13,14 +13,17 @@ class ChatDetailWithShopScreen extends StatefulWidget {
       {super.key,
       required this.avatar,
       required this.name,
-      required this.idShop});
+      required this.idShop, 
+      required this.isEmpty});
 
   final String avatar;
   final String name;
   final String idShop;
+  final bool isEmpty;
 
   @override
-  State<ChatDetailWithShopScreen> createState() => _ChatDetailWithShopScreenState();
+  State<ChatDetailWithShopScreen> createState() =>
+      _ChatDetailWithShopScreenState();
 }
 
 class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
@@ -231,36 +234,58 @@ class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
               controller: _scrollController,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 60),
-                child: ListView.builder(
-                  itemCount: messages.length,
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                  physics: const ScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: const EdgeInsets.only(
-                          left: 14, right: 14, top: 10, bottom: 10),
-                      child: Align(
-                        alignment: (messages[index].messageType == "receiver"
-                            ? Alignment.topLeft
-                            : Alignment.topRight),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: (messages[index].messageType == "receiver"
-                                ? Colors.grey.shade200
-                                : gradientEndColor.withOpacity(0.5)),
-                          ),
-                          padding: const EdgeInsets.all(16),
-                          child: Text(
-                            messages[index].messageContent,
-                            style: const TextStyle(fontSize: 15),
-                          ),
+                child: messages.isEmpty && widget.isEmpty
+                    ? const Center(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 50),
+                            Image(
+                              image: AssetImage(
+                                  'lib/assets/pictures/icon_empty_chat.png'),
+                              width: 70,
+                              height: 70,
+                            ),
+                            Text('Không có tin nhắn nào',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black54)),
+                            Text('Hãy bắt đầu trò chuyện ngay nào!',
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.black54)),
+                          ],
                         ),
+                      )
+                    : ListView.builder(
+                        itemCount: messages.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        physics: const ScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            padding: const EdgeInsets.only(
+                                left: 14, right: 14, top: 10, bottom: 10),
+                            child: Align(
+                              alignment:
+                                  (messages[index].messageType == "receiver"
+                                      ? Alignment.topLeft
+                                      : Alignment.topRight),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color:
+                                      (messages[index].messageType == "receiver"
+                                          ? Colors.grey.shade200
+                                          : gradientEndColor.withOpacity(0.5)),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Text(
+                                  messages[index].messageContent,
+                                  style: const TextStyle(fontSize: 15),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
             Align(
@@ -319,17 +344,14 @@ class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(
-                    bottom:
-                        70),
+                padding: const EdgeInsets.only(bottom: 70),
                 child: _showScrollDownButton
                     ? FloatingActionButton(
                         onPressed: _scrollToBottom,
                         backgroundColor: Colors.white,
                         child: const Icon(
                           Icons.arrow_downward,
-                          color:
-                              buttonBackgroundColor,
+                          color: buttonBackgroundColor,
                         ),
                       )
                     : Container(),

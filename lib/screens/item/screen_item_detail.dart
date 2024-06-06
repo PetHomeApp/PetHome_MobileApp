@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
-import 'package:pethome_mobileapp/model/item/model_item_classify.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';

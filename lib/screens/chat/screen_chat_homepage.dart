@@ -49,8 +49,12 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         setState(() {
           isShop = true;
           idShop = checkIsActiveShop['shopId'];
-          chatRoomUser = dataResponseUser['listChatRoomUser'];
-          chatRoomShop = dataResponseShop['listChatRoomShop'];
+          chatRoomUser = dataResponseUser['listChatRoomUser']
+              .where((chat) => chat.lastMessage != '')
+              .toList();
+          chatRoomShop = dataResponseShop['listChatRoomShop']
+              .where((chat) => chat.lastMessage != '')
+              .toList();
 
           loading = false;
         });
@@ -58,8 +62,12 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
         setState(() {
           isShop = false;
           idShop = '';
-          chatRoomUser = dataResponseUser['listChatRoomUser'];
-          chatRoomShop = dataResponseShop['listChatRoomShop'];
+          chatRoomUser = dataResponseUser['listChatRoomUser']
+              .where((chat) => chat.lastMessage != '')
+              .toList();
+          chatRoomShop = dataResponseShop['listChatRoomShop']
+              .where((chat) => chat.lastMessage != '')
+              .toList();
           loading = false;
         });
       }
@@ -172,6 +180,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                                         avatar: chatRoomUser[index].shopAvatar,
                                         name: chatRoomUser[index].shopName,
                                         idShop: chatRoomUser[index].idShop,
+                                        isEmpty: false,
                                       ),
                                     ),
                                   ).then(

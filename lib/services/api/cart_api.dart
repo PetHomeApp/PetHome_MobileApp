@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:pethome_mobileapp/model/item/model_item_cart.dart';
-import 'package:pethome_mobileapp/model/pet/model_pet_cart.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_cart.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_cart.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';

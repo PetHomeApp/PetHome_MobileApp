@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:pethome_mobileapp/model/item/model_item_detail.dart';
-import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
-import 'package:pethome_mobileapp/model/item/model_item_type.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_type.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -257,7 +257,6 @@ class ItemApi {
       return itemTypes;
     } else {
       throw Exception('Failed to load item types'); 
-      
     }
   }
 }

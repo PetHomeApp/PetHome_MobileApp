@@ -1,4 +1,4 @@
-import 'package:pethome_mobileapp/model/item/model_item_type_detail.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_type_detail.dart';
 
 class ItemType {
   final int idItemType;

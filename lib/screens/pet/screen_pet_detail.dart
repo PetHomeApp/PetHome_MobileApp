@@ -10,7 +10,7 @@ import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
 import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
-import 'package:pethome_mobileapp/model/pet/model_pet_detail.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -554,6 +554,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               avatar: shopInfor.logo,
                               name: shopInfor.name,
                               idShop: petDetail.idShop,
+                              isEmpty: true,
                             ),
                           ),
                         );

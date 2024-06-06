@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:pethome_mobileapp/model/item/model_item_in_card.dart';
-import 'package:pethome_mobileapp/model/item/model_item_type.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_type.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_detail.dart';
 import 'package:pethome_mobileapp/screens/item/screen_item_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:pethome_mobileapp/widgets/item/item_card.dart';
+import 'package:pethome_mobileapp/widgets/product/item/item_card.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
