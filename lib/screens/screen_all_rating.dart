@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/rate_item.dart';
 
@@ -88,7 +89,25 @@ class _AllRatingScreenState extends State<AllRatingScreen> {
         currentPage++;
         loading = false;
       });
-    } else {}
+    } else {
+      ServiceApi serviceApi = ServiceApi();
+      final List<Rate> rates = await serviceApi.getServiceRates(
+        widget.id,
+        5,
+        currentPage * 5,
+      );
+
+      if (rates.isEmpty) {
+        loading = false;
+        return;
+      }
+
+      setState(() {
+        listRate.addAll(rates);
+        currentPage++;
+        loading = false;
+      });
+    }
   }
 
   @override

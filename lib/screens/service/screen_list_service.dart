@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type_detail.dart';
+import 'package:pethome_mobileapp/screens/service/screen_service_detail.dart';
+import 'package:pethome_mobileapp/screens/service/screen_service_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/product/service/service_shop_card.dart';
@@ -87,8 +89,8 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
 
     loading = true;
     final List<ServiceInCard> serviceInCard = await ServiceApi()
-        .getServiceInCard(
-            selectedServiceTypeDetail.idServiceTypeDetail, 6, currentPage * 6);
+        .getServiceInCard(selectedServiceTypeDetail.idServiceTypeDetail, 10,
+            currentPage * 10);
 
     if (serviceInCard.isEmpty) {
       setState(() {
@@ -155,10 +157,12 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
                   );
                   return;
                 }
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) =>
-                //       PetSearchAndFilterScreen(title: searchKey),
-                // ));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ServiceSearchAndFulterScreen(
+                      serviceTypeId:
+                          selectedServiceTypeDetail.idServiceTypeDetail,
+                      title: searchKey),
+                ));
                 _searchController.clear();
               },
               icon: const Icon(
@@ -231,8 +235,17 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
                   controller: _scrollController,
                   itemCount: listServiceInCard.length,
                   itemBuilder: (context, index) {
-                    return ServiceShopCard(
-                        serviceInCard: listServiceInCard[index]);
+                    return InkWell(
+                      onTap: () {
+                        print(listServiceInCard[index].idService);
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ServiceDetailScreen(
+                              idService: listServiceInCard[index].idService),
+                        ));
+                      },
+                      child: ServiceShopCard(
+                          serviceInCard: listServiceInCard[index]),
+                    );
                   },
                 ),
       endDrawer: FractionallySizedBox(
