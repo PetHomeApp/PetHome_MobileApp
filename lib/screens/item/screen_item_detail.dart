@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
+import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
+import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_item_rate_sheet.dart';
@@ -35,6 +39,8 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   bool checkRated = false;
   int selectedDetail = 0;
 
+  bool hasMessage = false;
+
   int price = 0;
   bool instock = false;
 
@@ -62,20 +68,71 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
       return;
     }
 
-   if (mounted) {
-     setState(() {
-      imageUrlDescriptions = [];
-      imageUrlDescriptions.add(itemDetail.imageUrl.toString());
-      imageUrlDescriptions.addAll(itemDetail.imageUrlDescriptions);
+    if (mounted) {
+      setState(() {
+        imageUrlDescriptions = [];
+        imageUrlDescriptions.add(itemDetail.imageUrl.toString());
+        imageUrlDescriptions.addAll(itemDetail.imageUrlDescriptions);
 
-      detailItemClassifyList = itemDetail.details;
-      detailItemClassifyList.sort((a, b) => a.orderItem.compareTo(b.orderItem));
+        detailItemClassifyList = itemDetail.details;
+        detailItemClassifyList
+            .sort((a, b) => a.orderItem.compareTo(b.orderItem));
 
-      price = detailItemClassifyList[selectedDetail].price;
-      instock = detailItemClassifyList[selectedDetail].instock;
+        price = detailItemClassifyList[selectedDetail].price;
+        instock = detailItemClassifyList[selectedDetail].instock;
+        loading = false;
+      });
+    }
+  }
+
+  Future<bool> checkUserIsShop() async {
+    if (loading) {
+      return true;
+    }
+
+    loading = true;
+    ShopApi shopApi = ShopApi();
+    final dataResponse = await shopApi.checkIsActiveShop();
+
+    if (dataResponse['isSuccess'] == true) {
       loading = false;
-    });
-   }
+      if (itemDetail.idShop == dataResponse['shopId']) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      loading = false;
+      return true;
+    }
+  }
+
+  Future<ShopInfor> getShopInfor(String idShop) async {
+    if (loading) {
+      return ShopInfor(
+        idShop: '',
+        name: '',
+        logo: '',
+        areas: [],
+      );
+    }
+
+    loading = true;
+    ShopApi shopApi = ShopApi();
+    final dataResponse = await shopApi.getShopInfor(idShop);
+
+    if (dataResponse['isSuccess'] == true) {
+      loading = false;
+      return ShopInfor.fromJson(dataResponse['shopInfor']);
+    } else {
+      loading = false;
+      return ShopInfor(
+        idShop: '',
+        name: '',
+        logo: '',
+        areas: [],
+      );
+    }
   }
 
   @override
@@ -556,15 +613,50 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 Expanded(
                   flex: 10,
                   child: InkWell(
-                    onTap: () {
-                      // ignore: avoid_print
-                      print('Chat with shop');
+                    onTap: () async {
+                      bool isShop = await checkUserIsShop();
+                      if (isShop) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                                'Xin lỗi! Sản phẩm này thuộc Cửa hàng của bạn!',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                      } else {
+                        ShopInfor shopInfor =
+                            await getShopInfor(itemDetail.idShop);
+
+                        var res = await ChatApi()
+                            .checkMessageWithShop(itemDetail.idShop);
+
+                        if (res['isSuccess'] == true) {
+                          hasMessage = res['has_messages'];
+                        } else {
+                          //
+                        }
+                        Navigator.push(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatDetailWithShopScreen(
+                              avatar: shopInfor.logo,
+                              name: shopInfor.name,
+                              idShop: itemDetail.idShop,
+                              isEmpty: !hasMessage,
+                            ),
+                          ),
+                        );
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey[100],
                         border: const Border(
-                          right: BorderSide(color: buttonBackgroundColor, width: 1.0),
+                          right: BorderSide(
+                              color: buttonBackgroundColor, width: 1.0),
                         ),
                       ),
                       child: const Padding(
@@ -587,7 +679,6 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                     ),
                   ),
                 ),
-
                 Expanded(
                   flex: 10,
                   child: InkWell(

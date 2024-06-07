@@ -182,4 +182,46 @@ class ChatApi {
     }
   }
 
+  Future<Map<String, dynamic>> checkMessageWithShop(String idshop) async {
+    var url = Uri.parse('${chatApiUrl}api/user/chat/shop/$idshop');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      print("Nhớ stats code: " + response.statusCode.toString());
+
+      if (response.statusCode == 400 || response.statusCode == 201) {
+        var data = json.decode(response.body);
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+
+        return {
+          'isSuccess': true,
+          'has_messages': data['has_messages'],
+        };
+
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
 }

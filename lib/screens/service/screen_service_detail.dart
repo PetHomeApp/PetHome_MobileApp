@@ -5,6 +5,7 @@ import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
+import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -31,6 +32,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
   bool loading = false;
   bool checkRated = false;
+
+  bool hasMessage = false;
 
   @override
   void initState() {
@@ -575,6 +578,15 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         ShopInfor shopInfor =
                             await getShopInfor(serviceDetail.idShop);
 
+                        var res = await ChatApi()
+                            .checkMessageWithShop(serviceDetail.idShop);
+
+                        if (res['isSuccess'] == true) {
+                          hasMessage = res['has_messages'];
+                        } else {
+                          //
+                        }
+
                         Navigator.push(
                           // ignore: use_build_context_synchronously
                           context,
@@ -583,7 +595,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                               avatar: shopInfor.logo,
                               name: shopInfor.name,
                               idShop: serviceDetail.idShop,
-                              isEmpty: true,
+                              isEmpty: !hasMessage,
                             ),
                           ),
                         );

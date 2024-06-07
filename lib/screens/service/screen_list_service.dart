@@ -237,7 +237,6 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        print(listServiceInCard[index].idService);
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ServiceDetailScreen(
                               idService: listServiceInCard[index].idService),

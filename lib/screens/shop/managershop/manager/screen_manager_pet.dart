@@ -20,63 +20,108 @@ class ManagerPetScreen extends StatefulWidget {
   State<ManagerPetScreen> createState() => _ManagerPetScreenState();
 }
 
-class _ManagerPetScreenState extends State<ManagerPetScreen> {
-  List<PetInCard> listPetInCards = List.empty(growable: true);
+class _ManagerPetScreenState extends State<ManagerPetScreen>
+    with TickerProviderStateMixin {
+  List<PetInCard> listPetActiveInCards = List.empty(growable: true);
+  List<PetInCard> listPetRequestInCards = List.empty(growable: true);
 
-  final ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollActiveController = ScrollController();
+  final ScrollController _scrollRequestController = ScrollController();
+
   final TextEditingController _searchController = TextEditingController();
 
   bool _isBottomBarVisible = true;
 
-  int currentPage = 0;
-  bool loading = false;
+  int currentPageActive = 0;
+  int currentPageRequest = 0;
+
+  bool loadingActive = false;
+  bool loadingRequest = false;
+
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
-    _scrollController.addListener(_listenerScroll);
+    _scrollActiveController.addListener(_onScrollActive);
+    _scrollActiveController.addListener(_listenerScrollActive);
 
-    getListPetInShop();
+    _scrollRequestController.addListener(_onScrollRequest);
+    _scrollRequestController.addListener(_listenerScrollRequest);
+
+    _tabController = TabController(length: 2, vsync: this);
+
+    getListPetActiveInShop();
+    getListPetRequiredInShop();
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollActiveController.dispose();
+    _scrollRequestController.dispose();
     super.dispose();
   }
 
-  void _listenerScroll() {
-    if (_scrollController.position.atEdge) {
-      if (_scrollController.position.pixels != 0) {
-        getListPetInShop();
+  void _listenerScrollActive() {
+    if (_scrollActiveController.position.atEdge) {
+      if (_scrollActiveController.position.pixels != 0) {
+        getListPetActiveInShop();
       }
     }
   }
 
-  Future<void> getListPetInShop() async {
-    if (loading) {
+  void _listenerScrollRequest() {
+    if (_scrollRequestController.position.atEdge) {
+      if (_scrollRequestController.position.pixels != 0) {
+        getListPetRequiredInShop();
+      }
+    }
+  }
+
+  Future<void> getListPetActiveInShop() async {
+    if (loadingActive) {
       return;
     }
 
-    loading = true;
-    final List<PetInCard> pets =
-        await ShopApi().getListPetInShop(widget.shopId, 10, currentPage * 10);
+    loadingActive = true;
+    final List<PetInCard> pets = await ShopApi()
+        .getListPetActiveInShop(widget.shopId, 10, currentPageActive * 10);
 
     if (pets.isEmpty) {
-      loading = false;
+      loadingActive = false;
       return;
     }
 
     setState(() {
-      listPetInCards.addAll(pets);
-      currentPage++;
-      loading = false;
+      listPetActiveInCards.addAll(pets);
+      currentPageActive++;
+      loadingActive = false;
     });
   }
 
-  void _onScroll() {
-    if (_scrollController.position.userScrollDirection ==
+  Future<void> getListPetRequiredInShop() async {
+    if (loadingRequest) {
+      return;
+    }
+
+    loadingRequest = true;
+    final List<PetInCard> pets = await ShopApi()
+        .getListPetRequiredInShop(widget.shopId, 10, currentPageRequest * 10);
+
+    if (pets.isEmpty) {
+      loadingRequest = false;
+      return;
+    }
+
+    setState(() {
+      listPetRequestInCards.addAll(pets);
+      currentPageRequest++;
+      loadingRequest = false;
+    });
+  }
+
+  void _onScrollActive() {
+    if (_scrollActiveController.position.userScrollDirection ==
         ScrollDirection.reverse) {
       if (_isBottomBarVisible) {
         setState(() {
@@ -84,7 +129,27 @@ class _ManagerPetScreenState extends State<ManagerPetScreen> {
           widget.updateBottomBarVisibility(false);
         });
       }
-    } else if (_scrollController.position.userScrollDirection ==
+    } else if (_scrollActiveController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      if (!_isBottomBarVisible) {
+        setState(() {
+          _isBottomBarVisible = true;
+          widget.updateBottomBarVisibility(true);
+        });
+      }
+    }
+  }
+
+  void _onScrollRequest() {
+    if (_scrollRequestController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      if (_isBottomBarVisible) {
+        setState(() {
+          _isBottomBarVisible = false;
+          widget.updateBottomBarVisibility(false);
+        });
+      }
+    } else if (_scrollRequestController.position.userScrollDirection ==
         ScrollDirection.forward) {
       if (!_isBottomBarVisible) {
         setState(() {
@@ -97,127 +162,258 @@ class _ManagerPetScreenState extends State<ManagerPetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Color.fromARGB(232, 255, 255, 255),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              size: 20,
+              color: Color.fromARGB(232, 255, 255, 255),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                cursorColor: Colors.white,
-                decoration: InputDecoration(
-                  hintText: 'Nhập để tìm kiếm...',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+          title: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  cursorColor: Colors.white,
+                  decoration: InputDecoration(
+                    hintText: 'Nhập để tìm kiếm...',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                  ),
+                  style: const TextStyle(color: Colors.white),
                 ),
-                style: const TextStyle(color: Colors.white),
+              ),
+              IconButton(
+                onPressed: () {
+                  String searchKey = _searchController.text;
+                  if (searchKey.isEmpty) {
+                    showTopSnackBar(
+                      // ignore: use_build_context_synchronously
+                      Overlay.of(context),
+                      const CustomSnackBar.error(
+                        message: 'Vui lòng nhập thông tin tìm kiếm!',
+                      ),
+                      displayDuration: const Duration(seconds: 0),
+                    );
+                    return;
+                  }
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //   builder: (context) =>
+                  //       PetSearchAndFilterScreen(title: searchKey),
+                  // ));
+                  _searchController.clear();
+                },
+                icon: const Icon(
+                  Icons.search,
+                  size: 30,
+                  color: iconButtonColor,
+                ),
+              ),
+              // Insert icon button
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const AddPetScreen(),
+                  ));
+                  getListPetActiveInShop();
+                },
+                icon: const Icon(
+                  Icons.add,
+                  size: 30,
+                  color: iconButtonColor,
+                ),
+              ),
+            ],
+          ),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [gradientStartColor, gradientEndColor],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-            IconButton(
-              onPressed: () {
-                String searchKey = _searchController.text;
-                if (searchKey.isEmpty) {
-                  showTopSnackBar(
-                    // ignore: use_build_context_synchronously
-                    Overlay.of(context),
-                    const CustomSnackBar.error(
-                      message: 'Vui lòng nhập thông tin tìm kiếm!',
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Container(
+              color: Colors.white,
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: buttonBackgroundColor,
+                labelColor: buttonBackgroundColor,
+                unselectedLabelColor: Colors.black,
+                tabs: const [
+                  Tab(
+                    text: 'Thú cưng của bạn',
+                  ),
+                  Tab(
+                    text: 'Đang yêu cầu',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            loadingActive
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: buttonBackgroundColor,
                     ),
-                    displayDuration: const Duration(seconds: 0),
-                  );
-                  return;
-                }
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) =>
-                //       PetSearchAndFilterScreen(title: searchKey),
-                // ));
-                _searchController.clear();
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-                color: iconButtonColor,
-              ),
-            ),
-            // Insert icon button
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      const AddPetScreen(),
-                ));
-                getListPetInShop();
-              },
-              icon: const Icon(
-                Icons.add,
-                size: 30,
-                color: iconButtonColor,
-              ),
-            ),
+                  )
+                : listPetActiveInCards.isEmpty
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                  'lib/assets/pictures/icon_no_service.png'),
+                              width: 70,
+                              height: 70,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Cửa hàng của bạn chưa có Thú cưng nào!',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: buttonBackgroundColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        controller: _scrollActiveController,
+                        itemCount: listPetActiveInCards.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 16),
+                        itemBuilder: (context, index) {
+                          return PetOfShopWidget(
+                              petInCard: listPetActiveInCards[index],
+                              onRemove: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Xác nhận"),
+                                      content: const Text(
+                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Không",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 84, 84, 84))),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {},
+                                          child: const Text("Xóa",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 209, 87, 78))),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              onEdit: () {});
+                        },
+                      ),
+            loadingRequest
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: buttonBackgroundColor,
+                    ),
+                  )
+                : listPetRequestInCards.isEmpty
+                    ? const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(
+                              image: AssetImage(
+                                  'lib/assets/pictures/icon_no_service.png'),
+                              width: 70,
+                              height: 70,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Bạn chưa gửi yêu cầu Thú cưng nào!',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: buttonBackgroundColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        controller: _scrollRequestController,
+                        itemCount: listPetRequestInCards.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 16),
+                        itemBuilder: (context, index) {
+                          return PetOfShopWidget(
+                              petInCard: listPetRequestInCards[index],
+                              onRemove: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Xác nhận"),
+                                      content: const Text(
+                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Không",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 84, 84, 84))),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {},
+                                          child: const Text("Xóa",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 209, 87, 78))),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                              onEdit: () {});
+                        },
+                      ),
           ],
         ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [gradientStartColor, gradientEndColor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-      ),
-      body: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: BouncingScrollPhysics(),
-        ),
-        controller: _scrollController,
-        itemCount: listPetInCards.length,
-        shrinkWrap: true,
-        padding: const EdgeInsets.only(top: 16),
-        itemBuilder: (context, index) {
-          return PetOfShopWidget(
-              petInCard: listPetInCards[index],
-              onRemove: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Xác nhận"),
-                      content: const Text(
-                          "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text("Không",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 84, 84, 84))),
-                        ),
-                        TextButton(
-                          onPressed: () async {},
-                          child: const Text("Xóa",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 209, 87, 78))),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              onEdit: () {});
-        },
       ),
     );
   }

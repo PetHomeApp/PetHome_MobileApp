@@ -178,8 +178,40 @@ class ShopApi {
     }
   }
 
-  Future<List<PetInCard>> getListPetInShop(String shopId, int limit, int start) async {
-    var url = Uri.parse('${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start');
+  Future<List<PetInCard>> getListPetActiveInShop(String shopId, int limit, int start) async {
+    var url = Uri.parse('${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start&status=active');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<PetInCard> pets = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return pets;
+      }
+
+      if (data['data'] == null) {
+        return pets;
+      }
+
+      for (var item in data['data']) {
+        pets.add(PetInCard.fromJson(item));
+      }
+
+      return pets;
+    } else {
+      throw Exception('Failed to load pets');
+    }
+  }
+
+  Future<List<PetInCard>> getListPetRequiredInShop(String shopId, int limit, int start) async {
+    var url = Uri.parse('${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start&status=requested');
 
     final response = await http.get(
       url,
