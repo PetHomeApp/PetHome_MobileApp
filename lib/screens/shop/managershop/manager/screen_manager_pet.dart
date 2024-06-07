@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/screen_add_pet.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/pet_of_shop.dart';
@@ -152,23 +153,11 @@ class _ManagerPetScreenState extends State<ManagerPetScreen> {
             // Insert icon button
             IconButton(
               onPressed: () {
-                String searchKey = _searchController.text;
-                if (searchKey.isEmpty) {
-                  showTopSnackBar(
-                    // ignore: use_build_context_synchronously
-                    Overlay.of(context),
-                    const CustomSnackBar.error(
-                      message: 'Vui lòng nhập thông tin tìm kiếm!',
-                    ),
-                    displayDuration: const Duration(seconds: 0),
-                  );
-                  return;
-                }
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) =>
-                //       PetSearchAndFilterScreen(title: searchKey),
-                // ));
-                _searchController.clear();
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      const AddPetScreen(),
+                ));
+                getListPetInShop();
               },
               icon: const Icon(
                 Icons.add,

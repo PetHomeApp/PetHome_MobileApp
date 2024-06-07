@@ -230,7 +230,7 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                       child: Column(
                         children: [
                           InfoInputField(
-                            label: 'Họ và tên : (*)',
+                            label: 'Họ và tên: (*)',
                             hintText: '',
                             controller: _ownerNameController,
                           ),
