@@ -217,8 +217,12 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child:
-                                  ItemCard(itemInCard: listItemsFilter[index]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8, right: 4, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index]),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -231,8 +235,12 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child: ItemCard(
-                                  itemInCard: listItemsFilter[index + 1]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 4, right: 8, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index + 1]),
+                              ),
                             ),
                           ),
                         ],
@@ -251,8 +259,12 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child:
-                                  ItemCard(itemInCard: listItemsFilter[index]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8, right: 4, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index]),
+                              ),
                             ),
                           ),
                           Expanded(

@@ -252,8 +252,12 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                                       ),
                                     ));
                                   },
-                                  child: ItemCard(
-                                      itemInCard: listItemsInCards[index]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, right: 4, top: 4, bottom: 4),
+                                    child: ItemCard(
+                                        itemInCard: listItemsInCards[index]),
+                                  ),
                                 ),
                               ),
                               Expanded(
@@ -268,8 +272,13 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                                       ),
                                     ));
                                   },
-                                  child: ItemCard(
-                                      itemInCard: listItemsInCards[index + 1]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 4, right: 8, top: 4, bottom: 4),
+                                    child: ItemCard(
+                                        itemInCard:
+                                            listItemsInCards[index + 1]),
+                                  ),
                                 ),
                               ),
                             ],
@@ -289,8 +298,12 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                                           showCartIcon: true),
                                     ));
                                   },
-                                  child: ItemCard(
-                                      itemInCard: listItemsInCards[index]),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, right: 4, top: 4, bottom: 4),
+                                    child: ItemCard(
+                                        itemInCard: listItemsInCards[index]),
+                                  ),
                                 ),
                               ),
                               Expanded(
