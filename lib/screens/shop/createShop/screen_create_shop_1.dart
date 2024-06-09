@@ -222,21 +222,21 @@ class _CreateShopScreen1State extends State<CreateShopScreen1> {
                                     borderRadius: BorderRadius.circular(12.0),
                                     borderSide: const BorderSide(
                                       color: Colors.grey,
-                                      width: 1.0,
+                                      width: 0.75,
                                     ),
                                   ),
                                   disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12.0),
                                     borderSide: const BorderSide(
                                       color: Colors.grey,
-                                      width: 1.0,
+                                      width: 0.75,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12.0),
                                     borderSide: const BorderSide(
                                       color: buttonBackgroundColor,
-                                      width: 2.0,
+                                      width: 1.0,
                                     ),
                                   ),
                                   contentPadding: const EdgeInsets.symmetric(

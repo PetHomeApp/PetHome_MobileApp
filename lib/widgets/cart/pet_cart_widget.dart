@@ -29,89 +29,86 @@ class PetCartWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Card(
+      child: Container(
+        color: Colors.grey[100],
+        padding: const EdgeInsets.only(top: 4, bottom: 4),
         child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: Image.network(
-                petCart.imageUrl.toString(),
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-                errorBuilder: (BuildContext context, Object exception,
-                    StackTrace? stackTrace) {
-                  return Image.asset(
-                    'lib/assets/pictures/placeholder_image.png',
-                    height: 100,
-                    fit: BoxFit.cover,
-                  );
-                },
+            children: [
+              ClipRRect(
+                child: Image.network(
+                  petCart.imageUrl.toString(),
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.cover,
+                  errorBuilder: (BuildContext context, Object exception,
+                      StackTrace? stackTrace) {
+                    return Image.asset(
+                      'lib/assets/pictures/placeholder_image.png',
+                      height: 100,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    petCart.name.toString().length > 30
-                        ? '${petCart.name.toString().substring(0, 30)}...'
-                        : petCart.name.toString(),
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    petCart.shopName.toString().length > 20
-                        ? '${petCart.shopName.toString().substring(0, 20)}...'
-                        : petCart.shopName.toString(),
-                    style: const TextStyle(
-                        fontSize: 15, color: Color.fromARGB(255, 84, 84, 84)),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${NumberFormat('#,##0', 'vi').format(petCart.price)} đ',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: priceColor,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: petCart.inStock ? Colors.green : Colors.red,
-                            borderRadius: BorderRadius.circular(20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      petCart.name.toString(),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      petCart.shopName.toString(),
+                      style: const TextStyle(
+                          fontSize: 15, color: Color.fromARGB(255, 84, 84, 84)),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${NumberFormat('#,##0', 'vi').format(petCart.price)} đ',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: priceColor,
                           ),
-                          child: Text(
-                            petCart.inStock ? '  Còn hàng  ' : '  Hết hàng  ',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                        ),
+                        const SizedBox(width: 5),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: petCart.inStock ? Colors.green : Colors.red,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              petCart.inStock ? '  Còn hàng  ' : '  Hết hàng  ',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ),
     );
   }

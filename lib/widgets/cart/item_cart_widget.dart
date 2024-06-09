@@ -76,7 +76,9 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
           ),
         ],
       ),
-      child: Card(
+      child: Container(
+        color: Colors.grey[100],
+        padding: const EdgeInsets.only(top: 4, bottom: 4),
         child: Column(
           children: [
             Row(
@@ -93,7 +95,6 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                   activeColor: buttonBackgroundColor,
                 ),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
                   child: Image.network(
                     widget.itemCart.picture.toString(),
                     height: 100,
@@ -127,16 +128,14 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                       Text(
                         '${widget.itemCart.size} ${widget.itemCart.unit}',
                         style: const TextStyle(
-                            fontSize: 16,
-                            color: Color.fromARGB(255, 84, 84, 84)),
+                            fontSize: 16, color: Color.fromARGB(255, 84, 84, 84)),
                       ),
                       Text(
                         widget.itemCart.shopName.toString().length > 20
                             ? '${widget.itemCart.shopName.toString().substring(0, 20)}...'
                             : widget.itemCart.shopName.toString(),
                         style: const TextStyle(
-                            fontSize: 14,
-                            color: Color.fromARGB(255, 84, 84, 84)),
+                            fontSize: 14, color: Color.fromARGB(255, 84, 84, 84)),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),

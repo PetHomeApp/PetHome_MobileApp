@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_spiece.dart';
+import 'package:pethome_mobileapp/services/api/pet_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/enter_infor_widget.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class AddPetScreen extends StatefulWidget {
   const AddPetScreen({super.key});
@@ -21,43 +24,39 @@ class _AddPetScreenState extends State<AddPetScreen> {
   late int selectedSpecieId;
   late int selectedAgeId;
 
-  List<PetSpecie> listPetSpecies = [
-    PetSpecie(id: 1, name: 'Chó'),
-    PetSpecie(id: 2, name: 'Mèo'),
-    PetSpecie(id: 3, name: 'Chim'),
-    PetSpecie(id: 4, name: 'Cá'),
-    PetSpecie(id: 5, name: 'Rắn'),
-    PetSpecie(id: 6, name: 'Khác'),
-  ];
-
-  List<PetAge> listPetAges = [
-    PetAge(id: 1, name: 'Dưới 1 tháng'),
-    PetAge(id: 2, name: '1 - 3 tháng'),
-    PetAge(id: 3, name: '3 - 6 tháng'),
-    PetAge(id: 4, name: '6 - 12 tháng'),
-    PetAge(id: 5, name: '1 - 2 tuổi'),
-    PetAge(id: 6, name: '2 - 3 tuổi'),
-    PetAge(id: 7, name: 'Trên 3 tuổi'),
-  ];
+  List<PetSpecie> listPetSpecies = List.empty(growable: true);
+  List<PetAge> listPetAges = List.empty(growable: true);
 
   bool loading = false;
 
   XFile? mainImage;
+  List<XFile?> listImages = List.empty(growable: true);
 
   int maxLength = 2000;
 
   @override
   void initState() {
     super.initState();
-    getPetInformation();
-    selectedSpecieId = listPetSpecies[0].id;
-    selectedAgeId = listPetAges[0].id;
+    getAgeAndSpecies();
   }
 
-  void getPetInformation() async {
+  Future<void> getAgeAndSpecies() async {
     if (loading) {
       return;
     }
+
+    loading = true;
+    final ageDataResponse = await PetApi().getPetAges();
+    final specieDataResponse = await PetApi().getPetSpecies();
+
+    listPetAges = ageDataResponse;
+    listPetSpecies = specieDataResponse;
+
+    setState(() {
+      selectedSpecieId = listPetSpecies[0].id;
+      selectedAgeId = listPetAges[0].id;
+      loading = false;
+    });
   }
 
   Future<void> _pickImage() async {
@@ -97,6 +96,72 @@ class _AddPetScreenState extends State<AddPetScreen> {
         mainImage = pickedImage;
       });
     }
+  }
+
+  Future _addImage() async {
+    if (listImages.length >= 4) {
+      showTopSnackBar(
+        // ignore: use_build_context_synchronously
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: 'Chỉ được chọn tối đa 4 hình ảnh!',
+        ),
+        displayDuration: const Duration(seconds: 0),
+      );
+      return;
+    }
+
+    final XFile? pickedImage = await showDialog<XFile>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Chọn hình ảnh'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await ImagePicker().pickImage(source: ImageSource.camera));
+            },
+            child: const Text('Chụp hình',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await ImagePicker().pickImage(source: ImageSource.gallery));
+            },
+            child: const Text('Chọn từ album',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+        ],
+      ),
+    );
+
+    if (pickedImage != null) {
+      setState(() {
+        listImages.add(pickedImage);
+      });
+    }
+  }
+
+  Future<void> _deleteImage() async {
+    if (listImages.isEmpty) {
+      showTopSnackBar(
+        // ignore: use_build_context_synchronously
+        Overlay.of(context),
+        const CustomSnackBar.error(
+          message: 'Chưa có hình ảnh nào được chọn!',
+        ),
+        displayDuration: const Duration(seconds: 0),
+      );
+      return;
+    }
+    setState(() {
+      listImages.removeLast();
+    });
   }
 
   @override
@@ -178,18 +243,16 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         border: Border.all(
                           color: Colors.grey,
                           style: BorderStyle.solid,
-                          width: 2.0,
+                          width: 1.0,
                         ),
                         borderRadius: BorderRadius.circular(12.0),
                       ),
                       child: mainImage == null || mainImage?.path == ''
                           ? const Center(
-                              child: Text(
-                                '+',
-                                style: TextStyle(
-                                  fontSize: 40,
-                                  color: Colors.grey,
-                                ),
+                              child: Icon(
+                                Icons.add_a_photo,
+                                size: 40,
+                                color: Colors.grey,
                               ),
                             )
                           : ClipRRect(
@@ -217,35 +280,33 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       Expanded(
                         child: AspectRatio(
                           aspectRatio: 1,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 1.0,
                               ),
-                              child: mainImage == null || mainImage?.path == ''
-                                  ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.file(
-                                        File(mainImage!.path),
-                                        fit: BoxFit.cover,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            // ignore: prefer_is_empty
+                            child: listImages.length < 1 || listImages[0]?.path == ''
+                                ? const Center(
+                                    child: Text(
+                                      '+',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                            ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.file(
+                                      File(listImages[0]!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -253,35 +314,32 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       Expanded(
                         child: AspectRatio(
                           aspectRatio: 1,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 1.0,
                               ),
-                              child: mainImage == null || mainImage?.path == ''
-                                  ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.file(
-                                        File(mainImage!.path),
-                                        fit: BoxFit.cover,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: listImages.length < 2
+                                ? const Center(
+                                    child: Text(
+                                      '+',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                            ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.file(
+                                      File(listImages[1]!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -289,35 +347,32 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       Expanded(
                         child: AspectRatio(
                           aspectRatio: 1,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 1.0,
                               ),
-                              child: mainImage == null || mainImage?.path == ''
-                                  ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.file(
-                                        File(mainImage!.path),
-                                        fit: BoxFit.cover,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: listImages.length < 3
+                                ? const Center(
+                                    child: Text(
+                                      '+',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                            ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.file(
+                                      File(listImages[2]!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -325,35 +380,74 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       Expanded(
                         child: AspectRatio(
                           aspectRatio: 1,
-                          child: GestureDetector(
-                            onTap: _pickImage,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  style: BorderStyle.solid,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 1.0,
                               ),
-                              child: mainImage == null || mainImage?.path == ''
-                                  ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.file(
-                                        File(mainImage!.path),
-                                        fit: BoxFit.cover,
+                              borderRadius: BorderRadius.circular(12.0),
+                            ),
+                            child: listImages.length < 4
+                                ? const Center(
+                                    child: Text(
+                                      '+',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.grey,
                                       ),
                                     ),
-                            ),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    child: Image.file(
+                                      File(listImages[3]!.path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          _addImage();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: buttonBackgroundColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Thêm ảnh',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _deleteImage();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Xóa ảnh',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
                           ),
                         ),
                       ),
@@ -401,21 +495,21 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: buttonBackgroundColor,
-                          width: 2.0,
+                          width: 1.0,
                         ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -450,21 +544,21 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: buttonBackgroundColor,
-                          width: 2.0,
+                          width: 1.0,
                         ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
@@ -498,21 +592,21 @@ class _AddPetScreenState extends State<AddPetScreen> {
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: Colors.grey,
-                          width: 1.0,
+                          width: 0.75,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.0),
                         borderSide: const BorderSide(
                           color: buttonBackgroundColor,
-                          width: 2.0,
+                          width: 1.0,
                         ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(

@@ -260,18 +260,16 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                                 border: Border.all(
                                   color: Colors.grey,
                                   style: BorderStyle.solid,
-                                  width: 2.0,
+                                  width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: _image_front!.path == ''
                                   ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          color: Colors.grey,
-                                        ),
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        color: Colors.grey,
+                                        size: 40.0,
                                       ),
                                     )
                                   : ClipRRect(
@@ -302,18 +300,16 @@ class _CreateShopScreen3State extends State<CreateShopScreen3> {
                                 border: Border.all(
                                   color: Colors.grey,
                                   style: BorderStyle.solid,
-                                  width: 2.0,
+                                  width: 1.0,
                                 ),
                                 borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: _image_back?.path == ''
                                   ? const Center(
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          fontSize: 40,
-                                          color: Colors.grey,
-                                        ),
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        color: Colors.grey,
+                                        size: 40.0,
                                       ),
                                     )
                                   : ClipRRect(

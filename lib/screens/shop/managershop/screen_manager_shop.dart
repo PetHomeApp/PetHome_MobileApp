@@ -159,10 +159,9 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 211, 245, 242),
-        borderRadius: BorderRadius.circular(16.0),
+      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
+      decoration: const BoxDecoration(
+        color: Color.fromARGB(255, 211, 245, 242),
       ),
       child: Row(
         children: [
@@ -190,7 +189,7 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
                 ),
                 const SizedBox(height: 8.0),
                 Text(
-                  'Chúc một ngày làm việc hiệu quả!',
+                  'Chúc một ngày làm việc hiệu quả và thật nhiều niềm vui!',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.teal[900],
                         fontSize: 16,
