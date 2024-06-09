@@ -184,7 +184,11 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 ),
                               ));
                             },
-                            child: PetCard(petInCard: listPetInCards[index]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 4.0, top: 4.0, bottom: 4.0),
+                              child: PetCard(petInCard: listPetInCards[index]),
+                            ),
                           ),
                         ),
                         Expanded(
@@ -197,8 +201,12 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 ),
                               ));
                             },
-                            child:
-                                PetCard(petInCard: listPetInCards[index + 1]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 4.0, right: 8.0, top: 4.0, bottom: 4.0),
+                              child:
+                                  PetCard(petInCard: listPetInCards[index + 1]),
+                            ),
                           ),
                         ),
                       ],
@@ -217,7 +225,11 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 ),
                               ));
                             },
-                            child: PetCard(petInCard: listPetInCards[index]),
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8.0, right: 4.0, top: 4.0, bottom: 4.0),
+                              child: PetCard(petInCard: listPetInCards[index]),
+                            ),
                           ),
                         ),
                         Expanded(

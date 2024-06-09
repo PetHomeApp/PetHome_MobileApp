@@ -79,7 +79,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
     loading = true;
     final List<PetInCard> pets =
         await PetApi().searchPetsInCard(widget.title, 10, currentPage * 10);
-        
+
     if (pets.isEmpty) {
       loading = false;
       return;
@@ -151,8 +151,8 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.filter_alt,
-                color: iconButtonColor, size: 30),
+            icon:
+                const Icon(Icons.filter_alt, color: iconButtonColor, size: 30),
             onPressed: () {
               scaffoldKey.currentState?.openEndDrawer();
             },
@@ -206,7 +206,15 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child: PetCard(petInCard: listPetsFilter[index]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    right: 4.0,
+                                    top: 4.0,
+                                    bottom: 4.0),
+                                child:
+                                    PetCard(petInCard: listPetsFilter[index]),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -219,8 +227,15 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child:
-                                  PetCard(petInCard: listPetsFilter[index + 1]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 4.0,
+                                    right: 8.0,
+                                    top: 4.0,
+                                    bottom: 4.0),
+                                child: PetCard(
+                                    petInCard: listPetsFilter[index + 1]),
+                              ),
                             ),
                           ),
                         ],
@@ -239,7 +254,15 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   ),
                                 ));
                               },
-                              child: PetCard(petInCard: listPetsFilter[index]),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    right: 4.0,
+                                    top: 4.0,
+                                    bottom: 4.0),
+                                child:
+                                    PetCard(petInCard: listPetsFilter[index]),
+                              ),
                             ),
                           ),
                           Expanded(

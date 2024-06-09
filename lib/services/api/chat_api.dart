@@ -203,9 +203,7 @@ class ChatApi {
         },
       );
 
-      print("Nhớ stats code: " + response.statusCode.toString());
-
-      if (response.statusCode == 400 || response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var data = json.decode(response.body);
 
         if (data == null) {

@@ -245,7 +245,7 @@ class _ChatDetailWithShopScreenState extends State<ChatDetailWithShopScreen> {
                               width: 70,
                               height: 70,
                             ),
-                            Text('Không có tin nhắn nào',
+                            Text('Không có tin nhắn',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.black54)),
                             Text('Hãy bắt đầu trò chuyện ngay nào!',
