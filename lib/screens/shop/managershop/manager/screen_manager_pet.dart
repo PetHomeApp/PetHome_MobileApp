@@ -88,7 +88,9 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
         .getListPetActiveInShop(widget.shopId, 10, currentPageActive * 10);
 
     if (pets.isEmpty) {
-      loadingActive = false;
+      setState(() {
+        loadingActive = false;
+      });
       return;
     }
 
@@ -104,12 +106,18 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
       return;
     }
 
+    setState(() {
+      loadingRequest = true;
+    });
+
     loadingRequest = true;
     final List<PetInCard> pets = await ShopApi()
         .getListPetRequiredInShop(widget.shopId, 10, currentPageRequest * 10);
 
     if (pets.isEmpty) {
-      loadingRequest = false;
+      setState(() {
+        loadingRequest = false;
+      });
       return;
     }
 
@@ -220,10 +228,15 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
               // Insert icon button
               IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
                     builder: (context) => const AddPetScreen(),
-                  ));
-                  getListPetActiveInShop();
+                  ))
+                      .then((value) {
+                    listPetRequestInCards.clear();
+                    currentPageRequest = 0;
+                    getListPetRequiredInShop();
+                  });
                 },
                 icon: const Icon(
                   Icons.add,

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pethome_mobileapp/model/product/pet/model_pet_added.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
@@ -239,6 +240,56 @@ class ShopApi {
       return pets;
     } else {
       throw Exception('Failed to load pets');
+    }
+  }
+
+  // Insert product
+  Future<Map<String, dynamic>> insertPet(PetIsAdded pet) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/pets');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    var request = http.MultipartRequest('POST', url);
+
+    request.headers['Authorization'] = accessToken;
+
+    request.fields['name'] = pet.name;
+    request.fields['id_pet_specie'] = pet.idPetSpecie;
+    request.fields['id_pet_age'] = pet.idPetAge;
+    request.fields['weight'] = pet.weight;
+    request.fields['price'] = pet.price;
+    request.fields['description'] = pet.description;
+
+    request.files.add(
+      await http.MultipartFile.fromPath('header_image', pet.headerImage!.path),
+    );
+
+    for (var image in pet.images) {
+      request.files.add(
+        await http.MultipartFile.fromPath('images', image!.path),
+      );
+    }
+
+    try {
+      var response = await request.send();
+      var responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        // Handle error
+        json.decode(responseBody);
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
     }
   }
 }

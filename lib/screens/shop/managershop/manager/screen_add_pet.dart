@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_added.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_spiece.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/enter_infor_widget.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -20,6 +22,9 @@ class AddPetScreen extends StatefulWidget {
 class _AddPetScreenState extends State<AddPetScreen> {
   final TextEditingController _petNameController = TextEditingController();
   final TextEditingController _petPriceController = TextEditingController();
+  final TextEditingController _petWeightController = TextEditingController();
+  final TextEditingController _petDescriptionController =
+      TextEditingController();
 
   late int selectedSpecieId;
   late int selectedAgeId;
@@ -49,8 +54,11 @@ class _AddPetScreenState extends State<AddPetScreen> {
     final ageDataResponse = await PetApi().getPetAges();
     final specieDataResponse = await PetApi().getPetSpecies();
 
-    listPetAges = ageDataResponse;
-    listPetSpecies = specieDataResponse;
+    // Xếp tăng dần theo id
+    listPetAges = ageDataResponse.toList()
+      ..sort((a, b) => a.id.compareTo(b.id));
+    listPetSpecies = specieDataResponse.toList()
+      ..sort((a, b) => a.id.compareTo(b.id));
 
     setState(() {
       selectedSpecieId = listPetSpecies[0].id;
@@ -212,10 +220,120 @@ class _AddPetScreenState extends State<AddPetScreen> {
                 IconButton(
                   icon:
                       const Icon(Icons.save, color: iconButtonColor, size: 30),
-                  onPressed: () {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) => const CartHomePageScreen(),
-                    // ));
+                  onPressed: () async {
+                    if (mainImage == null || mainImage?.path == '') {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Chưa chọn ảnh đại diện!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    if (listImages.isEmpty) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Chưa chọn ảnh mô tả!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    if (_petNameController.text.isEmpty ||
+                        _petPriceController.text.isEmpty ||
+                        _petWeightController.text.isEmpty ||
+                        _petDescriptionController.text.isEmpty) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Vui lòng điền đầy đủ thông tin!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    final int petPrice = int.parse(_petPriceController.text);
+                    final double petWeight =
+                        double.parse(_petWeightController.text);
+
+                    if (petPrice <= 0) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Giá không hợp lệ!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    if (petWeight <= 0) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Cân nặng không hợp lệ!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    if (_petDescriptionController.text.length > maxLength) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Mô tả quá dài!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      return;
+                    }
+
+                    PetIsAdded pet = PetIsAdded(
+                      name: _petNameController.text,
+                      idPetSpecie: selectedSpecieId.toString(),
+                      idPetAge: selectedAgeId.toString(),
+                      weight: _petWeightController.text,
+                      price: _petPriceController.text,
+                      description: _petDescriptionController.text,
+                      headerImage: mainImage!,
+                      images: listImages,
+                    );
+
+                    var result = await ShopApi().insertPet(pet);
+
+                    if (result['isSuccess'] == true) {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.success(
+                          message: 'Thêm thú cưng thành công!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(context).pop();
+                    } else {
+                      showTopSnackBar(
+                        // ignore: use_build_context_synchronously
+                        Overlay.of(context),
+                        const CustomSnackBar.error(
+                          message: 'Thêm thú cưng thất bại!',
+                        ),
+                        displayDuration: const Duration(seconds: 0),
+                      );
+                    }
                   },
                 ),
               ],
@@ -290,7 +408,8 @@ class _AddPetScreenState extends State<AddPetScreen> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             // ignore: prefer_is_empty
-                            child: listImages.length < 1 || listImages[0]?.path == ''
+                            child: listImages.length < 1 ||
+                                    listImages[0]?.path == ''
                                 ? const Center(
                                     child: Text(
                                       '+',
@@ -570,7 +689,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     label: 'Cân nặng (Kg): (*)',
                     hintText: '',
                     keyboardType: TextInputType.number,
-                    controller: _petPriceController,
+                    controller: _petWeightController,
                   ),
                   const SizedBox(height: 20.0),
                   const Align(
@@ -583,7 +702,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                   ),
                   const SizedBox(height: 8.0),
                   TextField(
-                    controller: _petNameController,
+                    controller: _petDescriptionController,
                     cursorColor: buttonBackgroundColor,
                     maxLines: 10,
                     maxLength: maxLength,
