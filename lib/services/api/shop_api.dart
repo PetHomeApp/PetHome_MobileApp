@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_added.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
@@ -277,7 +277,7 @@ class ShopApi {
   }
 
   // Insert product
-  Future<Map<String, dynamic>> insertPet(PetIsAdded pet) async {
+  Future<Map<String, dynamic>> insertPet(PetIsRequest pet) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/pets');
 
     AuthApi authApi = AuthApi();

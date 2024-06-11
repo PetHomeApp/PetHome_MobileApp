@@ -1,6 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 
-class PetIsAdded {
+class PetIsRequest {
   String name;
   String idPetSpecie;
   String idPetAge;
@@ -10,7 +10,7 @@ class PetIsAdded {
   XFile? headerImage;
   List<XFile?> images;
 
-  PetIsAdded({
+  PetIsRequest({
     required this.name,
     required this.idPetSpecie,
     required this.idPetAge,

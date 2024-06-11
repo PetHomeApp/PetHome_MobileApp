@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
@@ -12,6 +13,8 @@ import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class MyHomePageScreen extends StatefulWidget {
   const MyHomePageScreen({super.key});
@@ -30,6 +33,8 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
 
   late SharedPreferences sharedPreferences;
   late ShopInforRegister shopInforRegister;
+
+  XFile? avatarFile;
 
   @override
   void initState() {
@@ -112,6 +117,64 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedImage = await showDialog<XFile>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Thay đổi ảnh đại diện'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await picker.pickImage(source: ImageSource.camera));
+            },
+            child: const Text('Chụp hình',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await picker.pickImage(source: ImageSource.gallery));
+            },
+            child: const Text('Chọn từ album',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+        ],
+      ),
+    );
+
+    if (pickedImage != null) {
+      var res = await UserApi().updateAvatar(pickedImage);
+      if (res['isSuccess'] == true) {
+        setState(() {
+          getUserInfor();
+        });
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: 'Cập nhật ảnh đại diện thành công',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      } else {
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: 'Cập nhật ảnh đại diện thất bại',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,32 +209,30 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.only(top: 15.0, bottom: 15),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(15.0),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 4,
-                                blurRadius: 7,
-                                offset: const Offset(0, 3),
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                          child: GestureDetector(
-                            onTap: () {
-                              // ignore: avoid_print
-                              print('Thông tin cá nhân');
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 120.0,
-                                    height: 120.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    _pickImage();
+                                  },
+                                  child: SizedBox(
+                                    width: 100.0,
+                                    height: 100.0,
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
@@ -197,44 +258,40 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          userInfor.name,
-                                          style: const TextStyle(
-                                            fontSize: 24.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          softWrap:
-                                              true, // enable text to wrap onto the next line
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        userInfor.name,
+                                        style: const TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        Text(
-                                          'ID: ${userInfor.idUser}',
-                                          style: const TextStyle(
-                                            fontSize: 16.0,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                          softWrap:
-                                              true, // enable text to wrap onto the next line
+                                        softWrap: true,
+                                      ),
+                                      Text(
+                                        'ID:  ${userInfor.idUser}',
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
+                                          fontStyle: FontStyle.italic,
                                         ),
-                                      ],
-                                    ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 15.0, right: 15),
+                        padding: const EdgeInsets.only(left: 8.0, right: 8),
                         child: Column(
                           children: <Widget>[
                             Row(
@@ -268,11 +325,15 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: Image.asset(
-                                                'lib/assets/pictures/icon_chat.png'),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_chat.png'),
+                                            ),
                                           ),
                                           const Text(
                                             'Tin nhắn',
@@ -318,11 +379,15 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: Image.asset(
-                                                'lib/assets/pictures/icon_cart.png'),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_cart.png'),
+                                            ),
                                           ),
                                           const Text(
                                             'Giỏ hàng',
@@ -368,11 +433,15 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: Image.asset(
-                                                'lib/assets/pictures/icon_order.png'),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_order.png'),
+                                            ),
                                           ),
                                           const Text(
                                             'Đơn hàng của tôi',
@@ -414,7 +483,8 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                             Navigator.of(context)
                                                 .push(MaterialPageRoute(
                                               builder: (context) =>
-                                                  ShopManagementScreen(idShop: idShop),
+                                                  ShopManagementScreen(
+                                                      idShop: idShop),
                                             ));
                                           } else {
                                             // ignore: use_build_context_synchronously
@@ -442,7 +512,9 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                           Navigator.of(context)
                                               .push(MaterialPageRoute(
                                             builder: (context) =>
-                                                CreateShopScreen1(shopInforRegister: shopInforRegister),
+                                                CreateShopScreen1(
+                                                    shopInforRegister:
+                                                        shopInforRegister),
                                           ));
                                         }
                                       },
@@ -452,11 +524,15 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: Image.asset(
-                                                'lib/assets/pictures/icon_shop.png'),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_shop.png'),
+                                            ),
                                           ),
                                           const Text(
                                             'Quản lí cửa hàng',
@@ -475,6 +551,124 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                               ],
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      InkWell(
+                        onTap: () {
+                          // Handle 'Tin nhắn' tap
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Thông tin cá nhân',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Quản lí địa chỉ',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                              bottom: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.lock,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Đổi mật khẩu',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_added.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_spiece.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
@@ -300,7 +300,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                       return;
                     }
 
-                    PetIsAdded pet = PetIsAdded(
+                    PetIsRequest pet = PetIsRequest(
                       name: _petNameController.text,
                       idPetSpecie: selectedSpecieId.toString(),
                       idPetAge: selectedAgeId.toString(),
