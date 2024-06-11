@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class PetOfShopWidget extends StatelessWidget {
-  final PetInCard petInCard;
+class ItemActiveOfShopWidget extends StatelessWidget {
+  final ItemInCard itemInCard;
   final VoidCallback onRemove;
   final VoidCallback onEdit;
   final formatter = NumberFormat("#,###", "vi_VN");
 
-  PetOfShopWidget(
+  ItemActiveOfShopWidget(
       {super.key,
-      required this.petInCard,
+      required this.itemInCard,
       required this.onRemove,
       required this.onEdit});
 
@@ -49,7 +49,7 @@ class PetOfShopWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
               child: Image.network(
-                petInCard.imageUrl.toString(),
+                itemInCard.imageUrl.toString(),
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -74,9 +74,7 @@ class PetOfShopWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Text(
-                        petInCard.name.toString().length > 60
-                            ? '${petInCard.name.toString().substring(0, 60)}...'
-                            : petInCard.name.toString(),
+                        itemInCard.name.toString(),
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
@@ -89,7 +87,7 @@ class PetOfShopWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${NumberFormat('#,##0', 'vi').format(petInCard.price)} đ',
+                            '${NumberFormat('#,##0', 'vi').format(itemInCard.minPrice)} đ',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -97,29 +95,6 @@ class PetOfShopWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 5),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: petInCard.inStock
-                                    ? Colors.green
-                                    : Colors.red,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                petInCard.inStock
-                                    ? '  Còn hàng  '
-                                    : '  Hết hàng  ',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),

@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/screen_add_pet.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:pethome_mobileapp/widgets/shop/pet_of_shop.dart';
+import 'package:pethome_mobileapp/widgets/shop/product/item/item_active_of_shop.dart';
+import 'package:pethome_mobileapp/widgets/shop/product/item/item_request_of_shop.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class ManagerPetScreen extends StatefulWidget {
+class ManagerItemScreen extends StatefulWidget {
   final Function(bool) updateBottomBarVisibility;
   final String shopId;
-  const ManagerPetScreen(
+
+  const ManagerItemScreen(
       {super.key,
       required this.updateBottomBarVisibility,
       required this.shopId});
 
   @override
-  State<ManagerPetScreen> createState() => _ManagerPetScreenState();
+  State<ManagerItemScreen> createState() => _ManagerItemScreenState();
 }
 
-class _ManagerPetScreenState extends State<ManagerPetScreen>
-    with TickerProviderStateMixin {
-  List<PetInCard> listPetActiveInCards = List.empty(growable: true);
-  List<PetInCard> listPetRequestInCards = List.empty(growable: true);
+class _ManagerItemScreenState extends State<ManagerItemScreen>
+    with SingleTickerProviderStateMixin {
+  List<ItemInCard> listItemsActiveInCard = List.empty(growable: true);
+  List<ItemInCard> listItemsRequestInCard = List.empty(growable: true);
 
   final ScrollController _scrollActiveController = ScrollController();
   final ScrollController _scrollRequestController = ScrollController();
@@ -42,30 +43,29 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
 
   @override
   void initState() {
-    super.initState();
     _scrollActiveController.addListener(_onScrollActive);
     _scrollActiveController.addListener(_listenerScrollActive);
 
     _scrollRequestController.addListener(_onScrollRequest);
     _scrollRequestController.addListener(_listenerScrollRequest);
 
+    super.initState();
     _tabController = TabController(length: 2, vsync: this);
-
-    getListPetActiveInShop();
-    getListPetRequiredInShop();
   }
 
   @override
   void dispose() {
     _scrollActiveController.dispose();
     _scrollRequestController.dispose();
+
+    _tabController.dispose();
     super.dispose();
   }
 
   void _listenerScrollActive() {
     if (_scrollActiveController.position.atEdge) {
       if (_scrollActiveController.position.pixels != 0) {
-        getListPetActiveInShop();
+        getListItemActiveInShop();
       }
     }
   }
@@ -73,21 +73,21 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
   void _listenerScrollRequest() {
     if (_scrollRequestController.position.atEdge) {
       if (_scrollRequestController.position.pixels != 0) {
-        getListPetRequiredInShop();
+        //getListPetRequiredInShop();
       }
     }
   }
 
-  Future<void> getListPetActiveInShop() async {
+  Future<void> getListItemActiveInShop() async {
     if (loadingActive) {
       return;
     }
 
     loadingActive = true;
-    final List<PetInCard> pets = await ShopApi()
-        .getListPetActiveInShop(widget.shopId, 10, currentPageActive * 10);
+    final List<ItemInCard> items = await ShopApi()
+        .getListItemActiveInShop(widget.shopId, 10, currentPageActive * 10);
 
-    if (pets.isEmpty) {
+    if (items.isEmpty) {
       setState(() {
         loadingActive = false;
       });
@@ -95,36 +95,9 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     }
 
     setState(() {
-      listPetActiveInCards.addAll(pets);
+      listItemsActiveInCard.addAll(items);
       currentPageActive++;
       loadingActive = false;
-    });
-  }
-
-  Future<void> getListPetRequiredInShop() async {
-    if (loadingRequest) {
-      return;
-    }
-
-    setState(() {
-      loadingRequest = true;
-    });
-
-    loadingRequest = true;
-    final List<PetInCard> pets = await ShopApi()
-        .getListPetRequiredInShop(widget.shopId, 10, currentPageRequest * 10);
-
-    if (pets.isEmpty) {
-      setState(() {
-        loadingRequest = false;
-      });
-      return;
-    }
-
-    setState(() {
-      listPetRequestInCards.addAll(pets);
-      currentPageRequest++;
-      loadingRequest = false;
     });
   }
 
@@ -228,15 +201,15 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
               // Insert icon button
               IconButton(
                 onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                    builder: (context) => const AddPetScreen(),
-                  ))
-                      .then((value) {
-                    listPetRequestInCards.clear();
-                    currentPageRequest = 0;
-                    getListPetRequiredInShop();
-                  });
+                  // Navigator.of(context)
+                  //     .push(MaterialPageRoute(
+                  //   builder: (context) => const AddPetScreen(),
+                  // ))
+                  //     .then((value) {
+                  //   listPetRequestInCards.clear();
+                  //   currentPageRequest = 0;
+                  //   getListPetRequiredInShop();
+                  // });
                 },
                 icon: const Icon(
                   Icons.add,
@@ -266,7 +239,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                 unselectedLabelColor: Colors.black,
                 tabs: const [
                   Tab(
-                    text: 'Thú cưng của bạn',
+                    text: 'Vật phẩm của bạn',
                   ),
                   Tab(
                     text: 'Đang yêu cầu',
@@ -285,7 +258,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                       color: buttonBackgroundColor,
                     ),
                   )
-                : listPetActiveInCards.isEmpty
+                : listItemsActiveInCard.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -298,7 +271,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Cửa hàng của bạn chưa có Thú cưng nào!',
+                              'Cửa hàng của bạn chưa có Vật phẩm nào!',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -313,12 +286,12 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                           parent: BouncingScrollPhysics(),
                         ),
                         controller: _scrollActiveController,
-                        itemCount: listPetActiveInCards.length,
+                        itemCount: listItemsActiveInCard.length,
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
-                          return PetOfShopWidget(
-                              petInCard: listPetActiveInCards[index],
+                          return ItemActiveOfShopWidget(
+                              itemInCard: listItemsActiveInCard[index],
                               onRemove: () {
                                 showDialog(
                                   context: context,
@@ -326,7 +299,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                     return AlertDialog(
                                       title: const Text("Xác nhận"),
                                       content: const Text(
-                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi Cửa hàng không?"),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () {
@@ -338,7 +311,40 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                                       255, 84, 84, 84))),
                                         ),
                                         TextButton(
-                                          onPressed: () async {},
+                                          onPressed: () async {
+                                            // var res = await ShopApi().deletePet(
+                                            //     listPetActiveInCards[index]
+                                            //         .idPet);
+                                            // if (res['isSuccess']) {
+                                            //   showTopSnackBar(
+                                            //     // ignore: use_build_context_synchronously
+                                            //     Overlay.of(context),
+                                            //     const CustomSnackBar.success(
+                                            //       message:
+                                            //           'Xóa Thú cưng thành công!',
+                                            //     ),
+                                            //     displayDuration:
+                                            //         const Duration(seconds: 0),
+                                            //   );
+                                            //   setState(() {
+                                            //     listPetActiveInCards
+                                            //         .removeAt(index);
+                                            //   });
+                                            //   // ignore: use_build_context_synchronously
+                                            //   Navigator.of(context).pop();
+                                            // } else {
+                                            //   showTopSnackBar(
+                                            //     // ignore: use_build_context_synchronously
+                                            //     Overlay.of(context),
+                                            //     const CustomSnackBar.error(
+                                            //       message:
+                                            //           'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                            //     ),
+                                            //     displayDuration:
+                                            //         const Duration(seconds: 0),
+                                            //   );
+                                            // }
+                                          },
                                           child: const Text("Xóa",
                                               style: TextStyle(
                                                   color: Color.fromARGB(
@@ -358,7 +364,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                       color: buttonBackgroundColor,
                     ),
                   )
-                : listPetRequestInCards.isEmpty
+                : listItemsRequestInCard.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -371,7 +377,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Bạn chưa gửi yêu cầu Thú cưng nào!',
+                              'Bạn chưa gửi yêu cầu Vật phẩm nào!',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -386,12 +392,12 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                           parent: BouncingScrollPhysics(),
                         ),
                         controller: _scrollRequestController,
-                        itemCount: listPetRequestInCards.length,
+                        itemCount: listItemsRequestInCard.length,
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
-                          return PetOfShopWidget(
-                              petInCard: listPetRequestInCards[index],
+                          return ItemRequestOfShopWidget(
+                              itemInCard: listItemsRequestInCard[index],
                               onRemove: () {
                                 showDialog(
                                   context: context,
@@ -399,7 +405,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                     return AlertDialog(
                                       title: const Text("Xác nhận"),
                                       content: const Text(
-                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi giỏ hàng không?"),
+                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi Cửa hàng không?"),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () {
@@ -411,7 +417,41 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                                       255, 84, 84, 84))),
                                         ),
                                         TextButton(
-                                          onPressed: () async {},
+                                          onPressed: () async {
+                                            var res = null;
+                                            // var res = await ShopApi().deleteItem(
+                                            //     listItemsRequestInCard[index]
+                                            //         .idItem);
+                                            if (res['isSuccess']) {
+                                              showTopSnackBar(
+                                                // ignore: use_build_context_synchronously
+                                                Overlay.of(context),
+                                                const CustomSnackBar.success(
+                                                  message:
+                                                      'Xóa Thú cưng thành công!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                              setState(() {
+                                                listItemsRequestInCard
+                                                    .removeAt(index);
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context).pop();
+                                            } else {
+                                              showTopSnackBar(
+                                                // ignore: use_build_context_synchronously
+                                                Overlay.of(context),
+                                                const CustomSnackBar.error(
+                                                  message:
+                                                      'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                            }
+                                          },
                                           child: const Text("Xóa",
                                               style: TextStyle(
                                                   color: Color.fromARGB(
@@ -421,8 +461,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                     );
                                   },
                                 );
-                              },
-                              onEdit: () {});
+                              });
                         },
                       ),
           ],

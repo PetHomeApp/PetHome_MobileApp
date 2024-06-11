@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_added.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
@@ -243,6 +244,38 @@ class ShopApi {
     }
   }
 
+  Future<List<ItemInCard>> getListItemActiveInShop(String shopId, int limit, int start) async {
+    var url = Uri.parse('${pethomeApiUrl}shops/$shopId/items?limit=$limit&start=$start&status=active');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ItemInCard> items = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return items;
+      }
+
+      if (data['data'] == null) {
+        return items;
+      }
+
+      for (var item in data['data']) {
+        items.add(ItemInCard.fromJson(item));
+      }
+
+      return items;
+    } else {
+      throw Exception('Failed to load pets');
+    }
+  }
+
   // Insert product
   Future<Map<String, dynamic>> insertPet(PetIsAdded pet) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/pets');
@@ -286,6 +319,38 @@ class ShopApi {
       } else {
         // Handle error
         json.decode(responseBody);
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  // Delete product
+  Future<Map<String, dynamic>> deletePet(String petId) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/pets/$petId/remove');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
         return {'isSuccess': false};
       }
     } catch (e) {

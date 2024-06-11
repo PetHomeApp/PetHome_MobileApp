@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/screen_manager_pet.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_manager_item.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_manager_pet.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainManagerProductScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _MainManagerProductScreenState extends State<MainManagerProductScreen> {
 
   List<Widget> get _pages => [
         ManagerPetScreen(updateBottomBarVisibility: updateBottomBarVisibility, shopId: widget.shopId),
-        PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
+        ManagerItemScreen(updateBottomBarVisibility: updateBottomBarVisibility, shopId: widget.shopId),
         PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
       ];  
 
