@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
+import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/screen_manager_shop.dart';
@@ -556,7 +556,12 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                       const SizedBox(height: 15),
                       InkWell(
                         onTap: () {
-                          // Handle 'Tin nhắn' tap
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const UpdateInforUserScreen(),
+                              ))
+                              .then((value) => getUserInfor());
                         },
                         child: Container(
                           decoration: const BoxDecoration(
