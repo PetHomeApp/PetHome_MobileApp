@@ -5,6 +5,7 @@ import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
+import 'package:pethome_mobileapp/screens/my/address/screen_list_address.dart';
 import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
@@ -273,14 +274,18 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         ),
                                         softWrap: true,
                                       ),
-                                      Text(
-                                        'ID:  ${userInfor.idUser}',
-                                        style: const TextStyle(
-                                          fontSize: 14.0,
-                                          fontStyle: FontStyle.italic,
+                                      const SizedBox(height: 10),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 30),
+                                        child: Text(
+                                          'ID:  ${userInfor.idUser}',
+                                          style: const TextStyle(
+                                            fontSize: 14.0,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
                                       ),
                                     ],
                                   ),
@@ -599,7 +604,13 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const ListAddressScreen(),
+                              ));
+                        },
                         child: Container(
                           decoration: const BoxDecoration(
                             border: Border(
