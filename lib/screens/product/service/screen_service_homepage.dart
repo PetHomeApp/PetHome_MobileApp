@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/screens/service/screen_list_service.dart';
+import 'package:pethome_mobileapp/screens/product/service/screen_list_service.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/product/service/service_card.dart';
 

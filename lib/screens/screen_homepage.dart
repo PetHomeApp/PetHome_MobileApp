@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/blog/screen_blog_homepage.dart';
-import 'package:pethome_mobileapp/screens/item/screen_item_homepage.dart';
+import 'package:pethome_mobileapp/screens/product/item/screen_item_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/screen_my_homepage.dart';
-import 'package:pethome_mobileapp/screens/pet/screen_pet_homepage.dart';
-import 'package:pethome_mobileapp/screens/service/screen_service_homepage.dart';
+import 'package:pethome_mobileapp/screens/product/pet/screen_pet_homepage.dart';
+import 'package:pethome_mobileapp/screens/product/service/screen_service_homepage.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainScreen extends StatefulWidget {

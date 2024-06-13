@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type_detail.dart';
-import 'package:pethome_mobileapp/screens/service/screen_service_detail.dart';
-import 'package:pethome_mobileapp/screens/service/screen_service_search_filter.dart';
+import 'package:pethome_mobileapp/screens/product/service/screen_service_detail.dart';
+import 'package:pethome_mobileapp/screens/product/service/screen_service_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/product/service/service_shop_card.dart';

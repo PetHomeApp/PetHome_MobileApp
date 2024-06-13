@@ -1,43 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_spiece.dart';
-import 'package:pethome_mobileapp/screens/pet/screen_pet_detail.dart';
-import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/screens/product/item/screen_item_detail.dart';
+import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/setting/list_area.dart';
-import 'package:pethome_mobileapp/widgets/product/pet/pet_card.dart';
+import 'package:pethome_mobileapp/widgets/product/item/item_card.dart';
 
-class PetSearchAndFilterScreen extends StatefulWidget {
-  const PetSearchAndFilterScreen({super.key, required this.title});
-
+class ItemSearchAndFilterScreen extends StatefulWidget {
+  const ItemSearchAndFilterScreen(
+      {super.key,
+      required this.title,
+      required this.searchType,
+      required this.detailTypeID});
   final String title;
+  final String searchType;
+  final int detailTypeID;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _PetSearchAndFilterScreenState createState() =>
-      _PetSearchAndFilterScreenState();
+  State<ItemSearchAndFilterScreen> createState() =>
+      _ItemSearchAndFilterScreenState();
 }
 
-class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
-  List<PetInCard> listPetsInCard = List.empty(growable: true);
-  List<PetInCard> listPetsFilter = List.empty(growable: true);
+class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
+  List<ItemInCard> listItemsInCard = List.empty(growable: true);
+  List<ItemInCard> listItemsFilter = List.empty(growable: true);
 
-  List<PetSpecie> petSpecie = List.empty(growable: true);
-  List<PetAge> petAge = List.empty(growable: true);
-
-  List<String> filterSpecie = [];
-  List<String> filterAge = [];
   List<String> filterArea = area;
-
-  Set<String> selectedSpecieFilters = {};
-  Set<String> selectedAgeFilters = {};
   Set<String> selectedAreaFilters = {};
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
   bool showAll = false;
-
   bool loading = false;
+
   int currentPage = 0;
   final ScrollController _scrollController = ScrollController();
 
@@ -45,73 +39,90 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_listenerScroll);
-
-    getListPetInCards();
-
-    PetApi().getPetSpecies().then((value) {
-      setState(() {
-        petSpecie = value;
-        filterSpecie = petSpecie.map((e) => e.name).toList();
-      });
-    });
-
-    PetApi().getPetAges().then((value) {
-      setState(() {
-        petAge = value;
-        filterAge = petAge.map((e) => e.name).toList();
-      });
-    });
+    if (widget.searchType == 'search') {
+      getListItemsBySearchInCards();
+    } else {
+      getListItemsByCategoryInCards();
+    }
   }
 
   void _listenerScroll() {
     if (_scrollController.position.atEdge) {
       if (_scrollController.position.pixels != 0) {
-        getListPetInCards();
+        if (widget.searchType == 'search') {
+          getListItemsBySearchInCards();
+        } else {
+          getListItemsByCategoryInCards();
+        }
       }
     }
   }
 
-  Future<void> getListPetInCards() async {
+  Future<void> getListItemsBySearchInCards() async {
     if (loading) {
       return;
     }
 
     loading = true;
-    final List<PetInCard> pets =
-        await PetApi().searchPetsInCard(widget.title, 10, currentPage * 10);
+    final List<ItemInCard> items =
+        await ItemApi().searchItemsInCard(widget.title, 10, currentPage * 10);
 
-    if (pets.isEmpty) {
+    if (items.isEmpty) {
       loading = false;
       return;
     }
 
     setState(() {
-      listPetsInCard.addAll(pets);
-      if (selectedSpecieFilters.isEmpty &&
-          selectedAgeFilters.isEmpty &&
-          selectedAreaFilters.isEmpty) {
-        listPetsFilter.addAll(pets);
+      listItemsInCard.addAll(items);
+      if (selectedAreaFilters.isEmpty) {
+        listItemsFilter.addAll(items);
       } else {
-        List<PetInCard> addFilterList = List.empty(growable: true);
-        addFilterList = pets.where((pet) {
-          PetSpecie petSpecieItem = petSpecie.firstWhere(
-              (element) => element.id == pet.specieID,
-              orElse: () => PetSpecie(id: 0, name: ''));
-          PetAge petAgeItem = petAge.firstWhere(
-              (element) => element.id == pet.ageID,
-              orElse: () => PetAge(id: 0, name: ''));
-          if ((selectedSpecieFilters.isEmpty ||
-                  selectedSpecieFilters.contains(petSpecieItem.name)) &&
-              (selectedAgeFilters.isEmpty ||
-                  selectedAgeFilters.contains(petAgeItem.name)) &&
-              (selectedAreaFilters.isEmpty ||
-                  selectedAreaFilters
-                      .any((element) => pet.areas!.contains(element)))) {
+        List<ItemInCard> addFilterList = List.empty(growable: true);
+        addFilterList = items.where((item) {
+          if ((selectedAreaFilters.isEmpty ||
+              selectedAreaFilters
+                  .any((element) => item.areas.contains(element)))) {
             return true;
           }
           return false;
         }).toList();
-        listPetsFilter.addAll(addFilterList);
+        listItemsFilter.addAll(addFilterList);
+      }
+
+      currentPage++;
+      loading = false;
+    });
+  }
+
+  Future<void> getListItemsByCategoryInCards() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<ItemInCard> items = await ItemApi()
+        .getItemsByTypeInCard(widget.detailTypeID, 10, currentPage * 10);
+
+    if (items.isEmpty) {
+      loading = false;
+      return;
+    }
+
+    setState(() {
+      listItemsInCard.addAll(items);
+      if (selectedAreaFilters.isEmpty) {
+        listItemsFilter.addAll(items);
+      } else {
+        List<ItemInCard> addFilterList = List.empty(growable: true);
+        addFilterList = items.where((item) {
+          if ((selectedAreaFilters.isEmpty ||
+              selectedAreaFilters
+                  .any((element) => item.areas.contains(element)))) {
+            return true;
+          }
+          return false;
+        }).toList();
+        listItemsFilter.addAll(addFilterList);
       }
 
       currentPage++;
@@ -166,7 +177,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                     AlwaysStoppedAnimation<Color>(buttonBackgroundColor),
               ),
             )
-          : listPetsFilter.isEmpty
+          : listItemsFilter.isEmpty
               ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -191,29 +202,26 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                     parent: BouncingScrollPhysics(),
                   ),
                   controller: _scrollController,
-                  itemCount: listPetsFilter.length,
+                  itemCount: listItemsFilter.length,
                   itemBuilder: (context, index) {
-                    if (index % 2 == 0 && index < listPetsFilter.length - 1) {
+                    if (index % 2 == 0 && index < listItemsFilter.length - 1) {
                       return Row(
                         children: [
                           Expanded(
                             child: InkWell(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PetDetailScreen(
-                                    idPet: listPetsFilter[index].idPet,
+                                  builder: (context) => ItemDetailScreen(
+                                    idItem: listItemsFilter[index].idItem,
                                     showCartIcon: true,
                                   ),
                                 ));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 4.0,
-                                    top: 4.0,
-                                    bottom: 4.0),
-                                child:
-                                    PetCard(petInCard: listPetsFilter[index]),
+                                    left: 8, right: 4, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index]),
                               ),
                             ),
                           ),
@@ -221,47 +229,41 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                             child: InkWell(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PetDetailScreen(
-                                    idPet: listPetsFilter[index + 1].idPet,
+                                  builder: (context) => ItemDetailScreen(
+                                    idItem: listItemsFilter[index + 1].idItem,
                                     showCartIcon: true,
                                   ),
                                 ));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 4.0,
-                                    right: 8.0,
-                                    top: 4.0,
-                                    bottom: 4.0),
-                                child: PetCard(
-                                    petInCard: listPetsFilter[index + 1]),
+                                    left: 4, right: 8, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index + 1]),
                               ),
                             ),
                           ),
                         ],
                       );
                     } else if (index % 2 == 0 &&
-                        index == listPetsFilter.length - 1) {
+                        index == listItemsFilter.length - 1) {
                       return Row(
                         children: [
                           Expanded(
                             child: InkWell(
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => PetDetailScreen(
-                                    idPet: listPetsFilter[index].idPet,
+                                  builder: (context) => ItemDetailScreen(
+                                    idItem: listItemsFilter[index].idItem,
                                     showCartIcon: true,
                                   ),
                                 ));
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 4.0,
-                                    top: 4.0,
-                                    bottom: 4.0),
-                                child:
-                                    PetCard(petInCard: listPetsFilter[index]),
+                                    left: 8, right: 4, top: 4, bottom: 4),
+                                child: ItemCard(
+                                    itemInCard: listItemsFilter[index]),
                               ),
                             ),
                           ),
@@ -309,113 +311,6 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        const Text('Loại thú cưng: ',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: filterSpecie.map((filterItem) {
-                                final isSelected =
-                                    selectedSpecieFilters.contains(filterItem);
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (isSelected) {
-                                        selectedSpecieFilters
-                                            .remove(filterItem);
-                                      } else {
-                                        selectedSpecieFilters.add(filterItem);
-                                      }
-                                    });
-                                  },
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? buttonBackgroundColor
-                                            : Colors.grey,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      filterItem,
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? buttonBackgroundColor
-                                            : Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ),
-                        const Divider(color: Colors.grey),
-                        const Text('Tuổi: ',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Wrap(
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
-                                  children: filterAge.map((filterItem) {
-                                    final isSelected =
-                                        selectedAgeFilters.contains(filterItem);
-                                    return InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          if (isSelected) {
-                                            selectedAgeFilters
-                                                .remove(filterItem);
-                                          } else {
-                                            selectedAgeFilters.add(filterItem);
-                                          }
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            10, 5, 10, 5),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                            color: isSelected
-                                                ? buttonBackgroundColor
-                                                : Colors.grey,
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          filterItem,
-                                          style: TextStyle(
-                                            color: isSelected
-                                                ? buttonBackgroundColor
-                                                : Colors.black,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const Divider(color: Colors.grey),
                         const Text('Khu vực: ',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
@@ -512,15 +407,13 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            selectedSpecieFilters.clear();
-                            selectedAgeFilters.clear();
                             selectedAreaFilters.clear();
                           });
                         },
                         child: Container(
                           padding: const EdgeInsets.fromLTRB(12, 5, 12, 5),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 249, 249, 249),
+                            color: const Color.fromARGB(255, 218, 217, 217),
                             border: Border.all(
                               color: buttonBackgroundColor,
                               width: 2,
@@ -538,27 +431,14 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            listPetsFilter = listPetsInCard.where((pet) {
-                              if (selectedSpecieFilters.isEmpty &&
-                                  selectedAgeFilters.isEmpty &&
-                                  selectedAreaFilters.isEmpty) {
+                            listItemsFilter = listItemsInCard.where((item) {
+                              if (selectedAreaFilters.isEmpty) {
                                 return true;
                               }
-                              PetSpecie petSpecieItem = petSpecie.firstWhere(
-                                  (element) => element.id == pet.specieID,
-                                  orElse: () => PetSpecie(id: 0, name: ''));
-                              PetAge petAgeItem = petAge.firstWhere(
-                                  (element) => element.id == pet.ageID,
-                                  orElse: () => PetAge(id: 0, name: ''));
-                              if ((selectedSpecieFilters.isEmpty ||
-                                      selectedSpecieFilters
-                                          .contains(petSpecieItem.name)) &&
-                                  (selectedAgeFilters.isEmpty ||
-                                      selectedAgeFilters
-                                          .contains(petAgeItem.name)) &&
-                                  (selectedAreaFilters.isEmpty ||
-                                      selectedAreaFilters.any((element) =>
-                                          pet.areas!.contains(element)))) {
+
+                              if (selectedAreaFilters.isEmpty ||
+                                  selectedAreaFilters.any((element) =>
+                                      item.areas.contains(element))) {
                                 return true;
                               }
                               return false;
