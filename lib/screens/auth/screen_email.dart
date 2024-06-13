@@ -76,14 +76,17 @@ class _EmailScreeenState extends State<EmailScreeen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text(
-                      "Thêm email của bạn. Chúng tôi sẽ gửi cho bạn mã xác minh để chúng tôi biết bạn là thật. Chúng tôi sẽ sử dụng email này làm tên đăng nhập cho tài khoản của bạn.",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black38,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      child: Text(
+                        "Thêm email của bạn. Chúng tôi sẽ gửi cho bạn mã xác minh để chúng tôi biết bạn là thật. Chúng tôi sẽ sử dụng email này làm tên đăng nhập cho tài khoản của bạn.",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black38,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(
                       height: 50,
@@ -98,9 +101,9 @@ class _EmailScreeenState extends State<EmailScreeen> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: 50,
+                      height: 45,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(12.0),
                         color: buttonBackgroundColor,
                       ),
                       child: InkWell(

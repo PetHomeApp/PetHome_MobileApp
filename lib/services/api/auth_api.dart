@@ -204,4 +204,75 @@ class AuthApi {
       };
     }
   }
+
+  // Forgot password
+  Future<Map<String, Object?>> sendOTPForgotPassword(String email) async {
+     try {
+      var url = Uri.parse('${authApiUrl}jwt/resetpass_send_code');
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({'email': email}));
+
+      if (response.statusCode == 200) {
+        String data = response.body;
+        Map<String, Object?> map = json.decode(data);
+        return {
+          'isSuccess': true,
+          'expiredAt': map['expiredAt'],
+          'token': map['token'],
+        };
+      } else if (response.statusCode == 208) {
+        return {
+          'isSuccess': false,
+          'message': 'Email chưa tồn tại!',
+        };
+      } else {
+        return {
+          'isSuccess': false,
+          'message': 'Có lỗi xảy ra!',
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> verifyOTPForgotPassword(String code, String token) async {
+    try {
+      var url = Uri.parse('${authApiUrl}jwt/resetpass_verify_code');
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          body: json.encode({'code': code}));
+
+      if (response.statusCode == 200) {
+        String data = response.body;
+        Map<String, Object?> map = json.decode(data);
+        return {
+          'isSuccess': true,
+          'email': map['email'],
+          'message': map['message'],
+          'token': map['token'],
+          'expiredAt': map['expiredAt'],
+        };
+      } else {
+        String data = response.body;
+        Map<String, Object?> map = json.decode(data);
+        return {
+          'isSuccess': false,
+          'error': map['error'],
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'error': e.toString(),
+      };
+    }
+  }
 }

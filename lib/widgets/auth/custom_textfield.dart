@@ -1,47 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
+  final TextInputType keyboardType;
   final String hintText;
   final bool obscureText;
+  final bool enabled;
   final bool readOnly;
 
   const CustomTextField(
       {super.key,
       required this.controller,
       required this.hintText,
+      this.keyboardType = TextInputType.text,
       this.obscureText = false,
+      this.enabled = true,
       this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      cursorColor: buttonBackgroundColor,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+            width: 0.75,
           ),
-        ],
-        color: Colors.grey[300],
-      ),
-      child: TextField(
-        controller: controller,
-        readOnly: readOnly,
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          contentPadding: const EdgeInsets.all(10.0),
         ),
-        obscureText: obscureText,
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+            width: 0.75,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          borderSide: const BorderSide(
+            color: buttonBackgroundColor,
+            width: 1.0,
+          ),
+        ),
+        hintText: hintText,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
       ),
+      enabled: enabled,
+      obscureText: obscureText,
+      readOnly: readOnly,
     );
   }
 }

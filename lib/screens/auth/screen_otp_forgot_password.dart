@@ -1,30 +1,30 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
-import 'package:pethome_mobileapp/screens/auth/screen_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 // ignore: must_be_immutable
-class OtpScreen extends StatefulWidget {
+class ForgotPasswordOtpScreen extends StatefulWidget {
   final String email;
   String expiredAt;
   String token;
 
-  OtpScreen(
+  ForgotPasswordOtpScreen(
       {super.key,
       required this.email,
       required this.expiredAt,
       required this.token});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _OtpScreenState createState() => _OtpScreenState();
+  State<ForgotPasswordOtpScreen> createState() =>
+      _ForgotPasswordOtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
   late Timer _timer;
   int _secondsRemaining = 59;
   bool _buttonEnabled = true;
@@ -86,7 +86,7 @@ class _OtpScreenState extends State<OtpScreen> {
           },
         ),
         title: const Text(
-          "Bước 2: Xác nhận OTP",
+          "Xác nhận OTP",
           style: TextStyle(
               color: buttonBackgroundColor,
               fontSize: 20,
@@ -153,9 +153,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     ),
                     Container(
                       width: double.infinity,
-                      height:45,
+                      height: 50,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
+                        borderRadius: BorderRadius.circular(20.0),
                         color: buttonBackgroundColor,
                       ),
                       child: InkWell(
@@ -185,7 +185,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           }
                           else {
                             var dataResponse =
-                                await AuthApi().verifyOTP(otp, widget.token);
+                                await AuthApi().verifyOTPForgotPassword(otp, widget.token);
                             if (dataResponse['isSuccess'] == true) {
                               showTopSnackBar(
                                 // ignore: use_build_context_synchronously
@@ -195,15 +195,15 @@ class _OtpScreenState extends State<OtpScreen> {
                                 ),
                                 displayDuration: const Duration(seconds: 0),
                               );
-                              Navigator.push(
-                                // ignore: use_build_context_synchronously
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterScreen(
-                                    email: widget.email,
-                                  ),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   // ignore: use_build_context_synchronously
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => RegisterScreen(
+                              //       email: widget.email,
+                              //     ),
+                              //   ),
+                              // );
                             } else if (dataResponse['error'] ==
                                 'Invalid code') {
                               showTopSnackBar(
@@ -254,7 +254,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           ? () async {
                               _resetTimer();
                               var dataResponse =
-                                  await AuthApi().sendOTP(widget.email);
+                                  await AuthApi().sendOTPForgotPassword(widget.email);
                               if (dataResponse['isSuccess'] == true) {
                                 showTopSnackBar(
                                   // ignore: use_build_context_synchronously

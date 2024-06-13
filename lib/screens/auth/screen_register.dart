@@ -120,9 +120,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 40.0),
                       Container(
                         width: double.infinity,
-                        height: 50,
+                        height: 45,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
+                          borderRadius: BorderRadius.circular(12.0),
                           color: buttonBackgroundColor,
                         ),
                         child: InkWell(

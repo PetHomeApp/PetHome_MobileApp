@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
+import 'package:pethome_mobileapp/screens/auth/screen_otp_forgot_password.dart';
 import 'package:pethome_mobileapp/screens/screen_homepage.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
+import 'package:pethome_mobileapp/services/utils/validate_email.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_text.dart';
 import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
@@ -101,7 +103,69 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          if (_emailEdititngController.text == "") {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Vui lòng nhập email!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          } else if (!validateEmail(
+                              _emailEdititngController.text)) {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message:
+                                    'Email không hợp lệ! Vui lòng nhập lại!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                            return;
+                          } else {
+                            var dataResponse = await AuthApi()
+                                .sendOTPForgotPassword(
+                                    _emailEdititngController.text);
+
+                            if (dataResponse['isSuccess'] == true) {
+                              Navigator.push(
+                              // ignore: use_build_context_synchronously
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ForgotPasswordOtpScreen(
+                                  email: _emailEdititngController.text,
+                                  expiredAt:
+                                      dataResponse['expiredAt'].toString(),
+                                  token: dataResponse['token'].toString(),
+                                ),
+                              ),
+                            );
+                            } else if (dataResponse['message'] ==
+                                'Email chưa tồn tại!') {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.error(
+                                  message:
+                                      'Email chưa tồn tại! Vui lòng nhập email khác!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                            } else {
+                              showTopSnackBar(
+                                // ignore: use_build_context_synchronously
+                                Overlay.of(context),
+                                const CustomSnackBar.error(
+                                  message: 'Có lỗi xảy ra! Vui lòng thử lại!',
+                                ),
+                                displayDuration: const Duration(seconds: 0),
+                              );
+                            }
+                          }
+                        },
                         child: const Text(
                           'Quên mật khẩu?',
                           style: TextStyle(
@@ -113,9 +177,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: 50,
+                      height: 45,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(12.0),
                         color: buttonBackgroundColor,
                       ),
                       child: InkWell(
@@ -153,7 +217,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               // ignore: use_build_context_synchronously
                               Navigator.of(context).pushReplacement(
                                 MaterialPageRoute(
-                                    builder: (context) => const MainScreen(initialIndex: 0)),
+                                    builder: (context) =>
+                                        const MainScreen(initialIndex: 0)),
                               );
                             } else {
                               showTopSnackBar(
