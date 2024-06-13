@@ -6,6 +6,7 @@ import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/address/screen_list_address.dart';
+import 'package:pethome_mobileapp/screens/my/screen_change_password.dart';
 import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
@@ -647,7 +648,13 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const ChangePasswordScreen(),
+                              ));
+                        },
                         child: Container(
                           decoration: const BoxDecoration(
                             border: Border(

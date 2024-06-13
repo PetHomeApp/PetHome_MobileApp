@@ -232,4 +232,43 @@ class UserApi {
       return {'isSuccess': false};
     }
   }
+
+  Future<Map<String, dynamic>> changePassword(
+      String oldPassword, String newPassword) async {
+    var url = Uri.parse('${authApiUrl}jwt/change_pass');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+        body: json.encode({
+          'password': oldPassword,
+          'new_password': newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        if (response.statusCode == 401) {
+          return {'isSuccess': false, 'message': 'Mật khẩu cũ không đúng'};
+        }
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
 }

@@ -195,8 +195,6 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                                 ),
                                 displayDuration: const Duration(seconds: 0),
                               );
-                              print(dataResponse['expiredAt'].toString());
-                              print(dataResponse['token'].toString());
                               Navigator.push(
                                 // ignore: use_build_context_synchronously
                                 context,
