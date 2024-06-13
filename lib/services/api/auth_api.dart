@@ -207,7 +207,7 @@ class AuthApi {
 
   // Forgot password
   Future<Map<String, Object?>> sendOTPForgotPassword(String email) async {
-     try {
+    try {
       var url = Uri.parse('${authApiUrl}jwt/resetpass_send_code');
       final response = await http.post(url,
           headers: {'Content-Type': 'application/json'},
@@ -240,7 +240,8 @@ class AuthApi {
     }
   }
 
-  Future<Map<String, Object?>> verifyOTPForgotPassword(String code, String token) async {
+  Future<Map<String, Object?>> verifyOTPForgotPassword(
+      String code, String token) async {
     try {
       var url = Uri.parse('${authApiUrl}jwt/resetpass_verify_code');
       final response = await http.post(url,
@@ -259,6 +260,40 @@ class AuthApi {
           'message': map['message'],
           'token': map['token'],
           'expiredAt': map['expiredAt'],
+        };
+      } else {
+        String data = response.body;
+        Map<String, Object?> map = json.decode(data);
+        return {
+          'isSuccess': false,
+          'error': map['error'],
+        };
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  Future<Map<String, Object?>> resetPassword(
+      String password, String token) async {
+    try {
+      var url = Uri.parse('${authApiUrl}jwt/resetpass_change_pass');
+      final response = await http.post(url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token,
+          },
+          body: json.encode({'new_password': password}));
+
+      if (response.statusCode == 200) {
+        String data = response.body;
+        Map<String, Object?> map = json.decode(data);
+        return {
+          'isSuccess': true,
+          'message': map['message'],
         };
       } else {
         String data = response.body;

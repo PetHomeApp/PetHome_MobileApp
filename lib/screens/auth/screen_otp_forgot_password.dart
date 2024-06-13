@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:pethome_mobileapp/screens/auth/screen_forgot_password.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
@@ -67,7 +68,6 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
 
   @override
   void dispose() {
-    _timer.cancel();
     super.dispose();
   }
 
@@ -153,9 +153,9 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                     ),
                     Container(
                       width: double.infinity,
-                      height: 50,
+                      height: 45,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(12.0),
                         color: buttonBackgroundColor,
                       ),
                       child: InkWell(
@@ -195,15 +195,19 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
                                 ),
                                 displayDuration: const Duration(seconds: 0),
                               );
-                              // Navigator.push(
-                              //   // ignore: use_build_context_synchronously
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => RegisterScreen(
-                              //       email: widget.email,
-                              //     ),
-                              //   ),
-                              // );
+                              print(dataResponse['expiredAt'].toString());
+                              print(dataResponse['token'].toString());
+                              Navigator.push(
+                                // ignore: use_build_context_synchronously
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordScreen(
+                                    email: widget.email,
+                                    expiredAt: dataResponse['expiredAt'].toString(),
+                                    token: dataResponse['token'].toString(),
+                                  ),
+                                ),
+                              );
                             } else if (dataResponse['error'] ==
                                 'Invalid code') {
                               showTopSnackBar(
