@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_add_pet.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_pet_infor.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_service_infor.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:pethome_mobileapp/widgets/shop/product/pet/pet_active_of_shop.dart';
-import 'package:pethome_mobileapp/widgets/shop/product/pet/pet_request_of_shop.dart';
+import 'package:pethome_mobileapp/widgets/shop/product/service/service_active_of_shop.dart';
+import 'package:pethome_mobileapp/widgets/shop/product/service/service_request_of_shop.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class ManagerPetScreen extends StatefulWidget {
-  final Function(bool) updateBottomBarVisibility;
+class ManagerServiceByTypeScreen extends StatefulWidget {
   final String shopId;
-  const ManagerPetScreen(
+  final String title;
+  final int serviceTypeDetailId;
+
+  const ManagerServiceByTypeScreen(
       {super.key,
-      required this.updateBottomBarVisibility,
-      required this.shopId});
+      required this.shopId,
+      required this.serviceTypeDetailId,
+      required this.title});
 
   @override
-  State<ManagerPetScreen> createState() => _ManagerPetScreenState();
+  State<ManagerServiceByTypeScreen> createState() =>
+      _ManagerServiceByTypeScreenState();
 }
 
-class _ManagerPetScreenState extends State<ManagerPetScreen>
-    with TickerProviderStateMixin {
-  List<PetInCard> listPetActiveInCards = List.empty(growable: true);
-  List<PetInCard> listPetRequestInCards = List.empty(growable: true);
+class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
+    with SingleTickerProviderStateMixin {
+  List<ServiceInCard> servicesActive = List.empty(growable: true);
+  List<ServiceInCard> servicesRequest = List.empty(growable: true);
 
   final ScrollController _scrollActiveController = ScrollController();
   final ScrollController _scrollRequestController = ScrollController();
-
-  final TextEditingController _searchController = TextEditingController();
-
-  bool _isBottomBarVisible = true;
 
   int currentPageActive = 0;
   int currentPageRequest = 0;
@@ -48,10 +46,8 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
   @override
   void initState() {
     super.initState();
-    _scrollActiveController.addListener(_onScrollActive);
     _scrollActiveController.addListener(_listenerScrollActive);
 
-    _scrollRequestController.addListener(_onScrollRequest);
     _scrollRequestController.addListener(_listenerScrollRequest);
 
     _tabController = TabController(length: 2, vsync: this);
@@ -91,8 +87,8 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     }
 
     loadingActive = true;
-    final res = await ShopApi()
-        .getListPetActiveInShop(widget.shopId, 10, currentPageActive * 10);
+    final res = await ShopApi().getListServiceActiveInShop(
+        widget.serviceTypeDetailId, widget.shopId, 10, currentPageActive * 10);
 
     if (res['isSuccess'] == false) {
       setState(() {
@@ -102,10 +98,10 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     }
 
     countActive = res['count'];
-    final List<PetInCard> pets = res['data'];
+    final List<ServiceInCard> services = res['data'];
 
     setState(() {
-      listPetActiveInCards.addAll(pets);
+      servicesActive.addAll(services);
       currentPageActive++;
       loadingActive = false;
     });
@@ -121,8 +117,8 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     });
 
     loadingRequest = true;
-    final res = await ShopApi()
-        .getListPetRequestInShop(widget.shopId, 10, currentPageRequest * 10);
+    final res = await ShopApi().getListServiceRequestInShop(
+        widget.serviceTypeDetailId, widget.shopId, 10, currentPageRequest * 10);
 
     if (res['isSuccess'] == false) {
       setState(() {
@@ -132,53 +128,13 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     }
 
     countRequest = res['count'];
-    final List<PetInCard> pets = res['data'];
+    final List<ServiceInCard> services = res['data'];
 
     setState(() {
-      listPetRequestInCards.addAll(pets);
+      servicesRequest.addAll(services);
       currentPageRequest++;
       loadingRequest = false;
     });
-  }
-
-  void _onScrollActive() {
-    if (_scrollActiveController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = false;
-          widget.updateBottomBarVisibility(false);
-        });
-      }
-    } else if (_scrollActiveController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = true;
-          widget.updateBottomBarVisibility(true);
-        });
-      }
-    }
-  }
-
-  void _onScrollRequest() {
-    if (_scrollRequestController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = false;
-          widget.updateBottomBarVisibility(false);
-        });
-      }
-    } else if (_scrollRequestController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = true;
-          widget.updateBottomBarVisibility(true);
-        });
-      }
-    }
   }
 
   @override
@@ -198,66 +154,10 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
               Navigator.of(context).pop();
             },
           ),
-          title: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập để tìm kiếm...',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  String searchKey = _searchController.text;
-                  if (searchKey.isEmpty) {
-                    showTopSnackBar(
-                      // ignore: use_build_context_synchronously
-                      Overlay.of(context),
-                      const CustomSnackBar.error(
-                        message: 'Vui lòng nhập thông tin tìm kiếm!',
-                      ),
-                      displayDuration: const Duration(seconds: 0),
-                    );
-                    return;
-                  }
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //   builder: (context) =>
-                  //       PetSearchAndFilterScreen(title: searchKey),
-                  // ));
-                  _searchController.clear();
-                },
-                icon: const Icon(
-                  Icons.search,
-                  size: 30,
-                  color: iconButtonColor,
-                ),
-              ),
-              // Insert icon button
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                    builder: (context) => const AddPetScreen(),
-                  ))
-                      .then((value) {
-                    listPetRequestInCards.clear();
-                    currentPageRequest = 0;
-                    getListPetRequiredInShop();
-                  });
-                },
-                icon: const Icon(
-                  Icons.add,
-                  size: 30,
-                  color: iconButtonColor,
-                ),
-              ),
-            ],
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
@@ -279,7 +179,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                 unselectedLabelColor: Colors.black,
                 tabs: [
                   Tab(
-                    text: 'Thú cưng của bạn ($countActive)',
+                    text: 'Dịch vụ của bạn ($countActive)',
                   ),
                   Tab(
                     text: 'Đang yêu cầu ($countRequest)',
@@ -298,7 +198,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                       color: buttonBackgroundColor,
                     ),
                   )
-                : listPetActiveInCards.isEmpty
+                : servicesActive.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -311,7 +211,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Cửa hàng của bạn chưa có Thú cưng nào!',
+                              'Cửa hàng của bạn chưa có Dịch vụ nào!',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -326,20 +226,20 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                           parent: BouncingScrollPhysics(),
                         ),
                         controller: _scrollActiveController,
-                        itemCount: listPetActiveInCards.length,
+                        itemCount: servicesActive.length,
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => PetInforScreen(
-                                  idPet: listPetActiveInCards[index].idPet,
+                                builder: (context) => ServiceInforScreen(
+                                  idService: servicesActive[index].idService,
                                 ),
                               ));
                             },
-                            child: PetActiveOfShopWidget(
-                                petInCard: listPetActiveInCards[index],
+                            child: ServiceActiveOfShopWidget(
+                                serviceInCard: servicesActive[index],
                                 onRemove: () {
                                   showDialog(
                                     context: context,
@@ -347,7 +247,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                       return AlertDialog(
                                         title: const Text("Xác nhận"),
                                         content: const Text(
-                                            "Bạn có chắc chắn muốn xóa thú cưng khỏi cửa hàng không?"),
+                                            "Bạn có chắc chắn muốn xóa dịch vụ khỏi cửa hàng không?"),
                                         actions: <Widget>[
                                           TextButton(
                                             onPressed: () {
@@ -361,24 +261,23 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                           TextButton(
                                             onPressed: () async {
                                               var res = await ShopApi()
-                                                  .deletePet(
-                                                      listPetActiveInCards[
-                                                              index]
-                                                          .idPet);
+                                                  .deleteService(
+                                                      servicesActive[index]
+                                                          .idService);
                                               if (res['isSuccess']) {
                                                 showTopSnackBar(
                                                   // ignore: use_build_context_synchronously
                                                   Overlay.of(context),
                                                   const CustomSnackBar.success(
                                                     message:
-                                                        'Xóa Thú cưng thành công!',
+                                                        'Xóa Dịch vụ thành công!',
                                                   ),
                                                   displayDuration:
                                                       const Duration(
                                                           seconds: 0),
                                                 );
                                                 setState(() {
-                                                  listPetActiveInCards
+                                                  servicesActive
                                                       .removeAt(index);
                                                   countActive--;
                                                 });
@@ -418,7 +317,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                       color: buttonBackgroundColor,
                     ),
                   )
-                : listPetRequestInCards.isEmpty
+                : servicesRequest.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -431,7 +330,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Bạn chưa gửi yêu cầu Thú cưng nào!',
+                              'Bạn chưa gửi yêu cầu Dịch vụ nào!',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -446,88 +345,85 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                           parent: BouncingScrollPhysics(),
                         ),
                         controller: _scrollRequestController,
-                        itemCount: listPetRequestInCards.length,
+                        itemCount: servicesRequest.length,
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => PetInforScreen(
-                                  idPet: listPetRequestInCards[index].idPet,
+                                builder: (context) => ServiceInforScreen(
+                                  idService: servicesRequest[index].idService,
                                 ),
                               ));
                             },
-                            child: PetRequestOfShopWidget(
-                                petInCard: listPetRequestInCards[index],
-                                onRemove: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Xác nhận"),
-                                        content: const Text(
-                                            "Bạn có chắc chắn muốn xóa thú cưng khỏi cửa hàng không?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("Không",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 84, 84, 84))),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              var res = await ShopApi()
-                                                  .deletePet(
-                                                      listPetRequestInCards[
-                                                              index]
-                                                          .idPet);
-                                              if (res['isSuccess']) {
-                                                showTopSnackBar(
-                                                  // ignore: use_build_context_synchronously
-                                                  Overlay.of(context),
-                                                  const CustomSnackBar.success(
-                                                    message:
-                                                        'Xóa Thú cưng thành công!',
-                                                  ),
-                                                  displayDuration:
-                                                      const Duration(
-                                                          seconds: 0),
-                                                );
-                                                setState(() {
-                                                  listPetRequestInCards
-                                                      .removeAt(index);
-                                                  countRequest--;
-                                                });
+                            child: ServiceRequestOfShopWidget(
+                              serviceInCard: servicesRequest[index],
+                              onRemove: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Xác nhận"),
+                                      content: const Text(
+                                          "Bạn có chắc chắn muốn xóa dịch vụ khỏi cửa hàng không?"),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text("Không",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 84, 84, 84))),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            var res = await ShopApi()
+                                                .deleteService(
+                                                    servicesRequest[index]
+                                                        .idService);
+                                            if (res['isSuccess']) {
+                                              showTopSnackBar(
                                                 // ignore: use_build_context_synchronously
-                                                Navigator.of(context).pop();
-                                              } else {
-                                                showTopSnackBar(
-                                                  // ignore: use_build_context_synchronously
-                                                  Overlay.of(context),
-                                                  const CustomSnackBar.error(
-                                                    message:
-                                                        'Đã xảy ra lỗi, vui lòng thử lại sau!',
-                                                  ),
-                                                  displayDuration:
-                                                      const Duration(
-                                                          seconds: 0),
-                                                );
-                                              }
-                                            },
-                                            child: const Text("Xóa",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 209, 87, 78))),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }),
+                                                Overlay.of(context),
+                                                const CustomSnackBar.success(
+                                                  message:
+                                                      'Xóa Dịch vụ thành công!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                              setState(() {
+                                                servicesRequest.removeAt(index);
+                                                countRequest--;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context).pop();
+                                            } else {
+                                              showTopSnackBar(
+                                                // ignore: use_build_context_synchronously
+                                                Overlay.of(context),
+                                                const CustomSnackBar.error(
+                                                  message:
+                                                      'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                            }
+                                          },
+                                          child: const Text("Xóa",
+                                              style: TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 209, 87, 78))),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           );
                         },
                       ),

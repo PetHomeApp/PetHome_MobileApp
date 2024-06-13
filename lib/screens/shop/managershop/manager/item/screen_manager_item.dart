@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_item_infor.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/product/item/item_active_of_shop.dart';
@@ -329,74 +330,83 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
-                          return ItemActiveOfShopWidget(
-                              itemInCard: listItemsActiveInCard[index],
-                              onRemove: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Xác nhận"),
-                                      content: const Text(
-                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi Cửa hàng không?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Không",
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 84, 84, 84))),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            var res = await ShopApi()
-                                                .deleteItem(
-                                                    listItemsActiveInCard[index]
-                                                        .idItem);
-                                            if (res['isSuccess']) {
-                                              showTopSnackBar(
-                                                // ignore: use_build_context_synchronously
-                                                Overlay.of(context),
-                                                const CustomSnackBar.success(
-                                                  message:
-                                                      'Xóa Vật phẩm thành công!',
-                                                ),
-                                                displayDuration:
-                                                    const Duration(seconds: 0),
-                                              );
-                                              setState(() {
-                                                listItemsActiveInCard
-                                                    .removeAt(index);
-                                                countActive--;
-                                              });
-                                              // ignore: use_build_context_synchronously
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ItemInforScreen(
+                                  idItem: listItemsActiveInCard[index].idItem,
+                                ),
+                              ));
+                            },
+                            child: ItemActiveOfShopWidget(
+                                itemInCard: listItemsActiveInCard[index],
+                                onRemove: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Xác nhận"),
+                                        content: const Text(
+                                            "Bạn có chắc chắn muốn xóa thú cưng khỏi cửa hàng không?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
                                               Navigator.of(context).pop();
-                                            } else {
-                                              showTopSnackBar(
+                                            },
+                                            child: const Text("Không",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 84, 84, 84))),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              var res = await ShopApi()
+                                                  .deleteItem(
+                                                      listItemsActiveInCard[index]
+                                                          .idItem);
+                                              if (res['isSuccess']) {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.success(
+                                                    message:
+                                                        'Xóa Vật phẩm thành công!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(seconds: 0),
+                                                );
+                                                setState(() {
+                                                  listItemsActiveInCard
+                                                      .removeAt(index);
+                                                  countActive--;
+                                                });
                                                 // ignore: use_build_context_synchronously
-                                                Overlay.of(context),
-                                                const CustomSnackBar.error(
-                                                  message:
-                                                      'Đã xảy ra lỗi, vui lòng thử lại sau!',
-                                                ),
-                                                displayDuration:
-                                                    const Duration(seconds: 0),
-                                              );
-                                            }
-                                          },
-                                          child: const Text("Xóa",
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 209, 87, 78))),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              onEdit: () {});
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.error(
+                                                    message:
+                                                        'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(seconds: 0),
+                                                );
+                                              }
+                                            },
+                                            child: const Text("Xóa",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 209, 87, 78))),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                onEdit: () {}),
+                          );
                         },
                       ),
             loadingRequest
@@ -437,74 +447,83 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                         shrinkWrap: true,
                         padding: const EdgeInsets.only(top: 16),
                         itemBuilder: (context, index) {
-                          return ItemRequestOfShopWidget(
-                              itemInCard: listItemsRequestInCard[index],
-                              onRemove: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text("Xác nhận"),
-                                      content: const Text(
-                                          "Bạn có chắc chắn muốn xóa thú cưng khỏi Cửa hàng không?"),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text("Không",
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 84, 84, 84))),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            var res = await ShopApi()
-                                                .deleteItem(
-                                                    listItemsRequestInCard[
-                                                            index]
-                                                        .idItem);
-                                            if (res['isSuccess']) {
-                                              showTopSnackBar(
-                                                // ignore: use_build_context_synchronously
-                                                Overlay.of(context),
-                                                const CustomSnackBar.success(
-                                                  message:
-                                                      'Xóa Vật phẩm thành công!',
-                                                ),
-                                                displayDuration:
-                                                    const Duration(seconds: 0),
-                                              );
-                                              setState(() {
-                                                listItemsRequestInCard
-                                                    .removeAt(index);
-                                                countRequest--;
-                                              });
-                                              // ignore: use_build_context_synchronously
+                          return InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ItemInforScreen(
+                                  idItem: listItemsRequestInCard[index].idItem,
+                                ),
+                              ));
+                            },
+                            child: ItemRequestOfShopWidget(
+                                itemInCard: listItemsRequestInCard[index],
+                                onRemove: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Xác nhận"),
+                                        content: const Text(
+                                            "Bạn có chắc chắn muốn xóa thú cưng khỏi cửa hàng không?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
                                               Navigator.of(context).pop();
-                                            } else {
-                                              showTopSnackBar(
+                                            },
+                                            child: const Text("Không",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 84, 84, 84))),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              var res = await ShopApi()
+                                                  .deleteItem(
+                                                      listItemsRequestInCard[
+                                                              index]
+                                                          .idItem);
+                                              if (res['isSuccess']) {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.success(
+                                                    message:
+                                                        'Xóa Vật phẩm thành công!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(seconds: 0),
+                                                );
+                                                setState(() {
+                                                  listItemsRequestInCard
+                                                      .removeAt(index);
+                                                  countRequest--;
+                                                });
                                                 // ignore: use_build_context_synchronously
-                                                Overlay.of(context),
-                                                const CustomSnackBar.error(
-                                                  message:
-                                                      'Đã xảy ra lỗi, vui lòng thử lại sau!',
-                                                ),
-                                                displayDuration:
-                                                    const Duration(seconds: 0),
-                                              );
-                                            }
-                                          },
-                                          child: const Text("Xóa",
-                                              style: TextStyle(
-                                                  color: Color.fromARGB(
-                                                      255, 209, 87, 78))),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              });
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.error(
+                                                    message:
+                                                        'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(seconds: 0),
+                                                );
+                                              }
+                                            },
+                                            child: const Text("Xóa",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 209, 87, 78))),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }),
+                          );
                         },
                       ),
           ],

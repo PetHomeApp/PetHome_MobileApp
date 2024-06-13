@@ -1,64 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
-import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
-import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
-import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
-import 'package:pethome_mobileapp/services/api/cart_api.dart';
-import 'package:pethome_mobileapp/services/api/chat_api.dart';
-import 'package:pethome_mobileapp/services/api/pet_api.dart';
-import 'package:pethome_mobileapp/services/api/shop_api.dart';
-import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
-import 'package:readmore/readmore.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_detail.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
+import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
+import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
+import 'package:readmore/readmore.dart';
 
-class PetDetailScreen extends StatefulWidget {
-  const PetDetailScreen(
-      {super.key, required this.idPet, required this.showCartIcon});
-  final String idPet;
-  final bool showCartIcon;
+class ItemInforScreen extends StatefulWidget {
+  const ItemInforScreen({super.key, required this.idItem});
+  final String idItem;
 
   @override
-  // ignore: library_private_types_in_public_api
-  _PetDetailScreenState createState() => _PetDetailScreenState();
+  State<ItemInforScreen> createState() => _ItemInforScreenState();
 }
 
-class _PetDetailScreenState extends State<PetDetailScreen> {
+class _ItemInforScreenState extends State<ItemInforScreen> {
   final _controller = PageController();
   final _currentPageNotifier = ValueNotifier<int>(1);
 
-  late PetDetail petDetail;
+  late ItemDetail itemDetail;
   late List<String> imageUrlDescriptions;
+  List<DetailItemClassify> detailItemClassifyList = [];
 
   bool loading = false;
-  bool checkRated = false;
+  int selectedDetail = 0;
 
-  bool hasMessage = false;
+  int price = 0;
+  bool instock = false;
 
   @override
   void initState() {
     super.initState();
     _controller.addListener(() {
-      _currentPageNotifier.value = (_controller.page!.round() + 1);
+      _currentPageNotifier.value = _controller.page!.round() + 1;
     });
-    getPetDetail();
+    getItemDetail();
   }
 
-  Future<void> getPetDetail() async {
+  void getItemDetail() async {
     if (loading) {
       return;
     }
 
     loading = true;
-    petDetail = await PetApi().getPetDetail(widget.idPet);
-    checkRated = await PetApi().checkRated(widget.idPet);
+    itemDetail = await ItemApi().getItemDetail(widget.idItem);
 
     // ignore: unnecessary_null_comparison
-    if (petDetail == null) {
+    if (itemDetail == null) {
       loading = false;
       return;
     }
@@ -66,60 +56,17 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     if (mounted) {
       setState(() {
         imageUrlDescriptions = [];
-        imageUrlDescriptions.add(petDetail.imageUrl.toString());
-        imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions);
+        imageUrlDescriptions.add(itemDetail.imageUrl.toString());
+        imageUrlDescriptions.addAll(itemDetail.imageUrlDescriptions);
+
+        detailItemClassifyList = itemDetail.details;
+        detailItemClassifyList
+            .sort((a, b) => a.orderItem.compareTo(b.orderItem));
+
+        price = detailItemClassifyList[selectedDetail].price;
+        instock = detailItemClassifyList[selectedDetail].instock;
         loading = false;
       });
-    }
-  }
-
-  Future<bool> checkUserIsShop() async {
-    if (loading) {
-      return true;
-    }
-
-    loading = true;
-    ShopApi shopApi = ShopApi();
-    final dataResponse = await shopApi.checkIsActiveShop();
-
-    if (dataResponse['isSuccess'] == true) {
-      loading = false;
-      if (petDetail.idShop == dataResponse['shopId']) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      loading = false;
-      return true;
-    }
-  }
-
-  Future<ShopInfor> getShopInfor(String idShop) async {
-    if (loading) {
-      return ShopInfor(
-        idShop: '',
-        name: '',
-        logo: '',
-        areas: [],
-      );
-    }
-
-    loading = true;
-    ShopApi shopApi = ShopApi();
-    final dataResponse = await shopApi.getShopInfor(idShop);
-
-    if (dataResponse['isSuccess'] == true) {
-      loading = false;
-      return ShopInfor.fromJson(dataResponse['shopInfor']);
-    } else {
-      loading = false;
-      return ShopInfor(
-        idShop: '',
-        name: '',
-        logo: '',
-        areas: [],
-      );
     }
   }
 
@@ -167,18 +114,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   ),
                 ),
               ),
-              actions: <Widget>[
-                if (widget.showCartIcon)
-                  IconButton(
-                    icon: const Icon(Icons.shopping_cart,
-                        color: iconButtonColor, size: 30),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const CartHomePageScreen(),
-                      ));
-                    },
-                  ),
-              ],
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -257,7 +192,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  petDetail.name,
+                                  itemDetail.name,
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -265,9 +200,75 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  petDetail.shop.name,
+                                  itemDetail.shop.name,
                                   style: const TextStyle(
                                     fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 0,
+                                        right: 10,
+                                        top: 10,
+                                        bottom: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Wrap(
+                                          spacing: 8.0,
+                                          runSpacing: 8.0,
+                                          children: detailItemClassifyList
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                            int index = entry.key;
+                                            DetailItemClassify
+                                                detailItemClassify =
+                                                entry.value;
+
+                                            return InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedDetail = index;
+                                                  price =
+                                                      detailItemClassify.price;
+                                                  instock = detailItemClassify
+                                                      .instock;
+                                                });
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 5, 10, 5),
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: selectedDetail ==
+                                                            index
+                                                        ? buttonBackgroundColor
+                                                        : Colors.grey,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  '${detailItemClassify.size} ${itemDetail.unit}',
+                                                  style: TextStyle(
+                                                    color: selectedDetail ==
+                                                            index
+                                                        ? buttonBackgroundColor
+                                                        : Colors.black,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 15),
@@ -276,7 +277,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '${NumberFormat('#,##0', 'vi').format(petDetail.price)} VNĐ',
+                                      '${NumberFormat('#,##0', 'vi').format(price)} VNĐ',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
@@ -288,13 +289,12 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: petDetail.inStock
-                                            ? Colors.green
-                                            : Colors.red,
+                                        color:
+                                            instock ? Colors.green : Colors.red,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        petDetail.inStock
+                                        instock
                                             ? '  Còn hàng  '
                                             : '  Hết hàng  ',
                                         style: const TextStyle(
@@ -352,7 +352,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: ReadMoreText(
-                              petDetail.description,
+                              itemDetail.description,
                               trimLength: 250,
                               trimCollapsedText: "Xem thêm",
                               trimExpandedText: "Rút gọn",
@@ -418,8 +418,12 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               children: [
                                 Row(
                                   children: [
+                                    // ignore: prefer_interpolation_to_compose_strings
                                     Text(
-                                      "${petDetail.averageRate.toStringAsFixed(1)}/5.0",
+                                      // ignore: prefer_interpolation_to_compose_strings
+                                      itemDetail.averageRating
+                                              .toStringAsFixed(1) +
+                                          "/5.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -427,7 +431,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      "(${petDetail.totalRate} đánh giá)",
+                                      "(${itemDetail.totalRate} đánh giá)",
                                       style: const TextStyle(
                                           color: buttonBackgroundColor,
                                           fontWeight: FontWeight.bold,
@@ -435,87 +439,28 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                     ),
                                   ],
                                 ),
-                                RateList(rates: petDetail.rates),
+                                RateList(rates: itemDetail.rates),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) => AllRatingScreen(
-                                        id: petDetail.idPet,
-                                        name: petDetail.name,
-                                        imageUrl: petDetail.imageUrl,
-                                        productType: 'pet',
-                                        averageRate: petDetail.averageRate,
-                                        totalRate: petDetail.totalRate,
-                                      ),
+                                          id: itemDetail.idItem,
+                                          name: itemDetail.name,
+                                          imageUrl: itemDetail.imageUrl,
+                                          productType: 'item',
+                                          averageRate: itemDetail.averageRating,
+                                          totalRate: itemDetail.totalRate),
                                     ));
                                   },
                                   child: Text(
-                                    'Tất cả đánh giá (${petDetail.totalRate})',
+                                    'Tất cả đánh giá (${itemDetail.totalRate})',
                                     style: const TextStyle(
                                       color: buttonBackgroundColor,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: buttonBackgroundColor,
-                                  ),
-                                  child: checkRated
-                                      ? const Center(
-                                          child: Text(
-                                            'Bạn đã đánh giá sản phẩm này!',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        )
-                                      : InkWell(
-                                          onTap: () async {
-                                            final result =
-                                                await showModalBottomSheet(
-                                              context: context,
-                                              isScrollControlled: true,
-                                              builder: (BuildContext context) {
-                                                return SingleChildScrollView(
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                              .viewInsets
-                                                              .bottom,
-                                                    ),
-                                                    child: SentPetRateWidget(
-                                                        petId: widget.idPet),
-                                                  ),
-                                                );
-                                              },
-                                            );
-
-                                            if (result != null &&
-                                                result == true) {
-                                              setState(() {
-                                                checkRated = true;
-                                                getPetDetail();
-                                              });
-                                            }
-                                          },
-                                          child: const Center(
-                                            child: Text(
-                                              'Viết đánh giá',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                 ),
                               ],
                             ),
@@ -526,131 +471,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   ],
                 ),
               ),
-            ),
-            bottomNavigationBar: Flex(
-              direction: Axis.horizontal,
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () async {
-                      bool isShop = await checkUserIsShop();
-                      if (isShop) {
-                        showTopSnackBar(
-                          // ignore: use_build_context_synchronously
-                          Overlay.of(context),
-                          const CustomSnackBar.error(
-                            message:
-                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
-                          ),
-                          displayDuration: const Duration(seconds: 0),
-                        );
-                      } else {
-                        ShopInfor shopInfor =
-                            await getShopInfor(petDetail.idShop);
-
-                        var res = await ChatApi()
-                            .checkMessageWithShop(petDetail.idShop);
-
-                        if (res['isSuccess'] == true) {
-                          hasMessage = res['has_messages'];
-                        } else {
-                          //
-                        }
-                        Navigator.push(
-                          // ignore: use_build_context_synchronously
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatDetailWithShopScreen(
-                              avatar: shopInfor.logo,
-                              name: shopInfor.name,
-                              idShop: petDetail.idShop,
-                              isEmpty: !hasMessage,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Container(
-                      color: Colors.grey[100],
-                      child: const Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.chat,
-                              color: buttonBackgroundColor,
-                            ),
-                            Text(
-                              'Liên hệ Shop',
-                              style: TextStyle(color: buttonBackgroundColor),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () async {
-                      var result = await CartApi().addPetToCart(widget.idPet);
-                      if (result['isSuccess'] == true) {
-                        showTopSnackBar(
-                          // ignore: use_build_context_synchronously
-                          Overlay.of(context),
-                          const CustomSnackBar.success(
-                            message: 'Đã thêm vào giỏ hàng',
-                          ),
-                          displayDuration: const Duration(seconds: 0),
-                        );
-                      } else if (result['isSuccess'] == false &&
-                          result['message'] == 'Pet already in cart') {
-                        showTopSnackBar(
-                          // ignore: use_build_context_synchronously
-                          Overlay.of(context),
-                          const CustomSnackBar.error(
-                            message: 'Thú cưng đã có trong giỏ hàng',
-                          ),
-                          displayDuration: const Duration(seconds: 0),
-                        );
-                      } else {
-                        showTopSnackBar(
-                          // ignore: use_build_context_synchronously
-                          Overlay.of(context),
-                          const CustomSnackBar.error(
-                            message: 'Lỗi khi thêm vào giỏ hàng',
-                          ),
-                          displayDuration: const Duration(seconds: 0),
-                        );
-                      }
-                    },
-                    child: Container(
-                      color: buttonBackgroundColor,
-                      child: const Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Icon(
-                              Icons.shopping_cart,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              'Thêm vào Giỏ hàng',
-                              style: TextStyle(color: Colors.white),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
           );
   }

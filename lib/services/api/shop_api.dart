@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -274,7 +275,6 @@ class ShopApi {
         return {'isSuccess': false, 'data': items, 'count': 0};
       }
 
-
       for (var item in data['data']) {
         items.add(ItemInCard.fromJson(item));
       }
@@ -318,6 +318,76 @@ class ShopApi {
       return {'isSuccess': true, 'data': items, 'count': count};
     } else {
       throw Exception('Failed to load items');
+    }
+  }
+
+  Future<Map<String, dynamic>> getListServiceActiveInShop(
+      int serviceTypeDetailID, String shopId, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/services?limit=$limit&start=$start&status=active&serviceTypeDetailID=$serviceTypeDetailID');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ServiceInCard> services = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': services, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': services, 'count': 0};
+      }
+
+      for (var service in data['data']) {
+        services.add(ServiceInCard.fromJson(service));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': services, 'count': count};
+    } else {
+      throw Exception('Failed to load services');
+    }
+  }
+
+  Future<Map<String, dynamic>> getListServiceRequestInShop(
+      int serviceTypeDetailID, String shopId, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/services?limit=$limit&start=$start&status=requested&serviceTypeDetailID=$serviceTypeDetailID');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ServiceInCard> services = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': services, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': services, 'count': 0};
+      }
+
+      for (var service in data['data']) {
+        services.add(ServiceInCard.fromJson(service));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': services, 'count': count};
+    } else {
+      throw Exception('Failed to load services');
     }
   }
 
@@ -405,6 +475,37 @@ class ShopApi {
 
   Future<Map<String, dynamic>> deleteItem(String itemId) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/items/$itemId/remove');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteService(String serviceId) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/services/$serviceId/remove');
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();

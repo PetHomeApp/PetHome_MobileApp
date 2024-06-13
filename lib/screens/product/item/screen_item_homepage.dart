@@ -370,7 +370,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                           return ListTile(
                             title: Text('${detail.name}  -  (${detail.count})',
                                 style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                 )),
                             onTap: () {

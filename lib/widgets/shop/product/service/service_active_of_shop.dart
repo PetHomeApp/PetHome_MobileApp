@@ -1,26 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
-class PetRequestOfShopWidget extends StatelessWidget {
-  final PetInCard petInCard;
+class ServiceActiveOfShopWidget extends StatelessWidget {
+  final ServiceInCard serviceInCard;
   final VoidCallback onRemove;
+  final VoidCallback onEdit;
   final formatter = NumberFormat("#,###", "vi_VN");
 
-  PetRequestOfShopWidget(
+  ServiceActiveOfShopWidget(
       {super.key,
-      required this.petInCard,
-      required this.onRemove});
+      required this.serviceInCard,
+      required this.onRemove,
+      required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
-        extentRatio: 0.3,
+        extentRatio: 0.6,
         children: [
+          SlidableAction(
+            onPressed: (context) {
+              onEdit();
+            },
+            icon: Icons.edit,
+            label: "Chỉnh sửa",
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.green,
+          ),
           SlidableAction(
             onPressed: (context) {
               onRemove();
@@ -38,7 +49,7 @@ class PetRequestOfShopWidget extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
               child: Image.network(
-                petInCard.imageUrl.toString(),
+                serviceInCard.picture.toString(),
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
@@ -63,7 +74,7 @@ class PetRequestOfShopWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Text(
-                        petInCard.name.toString(),
+                        serviceInCard.serviceName.toString(),
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
@@ -76,7 +87,7 @@ class PetRequestOfShopWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${NumberFormat('#,##0', 'vi').format(petInCard.price)} đ',
+                            '${NumberFormat('#,##0', 'vi').format(serviceInCard.minPrice)} đ - ${NumberFormat('#,##0', 'vi').format(serviceInCard.maxPrice)} đ',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -84,29 +95,6 @@ class PetRequestOfShopWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 5),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: petInCard.inStock
-                                    ? Colors.green
-                                    : Colors.red,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                petInCard.inStock
-                                    ? '  Còn hàng  '
-                                    : '  Hết hàng  ',
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),

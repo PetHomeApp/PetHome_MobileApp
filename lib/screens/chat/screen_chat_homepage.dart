@@ -211,7 +211,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
                               ),
                               SizedBox(height: 10),
                               Text(
-                                'Bạn không phải là Cửa hàng',
+                                'Bạn không phải là cửa hàng',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,

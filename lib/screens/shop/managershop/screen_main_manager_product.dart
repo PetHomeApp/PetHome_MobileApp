@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:pethome_mobileapp/screens/product/pet/screen_pet_homepage.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_manager_item.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_manager_pet.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_manager_service.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class MainManagerProductScreen extends StatefulWidget {
-  const MainManagerProductScreen({super.key, required this.initialIndex, required this.shopId});
+  const MainManagerProductScreen(
+      {super.key, required this.initialIndex, required this.shopId});
   final int initialIndex;
   final String shopId;
 
   @override
-  State<MainManagerProductScreen> createState() => _MainManagerProductScreenState();
+  State<MainManagerProductScreen> createState() =>
+      _MainManagerProductScreenState();
 }
 
 class _MainManagerProductScreenState extends State<MainManagerProductScreen> {
@@ -31,10 +33,16 @@ class _MainManagerProductScreenState extends State<MainManagerProductScreen> {
   }
 
   List<Widget> get _pages => [
-        ManagerPetScreen(updateBottomBarVisibility: updateBottomBarVisibility, shopId: widget.shopId),
-        ManagerItemScreen(updateBottomBarVisibility: updateBottomBarVisibility, shopId: widget.shopId),
-        PetHomeScreen(updateBottomBarVisibility: updateBottomBarVisibility),
-      ];  
+        ManagerPetScreen(
+            updateBottomBarVisibility: updateBottomBarVisibility,
+            shopId: widget.shopId),
+        ManagerItemScreen(
+            updateBottomBarVisibility: updateBottomBarVisibility,
+            shopId: widget.shopId),
+        ManagerServiceScreen(
+            updateBottomBarVisibility: updateBottomBarVisibility,
+            shopId: widget.shopId),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +55,21 @@ class _MainManagerProductScreenState extends State<MainManagerProductScreen> {
           child: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _currentIndex == 0 ?
-                const Icon(Icons.cruelty_free) : const Icon(Icons.cruelty_free_outlined),
+                icon: _currentIndex == 0
+                    ? const Icon(Icons.cruelty_free)
+                    : const Icon(Icons.cruelty_free_outlined),
                 label: 'Thú cưng',
               ),
               BottomNavigationBarItem(
-                icon: _currentIndex == 1 ?
-                const Icon(Icons.shopping_bag) : const Icon(Icons.shopping_bag_outlined),
+                icon: _currentIndex == 1
+                    ? const Icon(Icons.shopping_bag)
+                    : const Icon(Icons.shopping_bag_outlined),
                 label: 'Vật phẩm',
               ),
               BottomNavigationBarItem(
-                icon: _currentIndex == 2 ?
-                const Icon(Icons.medication_liquid) : const Icon(Icons.medication_liquid_sharp),
+                icon: _currentIndex == 2
+                    ? const Icon(Icons.medication_liquid)
+                    : const Icon(Icons.medication_liquid_sharp),
                 label: 'Dịch vụ',
               ),
             ],

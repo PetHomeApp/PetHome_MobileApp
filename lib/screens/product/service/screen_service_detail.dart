@@ -570,7 +570,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           Overlay.of(context),
                           const CustomSnackBar.error(
                             message:
-                                'Xin lỗi! Sản phẩm này thuộc Cửa hàng của bạn!',
+                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );

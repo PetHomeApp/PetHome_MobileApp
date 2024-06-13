@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pethome_mobileapp/model/product/pet/model_pet_detail.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
-import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:readmore/readmore.dart';
 
-class PetInforScreen extends StatefulWidget {
-  const PetInforScreen({super.key, required this.idPet});
-
-  final String idPet;
+class ServiceInforScreen extends StatefulWidget {
+  const ServiceInforScreen({super.key, required this.idService});
+  final String idService;
 
   @override
-  State<PetInforScreen> createState() => _PetInforScreenState();
+  State<ServiceInforScreen> createState() => _ServiceInforScreenState();
 }
 
-class _PetInforScreenState extends State<PetInforScreen> {
+class _ServiceInforScreenState extends State<ServiceInforScreen> {
   final _controller = PageController();
   final _currentPageNotifier = ValueNotifier<int>(1);
 
-  late PetDetail petDetail;
+  late ServiceDetail serviceDetail;
   late List<String> imageUrlDescriptions;
 
   bool loading = false;
@@ -40,10 +39,10 @@ class _PetInforScreenState extends State<PetInforScreen> {
     }
 
     loading = true;
-    petDetail = await PetApi().getPetDetail(widget.idPet);
+    serviceDetail = await ServiceApi().getServiceDetail(widget.idService);
 
     // ignore: unnecessary_null_comparison
-    if (petDetail == null) {
+    if (serviceDetail == null) {
       loading = false;
       return;
     }
@@ -51,8 +50,8 @@ class _PetInforScreenState extends State<PetInforScreen> {
     if (mounted) {
       setState(() {
         imageUrlDescriptions = [];
-        imageUrlDescriptions.add(petDetail.imageUrl.toString());
-        imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions);
+        imageUrlDescriptions.add(serviceDetail.picture);
+        imageUrlDescriptions.addAll(serviceDetail.images);
         loading = false;
       });
     }
@@ -82,7 +81,7 @@ class _PetInforScreenState extends State<PetInforScreen> {
                 },
               ),
               title: const Text(
-                "Thông tin sản phẩm",
+                "Thông tin dịch vụ",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -180,17 +179,10 @@ class _PetInforScreenState extends State<PetInforScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  petDetail.name,
+                                  serviceDetail.name,
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 5),
-                                Text(
-                                  petDetail.shop.name,
-                                  style: const TextStyle(
-                                    fontSize: 16,
                                   ),
                                 ),
                                 const SizedBox(height: 15),
@@ -199,32 +191,11 @@ class _PetInforScreenState extends State<PetInforScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      '${NumberFormat('#,##0', 'vi').format(petDetail.price)} VNĐ',
+                                      '${NumberFormat('#,##0', 'vi').format(serviceDetail.minPrice)} VNĐ - ${NumberFormat('#,##0', 'vi').format(serviceDetail.maxPrice)} VNĐ',
                                       style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: priceColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: petDetail.inStock
-                                            ? Colors.green
-                                            : Colors.red,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        petDetail.inStock
-                                            ? '  Còn hàng  '
-                                            : '  Hết hàng  ',
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
                                       ),
                                     ),
                                   ],
@@ -275,7 +246,7 @@ class _PetInforScreenState extends State<PetInforScreen> {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: ReadMoreText(
-                              petDetail.description,
+                              serviceDetail.description,
                               trimLength: 250,
                               trimCollapsedText: "Xem thêm",
                               trimExpandedText: "Rút gọn",
@@ -295,6 +266,66 @@ class _PetInforScreenState extends State<PetInforScreen> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [gradientStartColor, gradientEndColor],
+                              ),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.location_on, color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Địa chỉ cửa hàng',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: serviceDetail.address.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Text(
+                                    'Địa chỉ ${index + 1}: ${serviceDetail.address[index]}',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
                         ],
                       ),
                     ),
@@ -342,7 +373,7 @@ class _PetInforScreenState extends State<PetInforScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      "${petDetail.averageRate.toStringAsFixed(1)}/5.0",
+                                      "${serviceDetail.averageRate.toStringAsFixed(1)}/5.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -350,7 +381,7 @@ class _PetInforScreenState extends State<PetInforScreen> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      "(${petDetail.totalRate} đánh giá)",
+                                      "(${serviceDetail.totalRate} đánh giá)",
                                       style: const TextStyle(
                                           color: buttonBackgroundColor,
                                           fontWeight: FontWeight.bold,
@@ -358,23 +389,23 @@ class _PetInforScreenState extends State<PetInforScreen> {
                                     ),
                                   ],
                                 ),
-                                RateList(rates: petDetail.rates),
+                                RateList(rates: serviceDetail.rates),
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) => AllRatingScreen(
-                                        id: petDetail.idPet,
-                                        name: petDetail.name,
-                                        imageUrl: petDetail.imageUrl,
-                                        productType: 'pet',
-                                        averageRate: petDetail.averageRate,
-                                        totalRate: petDetail.totalRate,
+                                        id: serviceDetail.idService,
+                                        name: serviceDetail.name,
+                                        imageUrl: serviceDetail.picture,
+                                        productType: 'service',
+                                        averageRate: serviceDetail.averageRate,
+                                        totalRate: serviceDetail.totalRate,
                                       ),
                                     ));
                                   },
                                   child: Text(
-                                    'Tất cả đánh giá (${petDetail.totalRate})',
+                                    'Tất cả đánh giá (${serviceDetail.totalRate})',
                                     style: const TextStyle(
                                       color: buttonBackgroundColor,
                                       fontSize: 16,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type_detail.dart';
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
@@ -10,6 +11,34 @@ import 'package:pethome_mobileapp/setting/host_api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceApi {
+  Future<List<ServiceType>> getServiceType() async {
+    var url = Uri.parse('${pethomeApiUrl}service/types');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ServiceType> serviceType = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return serviceType;
+      }
+
+      for (var item in data) {
+        serviceType.add(ServiceType.fromJson(item));
+      }
+
+      return serviceType;
+    } else {
+      throw Exception('Failed to load service type');
+    }
+  }
+
   Future<List<ServiceTypeDetail>> getServiceTypeDetail(
       int serviceTypeId) async {
     var url = Uri.parse('${pethomeApiUrl}service/types/$serviceTypeId');
