@@ -212,33 +212,36 @@ class _ListAddressScreenState extends State<ListAddressScreen> {
                           ),
                         ],
                       ),
-                      child: Container(
-                        color: Colors.grey[100],
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: SizedBox(
-                            height: 120,
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text(
-                                  "Địa chỉ:  ${addressList[index].address}",
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 3,
-                                ),
-                                Text(
-                                  "Khu vực:  ${addressList[index].area}",
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: buttonBackgroundColor),
-                                ),
-                              ],
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5, bottom: 5),
+                        child: Container(
+                          color: Colors.grey[100],
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: SizedBox(
+                              height: 120,
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text(
+                                    "Địa chỉ:  ${addressList[index].address}",
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                  Text(
+                                    "Khu vực:  ${addressList[index].area}",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: buttonBackgroundColor),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

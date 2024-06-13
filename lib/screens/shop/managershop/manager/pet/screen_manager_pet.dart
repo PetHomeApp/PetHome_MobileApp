@@ -37,6 +37,9 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
   int currentPageActive = 0;
   int currentPageRequest = 0;
 
+  int countActive = 0;
+  int countRequest = 0;
+
   bool loadingActive = false;
   bool loadingRequest = false;
 
@@ -88,15 +91,18 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     }
 
     loadingActive = true;
-    final List<PetInCard> pets = await ShopApi()
+    final res = await ShopApi()
         .getListPetActiveInShop(widget.shopId, 10, currentPageActive * 10);
 
-    if (pets.isEmpty) {
+    if (res['isSuccess'] == false) {
       setState(() {
         loadingActive = false;
       });
       return;
     }
+
+    countActive = res['count'];
+    final List<PetInCard> pets = res['data'];
 
     setState(() {
       listPetActiveInCards.addAll(pets);
@@ -115,15 +121,18 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
     });
 
     loadingRequest = true;
-    final List<PetInCard> pets = await ShopApi()
-        .getListPetRequiredInShop(widget.shopId, 10, currentPageRequest * 10);
+    final res = await ShopApi()
+        .getListPetRequestInShop(widget.shopId, 10, currentPageRequest * 10);
 
-    if (pets.isEmpty) {
+    if (res['isSuccess'] == false) {
       setState(() {
         loadingRequest = false;
       });
       return;
     }
+
+    countRequest = res['count'];
+    final List<PetInCard> pets = res['data'];
 
     setState(() {
       listPetRequestInCards.addAll(pets);
@@ -268,12 +277,12 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                 indicatorColor: buttonBackgroundColor,
                 labelColor: buttonBackgroundColor,
                 unselectedLabelColor: Colors.black,
-                tabs: const [
+                tabs: [
                   Tab(
-                    text: 'Thú cưng của bạn',
+                    text: 'Thú cưng của bạn ($countActive)',
                   ),
                   Tab(
-                    text: 'Đang yêu cầu',
+                    text: 'Đang yêu cầu ($countRequest)',
                   ),
                 ],
               ),
@@ -351,9 +360,11 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              var res = await ShopApi().deletePet(
-                                                  listPetActiveInCards[index]
-                                                      .idPet);
+                                              var res = await ShopApi()
+                                                  .deletePet(
+                                                      listPetActiveInCards[
+                                                              index]
+                                                          .idPet);
                                               if (res['isSuccess']) {
                                                 showTopSnackBar(
                                                   // ignore: use_build_context_synchronously
@@ -363,11 +374,13 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                                         'Xóa Thú cưng thành công!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                                 setState(() {
                                                   listPetActiveInCards
                                                       .removeAt(index);
+                                                  countActive--;
                                                 });
                                                 // ignore: use_build_context_synchronously
                                                 Navigator.of(context).pop();
@@ -380,7 +393,8 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                                         'Đã xảy ra lỗi, vui lòng thử lại sau!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                               }
                                             },
@@ -486,6 +500,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                                 setState(() {
                                                   listPetRequestInCards
                                                       .removeAt(index);
+                                                  countRequest--;
                                                 });
                                                 // ignore: use_build_context_synchronously
                                                 Navigator.of(context).pop();

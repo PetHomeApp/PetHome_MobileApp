@@ -36,6 +36,9 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
   int currentPageActive = 0;
   int currentPageRequest = 0;
 
+  int countActive = 0;
+  int countRequest = 0;
+
   bool loadingActive = false;
   bool loadingRequest = false;
 
@@ -48,6 +51,9 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
 
     _scrollRequestController.addListener(_onScrollRequest);
     _scrollRequestController.addListener(_listenerScrollRequest);
+
+    getListItemActiveInShop();
+    getListPetRequiredInShop();
 
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
@@ -73,7 +79,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
   void _listenerScrollRequest() {
     if (_scrollRequestController.position.atEdge) {
       if (_scrollRequestController.position.pixels != 0) {
-        //getListPetRequiredInShop();
+        getListPetRequiredInShop();
       }
     }
   }
@@ -84,20 +90,53 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
     }
 
     loadingActive = true;
-    final List<ItemInCard> items = await ShopApi()
+    final res = await ShopApi()
         .getListItemActiveInShop(widget.shopId, 10, currentPageActive * 10);
 
-    if (items.isEmpty) {
+    if (res['isSuccess'] == false) {
       setState(() {
         loadingActive = false;
       });
       return;
     }
 
+    countActive = res['count'];
+    final List<ItemInCard> items = res['data'];
+
     setState(() {
       listItemsActiveInCard.addAll(items);
       currentPageActive++;
       loadingActive = false;
+    });
+  }
+
+  Future<void> getListPetRequiredInShop() async {
+    if (loadingRequest) {
+      return;
+    }
+
+    setState(() {
+      loadingRequest = true;
+    });
+
+    loadingRequest = true;
+    final res = await ShopApi()
+        .getListItemRequestInShop(widget.shopId, 10, currentPageRequest * 10);
+
+    if (res['isSuccess'] == false) {
+      setState(() {
+        loadingRequest = false;
+      });
+      return;
+    }
+
+    countRequest = res['count'];
+    final List<ItemInCard> items = res['data'];
+
+    setState(() {
+      listItemsRequestInCard.addAll(items);
+      currentPageRequest++;
+      loadingRequest = false;
     });
   }
 
@@ -237,12 +276,12 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                 indicatorColor: buttonBackgroundColor,
                 labelColor: buttonBackgroundColor,
                 unselectedLabelColor: Colors.black,
-                tabs: const [
+                tabs: [
                   Tab(
-                    text: 'Vật phẩm của bạn',
+                    text: 'Vật phẩm của bạn ($countActive)',
                   ),
                   Tab(
-                    text: 'Đang yêu cầu',
+                    text: 'Đang yêu cầu ($countRequest)',
                   ),
                 ],
               ),
@@ -312,38 +351,40 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            // var res = await ShopApi().deletePet(
-                                            //     listPetActiveInCards[index]
-                                            //         .idPet);
-                                            // if (res['isSuccess']) {
-                                            //   showTopSnackBar(
-                                            //     // ignore: use_build_context_synchronously
-                                            //     Overlay.of(context),
-                                            //     const CustomSnackBar.success(
-                                            //       message:
-                                            //           'Xóa Thú cưng thành công!',
-                                            //     ),
-                                            //     displayDuration:
-                                            //         const Duration(seconds: 0),
-                                            //   );
-                                            //   setState(() {
-                                            //     listPetActiveInCards
-                                            //         .removeAt(index);
-                                            //   });
-                                            //   // ignore: use_build_context_synchronously
-                                            //   Navigator.of(context).pop();
-                                            // } else {
-                                            //   showTopSnackBar(
-                                            //     // ignore: use_build_context_synchronously
-                                            //     Overlay.of(context),
-                                            //     const CustomSnackBar.error(
-                                            //       message:
-                                            //           'Đã xảy ra lỗi, vui lòng thử lại sau!',
-                                            //     ),
-                                            //     displayDuration:
-                                            //         const Duration(seconds: 0),
-                                            //   );
-                                            // }
+                                            var res = await ShopApi()
+                                                .deleteItem(
+                                                    listItemsActiveInCard[index]
+                                                        .idItem);
+                                            if (res['isSuccess']) {
+                                              showTopSnackBar(
+                                                // ignore: use_build_context_synchronously
+                                                Overlay.of(context),
+                                                const CustomSnackBar.success(
+                                                  message:
+                                                      'Xóa Vật phẩm thành công!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                              setState(() {
+                                                listItemsActiveInCard
+                                                    .removeAt(index);
+                                                countActive--;
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              Navigator.of(context).pop();
+                                            } else {
+                                              showTopSnackBar(
+                                                // ignore: use_build_context_synchronously
+                                                Overlay.of(context),
+                                                const CustomSnackBar.error(
+                                                  message:
+                                                      'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                ),
+                                                displayDuration:
+                                                    const Duration(seconds: 0),
+                                              );
+                                            }
                                           },
                                           child: const Text("Xóa",
                                               style: TextStyle(
@@ -418,17 +459,18 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            var res = null;
-                                            // var res = await ShopApi().deleteItem(
-                                            //     listItemsRequestInCard[index]
-                                            //         .idItem);
+                                            var res = await ShopApi()
+                                                .deleteItem(
+                                                    listItemsRequestInCard[
+                                                            index]
+                                                        .idItem);
                                             if (res['isSuccess']) {
                                               showTopSnackBar(
                                                 // ignore: use_build_context_synchronously
                                                 Overlay.of(context),
                                                 const CustomSnackBar.success(
                                                   message:
-                                                      'Xóa Thú cưng thành công!',
+                                                      'Xóa Vật phẩm thành công!',
                                                 ),
                                                 displayDuration:
                                                     const Duration(seconds: 0),
@@ -436,6 +478,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                               setState(() {
                                                 listItemsRequestInCard
                                                     .removeAt(index);
+                                                countRequest--;
                                               });
                                               // ignore: use_build_context_synchronously
                                               Navigator.of(context).pop();
