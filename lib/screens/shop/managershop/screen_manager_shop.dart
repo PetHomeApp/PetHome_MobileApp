@@ -87,164 +87,342 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
                 color: appColor,
               ),
             )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
+          : Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(context),
-                  const SizedBox(height: 20.0),
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.0,
-                      mainAxisSpacing: 16.0,
-                      children: [
-                        _buildManagementButton(
-                          context,
-                          title: 'Quản lý đơn hàng',
-                          icon: Icons.receipt_long,
-                          color: Colors.blue.shade400,
-                          onTap: () {
-                            // Điều hướng đến màn hình quản lý đơn hàng
-                            //print('Navigate to Order Management');
-                          },
-                        ),
-                        _buildManagementButton(
-                          context,
-                          title: 'Quản lý sản phẩm',
-                          icon: Icons.inventory,
-                          color: Colors.orange.shade400,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    MainManagerProductScreen(
-                                  initialIndex: 0,
-                                  shopId: widget.idShop,
-                                ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 30),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 203, 237, 237),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
                               ),
-                            );
-                          },
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    //_pickImage();
+                                  },
+                                  child: SizedBox(
+                                    width: 100.0,
+                                    height: 100.0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(60.0),
+                                        child: Image.network(
+                                          shopInfor.logo,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (BuildContext context,
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                            return Image.asset(
+                                                'lib/assets/pictures/placeholder_image.png',
+                                                fit: BoxFit.cover);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'Xin chào, $shopName!',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge
+                                              ?.copyWith(
+                                                color: buttonBackgroundColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 8.0),
+                                        Text(
+                                          'Chúc một ngày làm việc hiệu quả và thật nhiều niềm vui!',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: Colors.teal[900],
+                                                fontSize: 16,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        _buildManagementButton(
-                          context,
-                          title: 'Quản lý doanh thu',
-                          icon: Icons.bar_chart,
-                          color: Colors.green.shade400,
-                          onTap: () {
-                            // Điều hướng đến màn hình quản lý doanh thu
-                            //print('Navigate to Revenue Management');
-                          },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0, right: 8),
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey[100],
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    padding: const EdgeInsets.all(15),
+                                    child: InkWell(
+                                      onTap: () {
+                                        // Handle 'Tin nhắn' tap
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_order.png'),
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Đơn hàng',
+                                            style: TextStyle(
+                                              color: buttonBackgroundColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey[100],
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 7,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    padding: const EdgeInsets.all(15),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                MainManagerProductScreen(
+                                              initialIndex: 0,
+                                              shopId: widget.idShop,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 5.0),
+                                            child: SizedBox(
+                                              width: 35,
+                                              height: 35,
+                                              child: Image.asset(
+                                                  'lib/assets/pictures/icon_product.png'),
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Sản phẩm',
+                                            style: TextStyle(
+                                              color: buttonBackgroundColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        _buildManagementButton(
-                          context,
-                          title: 'Thông tin cửa hàng',
-                          icon: Icons.store,
-                          color: const Color.fromARGB(255, 207, 83, 98),
-                          onTap: () {
-                            // Điều hướng đến màn hình thông tin cửa hàng
-                            //print('Navigate to Store Information');
-                          },
+                      ),
+                      const SizedBox(height: 40),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Thông tin cửa hảng',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Địa chỉ - Chi nhánh',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                              bottom: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.currency_exchange,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Quản lý doanh thu',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
-      decoration: const BoxDecoration(
-        color: Color.fromARGB(255, 211, 245, 242),
-      ),
-      child: Row(
-        children: [
-          ClipOval(
-            child: Image.network(shopInfor.logo,
-                width: 80.0,
-                height: 80.0,
-                fit: BoxFit.cover, errorBuilder: (BuildContext context,
-                    Object exception, StackTrace? stackTrace) {
-              return Image.asset('lib/assets/pictures/placeholder_image.png',
-                  fit: BoxFit.cover);
-            }),
-          ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Xin chào, $shopName!',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: buttonBackgroundColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Chúc một ngày làm việc hiệu quả và thật nhiều niềm vui!',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.teal[900],
-                        fontSize: 16,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildManagementButton(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black26,
-              blurRadius: 4.0,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 60.0,
-              color: color,
-            ),
-            const SizedBox(height: 16.0),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: buttonBackgroundColor,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,8 +1,10 @@
+import 'package:pethome_mobileapp/model/shop/model_shop_area.dart';
+
 class ShopInfor {
   String idShop;
   String name;
   String logo;
-  List<String> areas;
+  List<ShopArea> areas;
 
   ShopInfor({
     required this.idShop,
@@ -16,7 +18,9 @@ class ShopInfor {
       idShop: json['id_shop'],
       name: json['name'],
       logo: json['logo'],
-      areas: List<String>.from(json['areas']),
+      areas: (json['areas'] as List)
+          .map((area) => ShopArea.fromJson(area))
+          .toList(),
     );
   }
 }
