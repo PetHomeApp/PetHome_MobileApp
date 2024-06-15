@@ -13,7 +13,7 @@ class ItemTypeDetail {
     return ItemTypeDetail(
       idItemTypeDetail: json['id_item_type_detail'],
       name: json['name'],
-      count: json['count'],
+      count: json['count'] ?? 0,
     );
   }
 }

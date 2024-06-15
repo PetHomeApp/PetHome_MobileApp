@@ -16,7 +16,6 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class AddServiceScreen extends StatefulWidget {
   const AddServiceScreen({super.key, required this.shopId});
-
   final String shopId;
 
   @override
@@ -28,7 +27,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
   List<ServiceTypeDetail> serviceTypeDetails = List.empty(growable: true);
 
   List<ShopAddress> shopAddresses = List.empty(growable: true);
-  Map<String, bool> _checkedAddresses = {};
+  final Map<String, bool> _checkedAddresses = {};
 
   final TextEditingController _serviceNameController = TextEditingController();
   final TextEditingController _serviceDescriptionController =

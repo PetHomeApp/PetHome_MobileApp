@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_add_item.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_item_infor.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -54,7 +55,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
     _scrollRequestController.addListener(_listenerScrollRequest);
 
     getListItemActiveInShop();
-    getListPetRequiredInShop();
+    getListItemRequiredInShop();
 
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
@@ -80,7 +81,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
   void _listenerScrollRequest() {
     if (_scrollRequestController.position.atEdge) {
       if (_scrollRequestController.position.pixels != 0) {
-        getListPetRequiredInShop();
+        getListItemRequiredInShop();
       }
     }
   }
@@ -111,7 +112,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
     });
   }
 
-  Future<void> getListPetRequiredInShop() async {
+  Future<void> getListItemRequiredInShop() async {
     if (loadingRequest) {
       return;
     }
@@ -241,15 +242,15 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
               // Insert icon button
               IconButton(
                 onPressed: () {
-                  // Navigator.of(context)
-                  //     .push(MaterialPageRoute(
-                  //   builder: (context) => const AddPetScreen(),
-                  // ))
-                  //     .then((value) {
-                  //   listPetRequestInCards.clear();
-                  //   currentPageRequest = 0;
-                  //   getListPetRequiredInShop();
-                  // });
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                    builder: (context) => const AddItemScreen(),
+                  ))
+                      .then((value) {
+                    listItemsRequestInCard.clear();
+                    currentPageRequest = 0;
+                    getListItemRequiredInShop();
+                  });
                 },
                 icon: const Icon(
                   Icons.add,
@@ -362,7 +363,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                             onPressed: () async {
                                               var res = await ShopApi()
                                                   .deleteItem(
-                                                      listItemsActiveInCard[index]
+                                                      listItemsActiveInCard[
+                                                              index]
                                                           .idItem);
                                               if (res['isSuccess']) {
                                                 showTopSnackBar(
@@ -373,7 +375,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                                         'Xóa Vật phẩm thành công!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                                 setState(() {
                                                   listItemsActiveInCard
@@ -391,7 +394,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                                         'Đã xảy ra lỗi, vui lòng thử lại sau!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                               }
                                             },
@@ -491,7 +495,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                                         'Xóa Vật phẩm thành công!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                                 setState(() {
                                                   listItemsRequestInCard
@@ -509,7 +514,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                                         'Đã xảy ra lỗi, vui lòng thử lại sau!',
                                                   ),
                                                   displayDuration:
-                                                      const Duration(seconds: 0),
+                                                      const Duration(
+                                                          seconds: 0),
                                                 );
                                               }
                                             },

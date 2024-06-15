@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
@@ -423,6 +424,66 @@ class ShopApi {
         'images',
         await MultipartFile.fromFile(image!.path),
       ));
+    }
+
+    try {
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> insertItem(ItemIsRequest item) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/items');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'name': item.name,
+      'id_item_type_detail': item.idItemTypeDetail,
+      'unit': item.unit,
+      'description': item.description,
+      'header_image': await MultipartFile.fromFile(item.headerImage!.path),
+    });
+
+    for (var image in item.images) {
+      formData.files.add(MapEntry(
+        'images',
+        await MultipartFile.fromFile(image!.path),
+      ));
+    }
+
+    for (var detail in item.itemDetail) {
+      formData.fields.add(MapEntry('item_detail', detail));
     }
 
     try {
