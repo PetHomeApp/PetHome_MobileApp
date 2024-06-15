@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_request.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -404,40 +406,109 @@ class ShopApi {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String accessToken = sharedPreferences.getString('accessToken') ?? '';
 
-    var request = http.MultipartRequest('POST', url);
+    Dio dio = Dio();
 
-    request.headers['Authorization'] = accessToken;
-
-    request.fields['name'] = pet.name;
-    request.fields['id_pet_specie'] = pet.idPetSpecie;
-    request.fields['id_pet_age'] = pet.idPetAge;
-    request.fields['weight'] = pet.weight;
-    request.fields['price'] = pet.price;
-    request.fields['description'] = pet.description;
-
-    request.files.add(
-      await http.MultipartFile.fromPath('header_image', pet.headerImage!.path),
-    );
+    FormData formData = FormData.fromMap({
+      'name': pet.name,
+      'id_pet_specie': pet.idPetSpecie,
+      'id_pet_age': pet.idPetAge,
+      'weight': pet.weight,
+      'price': pet.price,
+      'description': pet.description,
+      'header_image': await MultipartFile.fromFile(pet.headerImage!.path),
+    });
 
     for (var image in pet.images) {
-      request.files.add(
-        await http.MultipartFile.fromPath('images', image!.path),
-      );
+      formData.files.add(MapEntry(
+        'images',
+        await MultipartFile.fromFile(image!.path),
+      ));
     }
 
     try {
-      var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {'isSuccess': true};
       } else {
-        // Handle error
-        json.decode(responseBody);
-        return {'isSuccess': false};
+        return {'isSuccess': false, 'message': response.data};
       }
     } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> insertService(ServiceIsRequest service) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/services');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
+    }
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'name': service.name,
+      'id_service_type_detail': service.idServiceDetail,
+      'min_price': service.minPrice,
+      'max_price': service.maxPrice,
+      'description': service.description,
+      'header_image': await MultipartFile.fromFile(service.headerImage!.path),
+    });
+
+    for (var image in service.images) {
+      formData.files.add(MapEntry(
+        'images',
+        await MultipartFile.fromFile(image!.path),
+      ));
+    }
+
+    for (var address in service.idAddress) {
+      formData.fields.add(MapEntry('id_address', address));
+    }
+
+    try {
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_add_service.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_manager_service_type.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -72,6 +73,10 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
     final List<ServiceType> serviceType = await ServiceApi().getServiceType();
     serviceType.sort((a, b) => a.idServiceType.compareTo(b.idServiceType));
 
+    for (int i = 0; i < serviceType.length; i++) {
+      serviceType[i].details.sort((a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
+    }
+
     setState(() {
       serviceTypes = serviceType;
       loading = false;
@@ -137,15 +142,9 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
             // Insert icon button
             IconButton(
               onPressed: () {
-                // Navigator.of(context)
-                //     .push(MaterialPageRoute(
-                //   builder: (context) => const AddPetScreen(),
-                // ))
-                //     .then((value) {
-                //   listPetRequestInCards.clear();
-                //   currentPageRequest = 0;
-                //   getListPetRequiredInShop();
-                // });
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AddServiceScreen(shopId: widget.shopId),
+                ));
               },
               icon: const Icon(
                 Icons.add,

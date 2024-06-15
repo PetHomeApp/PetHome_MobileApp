@@ -79,8 +79,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     }
 
     loading = true;
-    ShopApi shopApi = ShopApi();
-    final dataResponse = await shopApi.checkIsActiveShop();
+    final dataResponse = await  ShopApi().checkIsActiveShop();
 
     if (dataResponse['isSuccess'] == true) {
       loading = false;
