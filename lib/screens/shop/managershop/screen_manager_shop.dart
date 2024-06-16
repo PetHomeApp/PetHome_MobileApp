@@ -327,7 +327,7 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    'Thông tin cửa hảng',
+                                    'Thông tin cửa hàng',
                                     style: TextStyle(
                                       color: buttonBackgroundColor,
                                       fontSize: 16,

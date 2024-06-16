@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_service_infor.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_update_service.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/product/service/service_active_of_shop.dart';
@@ -52,8 +53,8 @@ class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
 
     _tabController = TabController(length: 2, vsync: this);
 
-    getListPetActiveInShop();
-    getListPetRequiredInShop();
+    getListServiceActiveInShop();
+    getListServiceRequiredInShop();
   }
 
   @override
@@ -68,7 +69,7 @@ class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
   void _listenerScrollActive() {
     if (_scrollActiveController.position.atEdge) {
       if (_scrollActiveController.position.pixels != 0) {
-        getListPetActiveInShop();
+        getListServiceActiveInShop();
       }
     }
   }
@@ -76,12 +77,12 @@ class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
   void _listenerScrollRequest() {
     if (_scrollRequestController.position.atEdge) {
       if (_scrollRequestController.position.pixels != 0) {
-        getListPetRequiredInShop();
+        getListServiceRequiredInShop();
       }
     }
   }
 
-  Future<void> getListPetActiveInShop() async {
+  Future<void> getListServiceActiveInShop() async {
     if (loadingActive) {
       return;
     }
@@ -107,7 +108,7 @@ class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
     });
   }
 
-  Future<void> getListPetRequiredInShop() async {
+  Future<void> getListServiceRequiredInShop() async {
     if (loadingRequest) {
       return;
     }
@@ -307,7 +308,20 @@ class _ManagerServiceByTypeScreenState extends State<ManagerServiceByTypeScreen>
                                     },
                                   );
                                 },
-                                onEdit: () {}),
+                                onEdit: () {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                    builder: (context) => UpdateServiceScreen(
+                                      idService:
+                                          servicesActive[index].idService,
+                                    ),
+                                  ))
+                                      .then((value) {
+                                    servicesActive.clear();
+                                    currentPageActive = 0;
+                                    getListServiceActiveInShop();
+                                  });
+                                }),
                           );
                         },
                       ),

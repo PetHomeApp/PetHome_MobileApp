@@ -1,4 +1,5 @@
 import 'package:pethome_mobileapp/model/rate/model_rate.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_address.dart';
 
 class ServiceDetail {
   final String idService;
@@ -10,7 +11,7 @@ class ServiceDetail {
   final String picture;
   final String idShop;
   final List<String> images;
-  final List<String> address;
+  final List<ShopAddress> address;
   final int totalRate;
   final double averageRate;
   final List<Rate> rates;
@@ -44,8 +45,8 @@ class ServiceDetail {
           .map((item) => item as String)
           .toList(),
       address: (json['shop']['data'] as List<dynamic>)
-          .map((item) => item['address'] as String)
-          .toList(),
+          .map((item) => ShopAddress.fromJson(item as Map<String, dynamic>))
+          .toList(),        
       totalRate: json['ratings']['rating_count'] as int,
       averageRate: (json['ratings']['average_rating'] as num).toDouble(),
       rates: (json['ratings']['data'] as List<dynamic>)

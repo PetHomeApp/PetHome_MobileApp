@@ -8,8 +8,8 @@ class ShopAddress {
   factory ShopAddress.fromJson(Map<String, dynamic> json) {
     return ShopAddress(
       idAddress: json['id_address'] ?? '',
-      address: json['address'],
-      area: json['area'],
+      address: json['address'] ?? '',
+      area: json['area'] ?? '',
     );
   }
 }

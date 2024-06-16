@@ -78,6 +78,7 @@ class _AddServiceScreenState extends State<AddServiceScreen> {
       ..sort((a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
 
     shopAddresses = shopInforData.areas.toList();
+    
     for (var address in shopAddresses) {
       _checkedAddresses[address.idAddress] = false;
     }

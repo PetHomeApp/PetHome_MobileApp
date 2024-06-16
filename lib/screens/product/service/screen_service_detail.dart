@@ -389,7 +389,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 8.0),
                                   child: Text(
-                                    'Địa chỉ ${index + 1}: ${serviceDetail.address[index]}',
+                                    'Địa chỉ ${index + 1}: ${serviceDetail.address[index].address}',
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
