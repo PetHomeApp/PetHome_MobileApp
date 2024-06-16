@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/address/screen_list_shop_address.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/screen_main_manager_product.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -341,7 +342,12 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ListShopAddressScreen(shopId: shopInfor.idShop),
+                          ));
+                        },
                         child: Container(
                           decoration: const BoxDecoration(
                             border: Border(

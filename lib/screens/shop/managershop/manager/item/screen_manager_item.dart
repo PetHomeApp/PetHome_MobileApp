@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_add_item.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_item_infor.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_update_item.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/product/item/item_active_of_shop.dart';
@@ -409,7 +410,20 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
                                     },
                                   );
                                 },
-                                onEdit: () {}),
+                                onEdit: () {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                    builder: (context) => UpdateItemScreen(
+                                      idItem:
+                                          listItemsActiveInCard[index].idItem,
+                                    ),
+                                  ))
+                                      .then((value) {
+                                    listItemsActiveInCard.clear();
+                                    currentPageActive = 0;
+                                    getListItemActiveInShop();
+                                  });
+                                }),
                           );
                         },
                       ),

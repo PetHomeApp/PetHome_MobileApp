@@ -306,7 +306,7 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Tình trạng thú cưng: (*)',
+                      'Lựa chọn chi nhánh cung cấp dịch vụ: (*)',
                       style: TextStyle(
                           fontSize: 16.0, fontWeight: FontWeight.w500),
                     ),
