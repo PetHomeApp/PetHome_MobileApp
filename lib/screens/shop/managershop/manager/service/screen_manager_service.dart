@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_add_service.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_manager_service_type.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ManagerServiceScreen extends StatefulWidget {
   final String shopId;
@@ -26,7 +23,6 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
 
   final ScrollController _scrollController = ScrollController();
 
-  final TextEditingController _searchController = TextEditingController();
   bool _isBottomBarVisible = true;
 
   bool loading = false;
@@ -74,7 +70,8 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
     serviceType.sort((a, b) => a.idServiceType.compareTo(b.idServiceType));
 
     for (int i = 0; i < serviceType.length; i++) {
-      serviceType[i].details.sort((a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
+      serviceType[i].details.sort(
+          (a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
     }
 
     setState(() {
@@ -99,60 +96,10 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
             Navigator.of(context).pop();
           },
         ),
-        title: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                cursorColor: Colors.white,
-                decoration: InputDecoration(
-                  hintText: 'Nhập để tìm kiếm...',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                String searchKey = _searchController.text;
-                if (searchKey.isEmpty) {
-                  showTopSnackBar(
-                    // ignore: use_build_context_synchronously
-                    Overlay.of(context),
-                    const CustomSnackBar.error(
-                      message: 'Vui lòng nhập thông tin tìm kiếm!',
-                    ),
-                    displayDuration: const Duration(seconds: 0),
-                  );
-                  return;
-                }
-                // Navigator.of(context).push(MaterialPageRoute(
-                //   builder: (context) =>
-                //       PetSearchAndFilterScreen(title: searchKey),
-                // ));
-                _searchController.clear();
-              },
-              icon: const Icon(
-                Icons.search,
-                size: 30,
-                color: iconButtonColor,
-              ),
-            ),
-            // Insert icon button
-            IconButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AddServiceScreen(shopId: widget.shopId),
-                ));
-              },
-              icon: const Icon(
-                Icons.add,
-                size: 30,
-                color: iconButtonColor,
-              ),
-            ),
-          ],
+        title: const Text(
+          'Quản lý dịch vụ',
+          style: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(

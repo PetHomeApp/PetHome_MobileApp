@@ -8,6 +8,7 @@ import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_request.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_detail_infor.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_register.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -175,6 +176,46 @@ class ShopApi {
         return {
           'isSuccess': true,
           'shopInfor': data,
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getShopDetailInfor() async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var data = json.decode(response.body);
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+
+        return {
+          'isSuccess': true,
+          'shopInfor': ShopDetailInfor.fromJson(data),
         };
       } else {
         return {'isSuccess': false};
