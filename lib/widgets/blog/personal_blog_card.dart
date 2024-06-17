@@ -98,7 +98,7 @@ class PersonalBlogCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.network(
-              blog.imageUrl,
+              blog.images[0],
               width: 200, 
               height: 300, 
               fit: BoxFit.cover,
@@ -120,9 +120,9 @@ class PersonalBlogCard extends StatelessWidget {
                       },
                     ),
                     const SizedBox(width: 4.0),
-                    Text(
-                      blog.favoriteCount.toString(),
-                    ),
+                    // Text(
+                    //   //blog.favoriteCount.toString(),
+                    // ),
                   ],
                 ),
               ],

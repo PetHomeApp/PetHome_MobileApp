@@ -13,37 +13,7 @@ class PersonalBlogScreen extends StatefulWidget {
 class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
   final ScrollController _scrollController = ScrollController();
   List<Blog> blogs = [
-    Blog(
-      blogId: '1',
-      description:
-          'Nội dung bài viết 1. Đây là nội dung bài viết 1. Hình ảnh một chú chó xinh đẹp. Đây là nội dung bài viết 1. Hình ảnh một chú chó xinh đẹp. Đây là nội dung bài viết 1. Hình ảnh một chú chó xinh đẹp.',
-      imageUrl: 'https://via.placeholder.com/150',
-      createAt: '2021-09-01',
-      isFavorite: false,
-      favoriteCount: 0,
-      nameAuthor: 'Người đăng 1',
-      avatarAuthor: 'https://via.placeholder.com/150',
-    ),
-    Blog(
-      blogId: '1',
-      description: 'Nội dung bài viết 1',
-      imageUrl: 'https://via.placeholder.com/150',
-      createAt: '2021-09-01',
-      isFavorite: false,
-      favoriteCount: 0,
-      nameAuthor: 'Người đăng 1',
-      avatarAuthor: 'https://via.placeholder.com/150',
-    ),
-    Blog(
-      blogId: '1',
-      description: 'Nội dung bài viết 1',
-      imageUrl: 'https://via.placeholder.com/150',
-      createAt: '2021-09-01',
-      isFavorite: false,
-      favoriteCount: 0,
-      nameAuthor: 'Người đăng 1',
-      avatarAuthor: 'https://via.placeholder.com/150',
-    ),
+    
   ];
 
   @override
