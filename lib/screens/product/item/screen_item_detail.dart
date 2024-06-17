@@ -476,6 +476,83 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                             child: const Row(
                               children: [
+                                Icon(Icons.location_city, color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Thông tin cửa hàng',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, left: 12),
+                                child: Text(
+                                  itemDetail.shop.name,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: buttonBackgroundColor),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: itemDetail.shop.shopAddress.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        'Địa chỉ ${index + 1}: ${itemDetail.shop.shopAddress[index].address}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [gradientStartColor, gradientEndColor],
+                              ),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                            child: const Row(
+                              children: [
                                 Icon(Icons.comment, color: Colors.white),
                                 SizedBox(width: 8),
                                 Text(

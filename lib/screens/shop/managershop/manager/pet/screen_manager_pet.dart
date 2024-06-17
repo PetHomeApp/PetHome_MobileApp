@@ -336,6 +336,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => PetInforScreen(
                                   idPet: listPetActiveInCards[index].idPet,
+                                  ageID: listPetActiveInCards[index].ageID,
                                 ),
                               ));
                             },
@@ -468,6 +469,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => PetInforScreen(
                                   idPet: listPetRequestInCards[index].idPet,
+                                  ageID: listPetRequestInCards[index].ageID,
                                 ),
                               ));
                             },

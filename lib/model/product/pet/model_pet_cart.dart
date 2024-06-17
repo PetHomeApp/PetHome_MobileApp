@@ -4,7 +4,8 @@ class PetCart {
   final String? imageUrl;
   final String? shopName;
   final int? price;
-  final String? specieID;
+  final int? specieID;
+  final int? ageID;
   final bool inStock;
   final String? shopId;
 
@@ -15,6 +16,7 @@ class PetCart {
     this.shopName,
     this.price,
     this.specieID,
+    this.ageID,
     this.inStock = false,
     this.shopId,
   });
@@ -27,6 +29,7 @@ class PetCart {
       shopName: json['shop_name'],
       price: json['price'],
       specieID: json['id_pet_specie'],
+      ageID: json['id_pet_age'],
       inStock: json['instock'] ?? false,
       shopId: json['id_shop'],
     );

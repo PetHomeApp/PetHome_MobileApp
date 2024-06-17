@@ -203,6 +203,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index].idPet,
                                     showCartIcon: true,
+                                    ageID: listPetsFilter[index].ageID,
                                   ),
                                 ));
                               },
@@ -224,6 +225,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index + 1].idPet,
                                     showCartIcon: true,
+                                    ageID: listPetsFilter[index + 1].ageID,
                                   ),
                                 ));
                               },
@@ -251,6 +253,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                                   builder: (context) => PetDetailScreen(
                                     idPet: listPetsFilter[index].idPet,
                                     showCartIcon: true,
+                                    ageID: listPetsFilter[index].ageID,
                                   ),
                                 ));
                               },

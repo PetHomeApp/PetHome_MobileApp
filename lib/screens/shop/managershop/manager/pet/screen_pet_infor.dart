@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_detail.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/pet_api.dart';
@@ -8,9 +9,10 @@ import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:readmore/readmore.dart';
 
 class PetInforScreen extends StatefulWidget {
-  const PetInforScreen({super.key, required this.idPet});
+  const PetInforScreen({super.key, required this.idPet, this.ageID});
 
   final String idPet;
+  final int? ageID;
 
   @override
   State<PetInforScreen> createState() => _PetInforScreenState();
@@ -22,6 +24,7 @@ class _PetInforScreenState extends State<PetInforScreen> {
 
   late PetDetail petDetail;
   late List<String> imageUrlDescriptions;
+  List<PetAge> petAge = List.empty(growable: true);
 
   bool loading = false;
 
@@ -32,6 +35,12 @@ class _PetInforScreenState extends State<PetInforScreen> {
       _currentPageNotifier.value = (_controller.page!.round() + 1);
     });
     getPetDetail();
+
+    PetApi().getPetAges().then((value) {
+      setState(() {
+        petAge = value;
+      });
+    });
   }
 
   Future<void> getPetDetail() async {
@@ -229,6 +238,67 @@ class _PetInforScreenState extends State<PetInforScreen> {
                                     ),
                                   ],
                                 ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [gradientStartColor, gradientEndColor],
+                              ),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.app_registration_sharp,
+                                    color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Thông tin cơ bản',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Cân nặng: ${petDetail.weight} kg',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                        fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 5),
+                                Text(
+                                    'Tuổi: ${petAge.firstWhere((element) => element.id == widget.ageID).name}',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                        fontWeight: FontWeight.w500)),
                               ],
                             ),
                           ),

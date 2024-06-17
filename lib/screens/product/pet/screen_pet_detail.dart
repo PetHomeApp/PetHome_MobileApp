@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
@@ -18,8 +19,12 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class PetDetailScreen extends StatefulWidget {
   const PetDetailScreen(
-      {super.key, required this.idPet, required this.showCartIcon});
+      {super.key,
+      required this.idPet,
+      required this.showCartIcon,
+      required this.ageID});
   final String idPet;
+  final int? ageID;
   final bool showCartIcon;
 
   @override
@@ -33,6 +38,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
 
   late PetDetail petDetail;
   late List<String> imageUrlDescriptions;
+  List<PetAge> petAge = List.empty(growable: true);
 
   bool loading = false;
   bool checkRated = false;
@@ -46,6 +52,12 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
       _currentPageNotifier.value = (_controller.page!.round() + 1);
     });
     getPetDetail();
+
+    PetApi().getPetAges().then((value) {
+      setState(() {
+        petAge = value;
+      });
+    });
   }
 
   Future<void> getPetDetail() async {
@@ -79,7 +91,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     }
 
     loading = true;
-    final dataResponse = await  ShopApi().checkIsActiveShop();
+    final dataResponse = await ShopApi().checkIsActiveShop();
 
     if (dataResponse['isSuccess'] == true) {
       loading = false;
@@ -335,6 +347,67 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                             child: const Row(
                               children: [
+                                Icon(Icons.app_registration_sharp,
+                                    color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Thông tin cơ bản',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Cân nặng: ${petDetail.weight} kg',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                        fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 5),
+                                Text(
+                                    'Tuổi: ${petAge.firstWhere((element) => element.id == widget.ageID).name}',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [gradientStartColor, gradientEndColor],
+                              ),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                            child: const Row(
+                              children: [
                                 Icon(Icons.description, color: Colors.white),
                                 SizedBox(width: 8),
                                 Text(
@@ -371,6 +444,83 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [gradientStartColor, gradientEndColor],
+                              ),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.location_city, color: Colors.white),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Thông tin cửa hàng',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, left: 12),
+                                child: Text(
+                                  petDetail.shop.name,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: buttonBackgroundColor),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: petDetail.shop.shopAddress.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        'Địa chỉ ${index + 1}: ${petDetail.shop.shopAddress[index].address}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),

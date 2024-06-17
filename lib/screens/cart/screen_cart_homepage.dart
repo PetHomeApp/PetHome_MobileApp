@@ -182,7 +182,8 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => PetDetailScreen(
                                           idPet: pets[index].idPet,
-                                          showCartIcon: false)));
+                                          showCartIcon: false,
+                                          ageID: pets[index].ageID)));
                                 },
                                 child: PetCartWidget(
                                   petCart: pets[index],

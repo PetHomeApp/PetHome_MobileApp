@@ -181,6 +181,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 builder: (context) => PetDetailScreen(
                                   idPet: listPetInCards[index].idPet,
                                   showCartIcon: true,
+                                  ageID: listPetInCards[index].ageID,
                                 ),
                               ));
                             },
@@ -198,6 +199,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 builder: (context) => PetDetailScreen(
                                   idPet: listPetInCards[index + 1].idPet,
                                   showCartIcon: true,
+                                  ageID: listPetInCards[index + 1].ageID,
                                 ),
                               ));
                             },
@@ -222,6 +224,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
                                 builder: (context) => PetDetailScreen(
                                   idPet: listPetInCards[index].idPet,
                                   showCartIcon: true,
+                                  ageID: listPetInCards[index].ageID,
                                 ),
                               ));
                             },

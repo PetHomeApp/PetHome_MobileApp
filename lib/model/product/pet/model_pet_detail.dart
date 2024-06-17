@@ -6,6 +6,7 @@ class PetDetail {
   final String name;
   final int idPetSpecie;
   final int price;
+  final double weight;
   final bool inStock;
   final String idShop;
   final String description;
@@ -21,6 +22,7 @@ class PetDetail {
       required this.name,
       required this.idPetSpecie,
       required this.price,
+      required this.weight,
       required this.inStock,
       required this.idShop,
       required this.description,
@@ -37,6 +39,7 @@ class PetDetail {
       name: json['name'] as String,
       idPetSpecie: json['id_pet_specie'] as int,
       price: json['price'] as int,
+      weight: (json['weight'] as num).toDouble(),
       inStock: json['instock'] as bool,
       idShop: json['id_shop'] as String,
       description: json['description'] as String,
