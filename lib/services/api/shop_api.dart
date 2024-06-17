@@ -714,6 +714,141 @@ class ShopApi {
     }
   }
 
+  Future<Map<String, dynamic>> addItemDetail(
+      String idItem, int price, String size, int quantity) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/items/$idItem/detail/add');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'item_detail': '$price^$size^$quantity',
+    });
+
+    try {
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteItemDetail(
+      String idItem, String idItemDetail) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}api/shop/items/$idItem/detail/$idItemDetail');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    try {
+      final response = await dio.delete(
+        url.toString(),
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> updateItemDetail(
+      String idItem, String idItemDetail, int price, int quantity) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}api/shop/items/$idItem/detail/$idItemDetail');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'price': price,
+      'quantity': quantity,
+      'instock': quantity > 0 ? 'true' : 'false',
+    });
+
+    try {
+      final response = await dio.put(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      print(e.toString());
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
   Future<Map<String, dynamic>> updatePriceService(
       String idService, int minPrice, int maxPrice) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService');
@@ -762,7 +897,8 @@ class ShopApi {
 
   Future<Map<String, dynamic>> updateAddressService(String idService,
       List<String> newAddressid, List<String> deleteAddressId) async {
-    var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService/addresses');
+    var url =
+        Uri.parse('${pethomeApiUrl}api/shop/services/$idService/addresses');
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();

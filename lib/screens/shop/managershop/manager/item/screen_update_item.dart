@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_add_item_detal.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_update_item_detail.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
-import 'package:pethome_mobileapp/widgets/shop/product/item/add_item_detail_sheet.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class UpdateItemScreen extends StatefulWidget {
   const UpdateItemScreen({super.key, required this.idItem});
@@ -162,8 +166,20 @@ class _UpdateItemScreenState extends State<UpdateItemScreen> {
                             children: [
                               IconButton(
                                 onPressed: () {
-                                  setState(() {
-                                    //itemDetailRequest.update(item);
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateItemDetailScreen(
+                                      itemID: widget.idItem,
+                                      itemName: itemDetail.name,
+                                      idItemDetail: item.idItemDetail,
+                                      price: item.price,
+                                      size: item.size,
+                                      quantity: item.quantity,
+                                    ),
+                                  ))
+                                      .then((value) {
+                                    getItemDetail();
                                   });
                                 },
                                 icon: const Icon(Icons.edit,
@@ -172,11 +188,73 @@ class _UpdateItemScreenState extends State<UpdateItemScreen> {
                               const SizedBox(width: 10.0),
                               IconButton(
                                 onPressed: () {
-                                  setState(() {
-                                    //itemDetailRequest.remove(item);
-                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text("Xác nhận"),
+                                        content: const Text(
+                                            "Bạn có chắc chắn muốn xóa loại hàng này khỏi cửa hàng không?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text("Không",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 84, 84, 84))),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              var res = await ShopApi()
+                                                  .deleteItemDetail(
+                                                      widget.idItem,
+                                                      item.idItemDetail);
+                                              if (res['isSuccess']) {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.success(
+                                                    message:
+                                                        'Xóa loại hàng thành công!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(
+                                                          seconds: 0),
+                                                );
+                                                setState(() {
+                                                  detailItemClassify
+                                                      .remove(item);
+                                                });
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.error(
+                                                    message:
+                                                        'Đã xảy ra lỗi, vui lòng thử lại sau!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(
+                                                          seconds: 0),
+                                                );
+                                              }
+                                            },
+                                            child: const Text("Xóa",
+                                                style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 209, 87, 78))),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
                               ),
                             ],
                           ),
@@ -186,24 +264,14 @@ class _UpdateItemScreenState extends State<UpdateItemScreen> {
                     const SizedBox(height: 20.0),
                     ElevatedButton(
                       onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (BuildContext context) {
-                            return SingleChildScrollView(
-                              padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).viewInsets.bottom,
-                              ),
-                              child: AddItemDetailSheet(
-                                onAddItem: (newItemDetail) {
-                                  setState(() {
-                                    
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        );
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(
+                          builder: (context) => AddItemDetailScreen(
+                              itemID: widget.idItem, itemName: itemDetail.name),
+                        ))
+                            .then((value) {
+                          getItemDetail();
+                        });
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: buttonBackgroundColor,
