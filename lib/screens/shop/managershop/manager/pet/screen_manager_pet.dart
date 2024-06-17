@@ -4,6 +4,7 @@ import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_add_pet.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_pet_infor.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/pet/screen_update_pet.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/search_filter/screen_search_pet.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/product/pet/pet_active_of_shop.dart';
@@ -102,12 +103,12 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
       return;
     }
 
-    countActive = res['count'];
     final List<PetInCard> pets = res['data'];
 
     setState(() {
       listPetActiveInCards.addAll(pets);
       currentPageActive++;
+      countActive = res['count'];
       loadingActive = false;
     });
   }
@@ -132,12 +133,12 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
       return;
     }
 
-    countRequest = res['count'];
     final List<PetInCard> pets = res['data'];
 
     setState(() {
       listPetRequestInCards.addAll(pets);
       currentPageRequest++;
+      countRequest = res['count'];
       loadingRequest = false;
     });
   }
@@ -227,10 +228,22 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                     );
                     return;
                   }
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //   builder: (context) =>
-                  //       PetSearchAndFilterScreen(title: searchKey),
-                  // ));
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                    builder: (context) => SearchShopPetScreen(
+                        shopId: widget.shopId, title: searchKey),
+                  ))
+                      .then((value) {
+                    listPetActiveInCards.clear();
+                    currentPageActive = 0;
+                    countActive = 0;
+                    getListPetActiveInShop();
+
+                    listPetRequestInCards.clear();
+                    currentPageRequest = 0;
+                    countRequest = 0;
+                    getListPetRequiredInShop();
+                  });
                   _searchController.clear();
                 },
                 icon: const Icon(
@@ -248,6 +261,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                   ))
                       .then((value) {
                     listPetRequestInCards.clear();
+                    countRequest = 0;
                     currentPageRequest = 0;
                     getListPetRequiredInShop();
                   });
@@ -419,6 +433,7 @@ class _ManagerPetScreenState extends State<ManagerPetScreen>
                                   ))
                                       .then((value) {
                                     listPetActiveInCards.clear();
+                                    countActive = 0;
                                     currentPageActive = 0;
                                     getListPetActiveInShop();
                                   });

@@ -254,6 +254,76 @@ class ShopApi {
     }
   }
 
+  Future<Map<String, dynamic>> searchPetsActiveInShop(
+      String shopId, String searchKey, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start&status=active&name=$searchKey');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<PetInCard> pets = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': pets, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': pets, 'count': 0};
+      }
+
+      for (var item in data['data']) {
+        pets.add(PetInCard.fromJson(item));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': pets, 'count': count};
+    } else {
+      throw Exception('Failed to load pets');
+    }
+  }
+
+  Future<Map<String, dynamic>> searchPetsRequestInShop(
+      String shopId, String searchKey, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/pets?limit=$limit&start=$start&status=requested&name=$searchKey');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<PetInCard> pets = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': pets, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': pets, 'count': 0};
+      }
+
+      for (var item in data['data']) {
+        pets.add(PetInCard.fromJson(item));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': pets, 'count': count};
+    } else {
+      throw Exception('Failed to load pets');
+    }
+  }
+
   Future<Map<String, dynamic>> getListItemActiveInShop(
       String shopId, int limit, int start) async {
     var url = Uri.parse(
@@ -293,6 +363,76 @@ class ShopApi {
       String shopId, int limit, int start) async {
     var url = Uri.parse(
         '${pethomeApiUrl}shops/$shopId/items?limit=$limit&start=$start&status=requested');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ItemInCard> items = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': items, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': items, 'count': 0};
+      }
+
+      for (var item in data['data']) {
+        items.add(ItemInCard.fromJson(item));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': items, 'count': count};
+    } else {
+      throw Exception('Failed to load items');
+    }
+  }
+
+  Future<Map<String, dynamic>> searchItemsActiveInShop(
+      String shopId, String searchKey, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/items?limit=$limit&start=$start&status=active&name=$searchKey');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ItemInCard> items = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': items, 'count': 0};
+      }
+
+      if (data['data'] == null) {
+        return {'isSuccess': false, 'data': items, 'count': 0};
+      }
+
+      for (var item in data['data']) {
+        items.add(ItemInCard.fromJson(item));
+      }
+      int count = data['count'];
+
+      return {'isSuccess': true, 'data': items, 'count': count};
+    } else {
+      throw Exception('Failed to load items');
+    }
+  }
+
+  Future<Map<String, dynamic>> searchItemsRequestInShop(
+      String shopId, String searchKey, int limit, int start) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}shops/$shopId/items?limit=$limit&start=$start&status=requested&name=$searchKey');
 
     final response = await http.get(
       url,
@@ -821,6 +961,9 @@ class ShopApi {
       'quantity': quantity,
       'instock': quantity > 0 ? 'true' : 'false',
     });
+
+    print(quantity);
+    print(quantity > 0 ? 'true' : 'false');
 
     try {
       final response = await dio.put(

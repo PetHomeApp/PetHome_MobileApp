@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_add_item.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_item_infor.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_update_item.dart';
-import 'package:pethome_mobileapp/screens/shop/managershop/search_filter/screen_search_item.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/product/item/item_active_of_shop.dart';
@@ -12,30 +9,24 @@ import 'package:pethome_mobileapp/widgets/shop/product/item/item_request_of_shop
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class ManagerItemScreen extends StatefulWidget {
-  final Function(bool) updateBottomBarVisibility;
-  final String shopId;
+class SearchShopItemScreen extends StatefulWidget {
+  const SearchShopItemScreen(
+      {super.key, required this.shopId, required this.title});
 
-  const ManagerItemScreen(
-      {super.key,
-      required this.updateBottomBarVisibility,
-      required this.shopId});
+  final String shopId;
+  final String title;
 
   @override
-  State<ManagerItemScreen> createState() => _ManagerItemScreenState();
+  State<SearchShopItemScreen> createState() => _SearchShopItemScreenState();
 }
 
-class _ManagerItemScreenState extends State<ManagerItemScreen>
+class _SearchShopItemScreenState extends State<SearchShopItemScreen>
     with SingleTickerProviderStateMixin {
   List<ItemInCard> listItemsActiveInCard = List.empty(growable: true);
   List<ItemInCard> listItemsRequestInCard = List.empty(growable: true);
 
   final ScrollController _scrollActiveController = ScrollController();
   final ScrollController _scrollRequestController = ScrollController();
-
-  final TextEditingController _searchController = TextEditingController();
-
-  bool _isBottomBarVisible = true;
 
   int currentPageActive = 0;
   int currentPageRequest = 0;
@@ -50,10 +41,7 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
 
   @override
   void initState() {
-    _scrollActiveController.addListener(_onScrollActive);
     _scrollActiveController.addListener(_listenerScrollActive);
-
-    _scrollRequestController.addListener(_onScrollRequest);
     _scrollRequestController.addListener(_listenerScrollRequest);
 
     getListItemActiveInShop();
@@ -94,8 +82,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
     }
 
     loadingActive = true;
-    final res = await ShopApi()
-        .getListItemActiveInShop(widget.shopId, 10, currentPageActive * 10);
+    final res = await ShopApi().searchItemsActiveInShop(
+        widget.shopId, widget.title, 10, currentPageActive * 10);
 
     if (res['isSuccess'] == false) {
       setState(() {
@@ -124,8 +112,8 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
     });
 
     loadingRequest = true;
-    final res = await ShopApi()
-        .getListItemRequestInShop(widget.shopId, 10, currentPageRequest * 10);
+    final res = await ShopApi().searchItemsRequestInShop(
+        widget.shopId, widget.title, 10, currentPageRequest * 10);
 
     if (res['isSuccess'] == false) {
       setState(() {
@@ -142,46 +130,6 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
       currentPageRequest++;
       loadingRequest = false;
     });
-  }
-
-  void _onScrollActive() {
-    if (_scrollActiveController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = false;
-          widget.updateBottomBarVisibility(false);
-        });
-      }
-    } else if (_scrollActiveController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = true;
-          widget.updateBottomBarVisibility(true);
-        });
-      }
-    }
-  }
-
-  void _onScrollRequest() {
-    if (_scrollRequestController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = false;
-          widget.updateBottomBarVisibility(false);
-        });
-      }
-    } else if (_scrollRequestController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_isBottomBarVisible) {
-        setState(() {
-          _isBottomBarVisible = true;
-          widget.updateBottomBarVisibility(true);
-        });
-      }
-    }
   }
 
   @override
@@ -201,79 +149,10 @@ class _ManagerItemScreenState extends State<ManagerItemScreen>
               Navigator.of(context).pop();
             },
           ),
-          title: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập để tìm kiếm...',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  String searchKey = _searchController.text;
-                  if (searchKey.isEmpty) {
-                    showTopSnackBar(
-                      // ignore: use_build_context_synchronously
-                      Overlay.of(context),
-                      const CustomSnackBar.error(
-                        message: 'Vui lòng nhập thông tin tìm kiếm!',
-                      ),
-                      displayDuration: const Duration(seconds: 0),
-                    );
-                    return;
-                  }
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                    builder: (context) => SearchShopItemScreen(
-                        shopId: widget.shopId, title: searchKey),
-                  ))
-                      .then((value) {
-                    listItemsActiveInCard.clear();
-                    currentPageActive = 0;
-                    countActive = 0;
-                    getListItemActiveInShop();
-
-                    listItemsRequestInCard.clear();
-                    currentPageRequest = 0;
-                    countRequest = 0;
-                    getListItemRequiredInShop();
-                  });
-                  _searchController.clear();
-                },
-                icon: const Icon(
-                  Icons.search,
-                  size: 30,
-                  color: iconButtonColor,
-                ),
-              ),
-              // Insert icon button
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                    builder: (context) => const AddItemScreen(),
-                  ))
-                      .then((value) {
-                    listItemsRequestInCard.clear();
-                    countRequest = 0;
-                    currentPageRequest = 0;
-                    getListItemRequiredInShop();
-                  });
-                },
-                icon: const Icon(
-                  Icons.add,
-                  size: 30,
-                  color: iconButtonColor,
-                ),
-              ),
-            ],
+          title: Text(
+            widget.title,
+            style: const TextStyle(
+                color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
           ),
           flexibleSpace: Container(
             decoration: const BoxDecoration(
