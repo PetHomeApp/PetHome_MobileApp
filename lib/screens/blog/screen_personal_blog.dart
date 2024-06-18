@@ -1,20 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
+import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
+import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/blog/personal_blog_card.dart';
 
 class PersonalBlogScreen extends StatefulWidget {
-  const PersonalBlogScreen({super.key});
+  const PersonalBlogScreen({super.key, required this.userInfor});
+
+  final UserInfor userInfor;
 
   @override
   State<PersonalBlogScreen> createState() => _PersonalBlogScreenState();
 }
 
 class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
+  List<Blog> blogs = List.empty(growable: true);
+
   final ScrollController _scrollController = ScrollController();
-  List<Blog> blogs = [
-    
-  ];
+
+  int currentPage = 0;
+  bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_listenerScroll);
+    getUserBlogs();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _listenerScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      getUserBlogs();
+    }
+  }
+
+  Future<void> getUserBlogs() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<Blog> newBlogs =
+        await BlogApi().getListUserBlog(10, currentPage * 10);
+
+    if (newBlogs.isEmpty) {
+      loading = false;
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        blogs.addAll(newBlogs);
+        currentPage++;
+        loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +102,7 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
             delegate: SliverChildListDelegate(
               [
                 SizedBox(
-                  height: 200.0,
+                  height: 160.0,
                   width: double.infinity,
                   child: Stack(
                     children: [
@@ -65,12 +114,12 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                       ),
                       Positioned(
                         left: 24.0,
-                        bottom: 60.0,
+                        bottom: 40.0,
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 120.0,
-                              height: 120.0,
+                              width: 100.0,
+                              height: 100.0,
                               child: Container(
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
@@ -82,7 +131,7 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(60.0),
                                   child: Image.network(
-                                    'https://via.placeholder',
+                                    widget.userInfor.avatar,
                                     fit: BoxFit.cover,
                                     errorBuilder: (BuildContext context,
                                         Object exception,
@@ -96,20 +145,20 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16.0),
+                            const SizedBox(width: 30.0),
                             Image.asset('lib/assets/pictures/logo_app.png',
-                                width: 100, height: 100),
+                                width: 80, height: 80),
                             Image.asset('lib/assets/pictures/name_app.png',
-                                width: 120, height: 120),
+                                width: 100, height: 100),
                           ],
                         ),
                       ),
-                      const Positioned(
+                      Positioned(
                         left: 30.0,
-                        bottom: 20.0,
+                        bottom: 10.0,
                         child: Text(
-                          'Lê Xuân Huy',
-                          style: TextStyle(
+                          widget.userInfor.name,
+                          style: const TextStyle(
                             color: buttonBackgroundColor,
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
@@ -120,14 +169,56 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                   ),
                 ),
                 const SizedBox(height: 8.0),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: blogs.length,
-                  itemBuilder: (context, index) {
-                    return PersonalBlogCard(blog: blogs[index]);
-                  },
-                ),
+                loading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              buttonBackgroundColor),
+                        ),
+                      )
+                    : blogs.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 100),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: AssetImage(
+                                        'lib/assets/pictures/icon_order.png'),
+                                    width: 50,
+                                    height: 50,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Bạn chưa có bài viết nào',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: buttonBackgroundColor,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'Hãy trở về trang chủ để thêm bài viêt mới nhé!',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: buttonBackgroundColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: blogs.length,
+                            itemBuilder: (context, index) {
+                              return PersonalBlogCard(blog: blogs[index]);
+                            },
+                          ),
               ],
             ),
           ),

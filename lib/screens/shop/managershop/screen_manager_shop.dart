@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/address/screen_list_shop_address.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/screen_main_manager_product.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/screen_shop_infor.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ShopManagementScreen extends StatefulWidget {
   const ShopManagementScreen({super.key, required this.idShop});
@@ -50,6 +53,64 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
         shopName = '';
         loading = false;
       });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedImage = await showDialog<XFile>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Thay đổi logo cửa hàng'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await picker.pickImage(source: ImageSource.camera));
+            },
+            child: const Text('Chụp hình',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(
+                  // ignore: use_build_context_synchronously
+                  context,
+                  await picker.pickImage(source: ImageSource.gallery));
+            },
+            child: const Text('Chọn từ album',
+                style: TextStyle(color: buttonBackgroundColor)),
+          ),
+        ],
+      ),
+    );
+
+    if (pickedImage != null) {
+      var res = await ShopApi().updateLogo(pickedImage);
+      if (res['isSuccess'] == true) {
+        setState(() {
+          getShopInfo();
+        });
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: 'Cập nhật ảnh đại diện thành công',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      } else {
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: 'Cập nhật ảnh đại diện thất bại',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      }
     }
   }
 
@@ -116,7 +177,7 @@ class _ShopManagementScreenState extends State<ShopManagementScreen> {
                               children: <Widget>[
                                 InkWell(
                                   onTap: () {
-                                    //_pickImage();
+                                    _pickImage();
                                   },
                                   child: SizedBox(
                                     width: 100.0,

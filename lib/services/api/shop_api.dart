@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
@@ -1003,9 +1004,6 @@ class ShopApi {
       'instock': quantity > 0 ? 'true' : 'false',
     });
 
-    print(quantity);
-    print(quantity > 0 ? 'true' : 'false');
-
     try {
       final response = await dio.put(
         url.toString(),
@@ -1024,7 +1022,6 @@ class ShopApi {
       }
     } catch (e) {
       // ignore: deprecated_member_use
-      print(e.toString());
       if (e is DioError) {
         return {'isSuccess': false, 'message': e.response?.data};
       } else {
@@ -1191,6 +1188,39 @@ class ShopApi {
           'Authorization': accessToken,
         },
       );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateLogo(XFile? avatar) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/logo');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    var request = http.MultipartRequest('PUT', url);
+
+    request.headers['Authorization'] = accessToken;
+
+    request.files.add(
+      await http.MultipartFile.fromPath('file', avatar!.path),
+    );
+
+    try {
+      final response = await request.send();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {'isSuccess': true};

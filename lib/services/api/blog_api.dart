@@ -35,7 +35,50 @@ class BlogApi {
 
       return blogs;
     } else {
-      throw Exception('Failed to load pets');
+      throw Exception('Failed to load blogs');
+    }
+  }
+
+  Future<List<Blog>> getListUserBlog(int limit, int start) async {
+    var url =
+        Uri.parse('${pethomeApiUrl}api/user/blogs?limit=$limit&start=$start');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<Blog> blogs = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return blogs;
+      }
+
+      if (data['data'] == null) {
+        return blogs;
+      }
+
+      for (var item in data['data']) {
+        blogs.add(Blog.fromJson(item));
+      }
+
+      return blogs;
+    } else {
+      throw Exception('Failed to load blogs');
     }
   }
 
@@ -52,7 +95,7 @@ class BlogApi {
     if (response.statusCode == 200) {
       return json.decode(response.body)['total_like'];
     } else {
-      throw Exception('Failed to load pets');
+      throw Exception('Failed to load numlike blog');
     }
   }
 
@@ -109,5 +152,4 @@ class BlogApi {
       throw Exception('Failed to load check like blog');
     }
   }
-
 }

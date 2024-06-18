@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
+import 'package:pethome_mobileapp/screens/blog/screen_add_blog.dart';
 import 'package:pethome_mobileapp/screens/blog/screen_personal_blog.dart';
 import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/services/api/user_api.dart';
@@ -103,16 +103,16 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
     }
 
     loading = true;
-    final List<Blog> blogs = await BlogApi().getListBlog(10, currentPage * 10);
+    final List<Blog> newBlogs = await BlogApi().getListBlog(10, currentPage * 10);
 
-    if (blogs.isEmpty) {
+    if (newBlogs.isEmpty) {
       loading = false;
       return;
     }
 
     if (mounted) {
       setState(() {
-        blogs.addAll(blogs);
+        blogs.addAll(newBlogs);
         currentPage++;
         loading = false;
       });
@@ -163,7 +163,7 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const PersonalBlogScreen(),
+                                          PersonalBlogScreen(userInfor: userInfor),
                                     ),
                                   );
                                 },
@@ -193,7 +193,15 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
                               ),
                               const SizedBox(width: 30),
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AddBlogScreen(),
+                                    ),
+                                  );
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 8, horizontal: 12),
