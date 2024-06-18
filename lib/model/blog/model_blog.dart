@@ -3,6 +3,7 @@ class Blog {
   final String description;
   final String createAt;
   final String idUser;
+  final String status;
   final List<String> images;
   final String nameAuthor;
   final String avatarAuthor;
@@ -12,6 +13,7 @@ class Blog {
     required this.description,
     required this.createAt,
     required this.idUser,
+    required this.status,
     required this.images,
     required this.nameAuthor,
     required this.avatarAuthor,
@@ -23,6 +25,7 @@ class Blog {
       description: json['description'],
       createAt: json['created_at'],
       idUser: json['id_user'],
+      status: json['status'] ?? '',
       images: List<String>.from(json['images']),
       nameAuthor: json['username'],
       avatarAuthor: json['avatar'],

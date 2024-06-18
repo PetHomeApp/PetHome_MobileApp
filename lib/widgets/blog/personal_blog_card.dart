@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
+import 'package:pethome_mobileapp/screens/blog/screen_update_blog.dart';
 import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:readmore/readmore.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 // ignore: must_be_immutable
 class PersonalBlogCard extends StatefulWidget {
@@ -18,12 +21,14 @@ class PersonalBlogCard extends StatefulWidget {
 class _PersonalBlogCardState extends State<PersonalBlogCard> {
   bool loading = false;
   bool isFavorite = false;
+  late Blog myBlog;
 
   int favoriteCount = 0;
 
   @override
   void initState() {
     super.initState();
+    myBlog = widget.blog;
     getFavoriveInfor();
   }
 
@@ -33,12 +38,27 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
     }
 
     loading = true;
-    int numberLike = await BlogApi().getNumberLike(widget.blog.blogId);
-    bool isLiked = await BlogApi().checkLike(widget.blog.blogId);
+    int numberLike = await BlogApi().getNumberLike(myBlog.blogId);
+    bool isLiked = await BlogApi().checkLike(myBlog.blogId);
 
     setState(() {
       favoriteCount = numberLike;
       isFavorite = isLiked;
+      loading = false;
+    });
+  }
+
+  Future<void> resetBlog() async {
+    if (loading) {
+      return;
+    }
+    
+    setState(() {
+      loading = true;
+    });
+    myBlog = await BlogApi().getDetailBlog(myBlog.blogId);
+
+    setState(() {
       loading = false;
     });
   }
@@ -78,7 +98,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(60.0),
                                 child: Image.network(
-                                  widget.blog.avatarAuthor,
+                                  myBlog.avatarAuthor,
                                   fit: BoxFit.cover,
                                   errorBuilder: (BuildContext context,
                                       Object exception,
@@ -96,7 +116,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.blog.nameAuthor,
+                                myBlog.nameAuthor,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -104,12 +124,15 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                               ),
                               Text(
                                 DateFormat('dd/MM/yyyy HH:mm').format(
-                                    DateTime.parse(widget.blog.createAt)),
+                                    DateTime.parse(myBlog.createAt)
+                                        .add(const Duration(hours: 7))),
                                 style: const TextStyle(color: Colors.grey),
                               ),
-                              const Text(
-                                "Công khai",
-                                style: TextStyle(
+                              Text(
+                                myBlog.status == 'public'
+                                    ? 'Công khai'
+                                    : 'Chỉ mình tôi',
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: buttonBackgroundColor,
                                   fontSize: 12.0,
@@ -125,9 +148,81 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                           icon: const Icon(Icons.more_horiz),
                           onSelected: (value) {
                             if (value == 'edit') {
-                              // Handle edit action
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateBlogScreen(blog: myBlog),
+                                ),
+                              ).then((value) {
+                                resetBlog();
+                              });
                             } else if (value == 'delete') {
-                              // Handle delete action
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Xác nhận'),
+                                    content: const Text(
+                                        'Bạn có chắc chắn muốn xóa bài viết này không?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Hủy',
+                                            style: TextStyle(
+                                                color: buttonBackgroundColor)),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          var callDeleteApi = await BlogApi()
+                                              .deleteBlog(myBlog.blogId);
+                                          if (callDeleteApi['isSuccess']) {
+                                            showTopSnackBar(
+                                              // ignore: use_build_context_synchronously
+                                              Overlay.of(context),
+                                              const CustomSnackBar.error(
+                                                message:
+                                                    'Xóa bài viết thành công!',
+                                              ),
+                                              displayDuration:
+                                                  const Duration(seconds: 0),
+                                            );
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.pop(context);
+                                            // ignore: use_build_context_synchronously
+                                            Navigator.pop(context);
+                                          } else {
+                                            showDialog(
+                                              // ignore: use_build_context_synchronously
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text('Lỗi'),
+                                                  content: Text(
+                                                      callDeleteApi['message']),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: const Text('Xác nhận',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             }
                           },
                           itemBuilder: (BuildContext context) =>
@@ -150,7 +245,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                   padding:
                       const EdgeInsets.only(left: 10, right: 8.0, bottom: 10.0),
                   child: ReadMoreText(
-                    widget.blog.description,
+                    myBlog.description,
                     trimLength: 80,
                     trimCollapsedText: "Xem thêm",
                     trimExpandedText: "Rút gọn",
@@ -168,7 +263,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                     ),
                   ),
                 ),
-                widget.blog.images.length == 1
+                myBlog.images.length == 1
                     ? GestureDetector(
                         onTap: () {
                           showDialog(
@@ -184,7 +279,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                     width: double.infinity,
                                     height: double.infinity,
                                     child: Image.network(
-                                      widget.blog.images[0],
+                                      myBlog.images[0],
                                       fit: BoxFit.contain,
                                     ),
                                   ),
@@ -198,7 +293,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                           height: 300.0,
                           child: ClipRRect(
                             child: Image.network(
-                              widget.blog.images[0],
+                              myBlog.images[0],
                               fit: BoxFit.cover,
                               errorBuilder: (BuildContext context,
                                   Object exception, StackTrace? stackTrace) {
@@ -210,7 +305,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                           ),
                         ),
                       )
-                    : widget.blog.images.length == 2
+                    : myBlog.images.length == 2
                         ? Row(
                             children: [
                               Expanded(
@@ -229,7 +324,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                               width: double.infinity,
                                               height: double.infinity,
                                               child: Image.network(
-                                                widget.blog.images[0],
+                                                myBlog.images[0],
                                                 fit: BoxFit.contain,
                                               ),
                                             ),
@@ -243,7 +338,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                     height: 300.0,
                                     child: ClipRRect(
                                       child: Image.network(
-                                        widget.blog.images[0],
+                                        myBlog.images[0],
                                         fit: BoxFit.cover,
                                         errorBuilder: (BuildContext context,
                                             Object exception,
@@ -273,7 +368,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                               width: double.infinity,
                                               height: double.infinity,
                                               child: Image.network(
-                                                widget.blog.images[1],
+                                                myBlog.images[1],
                                                 fit: BoxFit.contain,
                                               ),
                                             ),
@@ -287,7 +382,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                     height: 300.0,
                                     child: ClipRRect(
                                       child: Image.network(
-                                        widget.blog.images[1],
+                                        myBlog.images[1],
                                         fit: BoxFit.cover,
                                         errorBuilder: (BuildContext context,
                                             Object exception,
@@ -303,7 +398,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                               ),
                             ],
                           )
-                        : widget.blog.images.length == 3
+                        : myBlog.images.length == 3
                             ? SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 height: 300,
@@ -327,7 +422,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                     width: double.infinity,
                                                     height: double.infinity,
                                                     child: Image.network(
-                                                      widget.blog.images[0],
+                                                      myBlog.images[0],
                                                       fit: BoxFit.contain,
                                                     ),
                                                   ),
@@ -337,7 +432,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                           );
                                         },
                                         child: Image.network(
-                                          widget.blog.images[0],
+                                          myBlog.images[0],
                                           fit: BoxFit.cover,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
@@ -374,8 +469,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                           height:
                                                               double.infinity,
                                                           child: Image.network(
-                                                            widget
-                                                                .blog.images[1],
+                                                            myBlog.images[1],
                                                             fit: BoxFit.contain,
                                                           ),
                                                         ),
@@ -385,7 +479,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                 );
                                               },
                                               child: Image.network(
-                                                widget.blog.images[1],
+                                                myBlog.images[1],
                                                 fit: BoxFit.cover,
                                                 errorBuilder: (context, error,
                                                         stackTrace) =>
@@ -419,8 +513,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                           height:
                                                               double.infinity,
                                                           child: Image.network(
-                                                            widget
-                                                                .blog.images[2],
+                                                            myBlog.images[2],
                                                             fit: BoxFit.contain,
                                                           ),
                                                         ),
@@ -430,7 +523,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                 );
                                               },
                                               child: Image.network(
-                                                widget.blog.images[2],
+                                                myBlog.images[2],
                                                 fit: BoxFit.cover,
                                                 errorBuilder: (context, error,
                                                         stackTrace) =>
@@ -451,7 +544,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                 height: 300.0,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: widget.blog.images.length,
+                                  itemCount: myBlog.images.length,
                                   itemBuilder: (context, index) {
                                     return Padding(
                                       padding:
@@ -474,8 +567,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                                       width: double.infinity,
                                                       height: double.infinity,
                                                       child: Image.network(
-                                                        widget
-                                                            .blog.images[index],
+                                                        myBlog.images[index],
                                                         fit: BoxFit.contain,
                                                       ),
                                                     ),
@@ -485,7 +577,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                                             );
                                           },
                                           child: Image.network(
-                                            widget.blog.images[index],
+                                            myBlog.images[index],
                                             fit: BoxFit.cover,
                                             errorBuilder:
                                                 (context, error, stackTrace) =>
@@ -516,7 +608,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
                             ),
                             onPressed: () async {
                               bool callLikeApi =
-                                  await BlogApi().postLike(widget.blog.blogId);
+                                  await BlogApi().postLike(myBlog.blogId);
                               if (callLikeApi) {
                                 setState(() {
                                   isFavorite = !isFavorite;

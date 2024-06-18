@@ -100,8 +100,9 @@ class _BlogCardState extends State<BlogCard> {
                           ),
                           const SizedBox(height: 4.0),
                           Text(
-                            DateFormat('dd/MM/yyyy HH:mm')
-                                .format(DateTime.parse(widget.blog.createAt)),
+                            DateFormat('dd/MM/yyyy HH:mm').format(
+                                DateTime.parse(widget.blog.createAt)
+                                    .add(const Duration(hours: 7))),
                             style: const TextStyle(color: Colors.grey),
                           ),
                         ],

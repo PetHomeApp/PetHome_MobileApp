@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
 import 'package:pethome_mobileapp/setting/host_api.dart';
@@ -150,6 +152,176 @@ class BlogApi {
       return true;
     } else {
       throw Exception('Failed to load check like blog');
+    }
+  }
+
+  Future<Map<String, dynamic>> postBlog(
+      String description, List<XFile> images, String status) async {
+    var url = Uri.parse('${pethomeApiUrl}api/blogs');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'description': description,
+      'status': status,
+    });
+
+    for (var image in images) {
+      formData.files.add(MapEntry(
+        'images',
+        await MultipartFile.fromFile(image.path),
+      ));
+    }
+
+    try {
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> updateBlog(
+      String blogId, String description, String status) async {
+    var url = Uri.parse('${pethomeApiUrl}api/user/blogs/$blogId');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({
+      'description': description,
+      'status': status,
+    });
+
+    try {
+      final response = await dio.put(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteBlog(String blogId) async {
+    var url = Uri.parse('${pethomeApiUrl}api/user/blogs/$blogId');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    try {
+      final response = await dio.delete(
+        url.toString(),
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Blog> getDetailBlog(String blogId) async {
+    var url = Uri.parse('${pethomeApiUrl}blogs/detail/$blogId');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return Blog(
+          blogId: '',
+          description: '',
+          createAt: '',
+          idUser: '',
+          status: '',
+          images: [],
+          nameAuthor: '',
+          avatarAuthor: '',
+        );
+      }
+
+      return Blog.fromJson(data);
+    } else {
+      throw Exception('Failed to load detail blog');
     }
   }
 }

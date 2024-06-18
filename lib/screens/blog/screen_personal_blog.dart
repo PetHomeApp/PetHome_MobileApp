@@ -52,7 +52,9 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
         await BlogApi().getListUserBlog(10, currentPage * 10);
 
     if (newBlogs.isEmpty) {
-      loading = false;
+      setState(() {
+        loading = false;
+      });
       return;
     }
 

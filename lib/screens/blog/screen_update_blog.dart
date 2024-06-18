@@ -1,35 +1,31 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:pethome_mobileapp/model/blog/model_blog.dart';
 import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class AddBlogScreen extends StatefulWidget {
-  const AddBlogScreen({super.key});
+class UpdateBlogScreen extends StatefulWidget {
+  final Blog blog;
+  const UpdateBlogScreen({super.key, required this.blog});
 
   @override
-  State<AddBlogScreen> createState() => _AddBlogScreenState();
+  State<UpdateBlogScreen> createState() => _UpdateBlogScreenState();
 }
 
 enum Privacy { private, public }
 
-class _AddBlogScreenState extends State<AddBlogScreen> {
+class _UpdateBlogScreenState extends State<UpdateBlogScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final int maxLength = 500;
 
   Privacy privacy = Privacy.private;
 
-  final List<XFile> _selectedImages = [];
-
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    final List<XFile> images = await picker.pickMultiImage();
-    setState(() {
-      _selectedImages.addAll(images);
-    });
+  @override
+  void initState() {
+    super.initState();
+    _descriptionController.text = widget.blog.description;
+    privacy = widget.blog.status == 'private' ? Privacy.private : Privacy.public;
   }
 
   @override
@@ -47,7 +43,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
           },
         ),
         title: const Text(
-          "Thêm bài đăng",
+          "Chỉnh sửa bài đăng",
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -63,7 +59,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
         ),
         actions: <Widget>[
           IconButton(
-            icon: const Icon(Icons.post_add, color: iconButtonColor, size: 30),
+            icon: const Icon(Icons.save, color: iconButtonColor, size: 30),
             onPressed: () async {
               if (_descriptionController.text.isEmpty) {
                 showTopSnackBar(
@@ -77,21 +73,9 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                 return;
               }
 
-              if (_selectedImages.isEmpty) {
-                showTopSnackBar(
-                  // ignore: use_build_context_synchronously
-                  Overlay.of(context),
-                  const CustomSnackBar.error(
-                    message: 'Vui lòng chọn ảnh!',
-                  ),
-                  displayDuration: const Duration(seconds: 0),
-                );
-                return;
-              }
-
-              var result = await BlogApi().postBlog(
+              var result = await BlogApi().updateBlog(
+                widget.blog.blogId,
                 _descriptionController.text,
-                _selectedImages,
                 privacy == Privacy.private ? 'private' : 'public',
               );
 
@@ -136,7 +120,7 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
               children: [
                 Radio<Privacy>(
                   value: Privacy.private,
-                  activeColor: buttonBackgroundColor,            
+                  activeColor: buttonBackgroundColor,
                   groupValue: privacy,
                   onChanged: (Privacy? value) {
                     setState(() {
@@ -216,54 +200,15 @@ class _AddBlogScreenState extends State<AddBlogScreen> {
                 crossAxisSpacing: 4.0,
                 mainAxisSpacing: 4.0,
               ),
-              itemCount: _selectedImages.length,
+              itemCount: widget.blog.images.length,
               itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedImages.removeAt(index);
-                    });
-                  },
-                  child: Image.file(
-                    File(_selectedImages[index].path),
-                    fit: BoxFit.cover,
-                  ),
+                return Image.network(
+                  widget.blog.images[index],
+                  fit: BoxFit.cover,
                 );
               },
             ),
             const SizedBox(height: 10.0),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: ElevatedButton(
-                onPressed: () {
-                  _pickImage();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonBackgroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.add_a_photo,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 10.0),
-                    Text(
-                      'Thêm ảnh',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
             const SizedBox(
               height: 20.0,
             ),
