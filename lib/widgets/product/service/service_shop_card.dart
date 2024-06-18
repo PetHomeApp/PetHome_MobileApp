@@ -12,9 +12,19 @@ class ServiceShopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 2, left: 4, right: 4, top: 2),
-      child: Card(
-        elevation: 5,
+      padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4, top: 4),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 2,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(

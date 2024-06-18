@@ -25,7 +25,8 @@ class _UpdateBlogScreenState extends State<UpdateBlogScreen> {
   void initState() {
     super.initState();
     _descriptionController.text = widget.blog.description;
-    privacy = widget.blog.status == 'private' ? Privacy.private : Privacy.public;
+    privacy =
+        widget.blog.status == 'private' ? Privacy.private : Privacy.public;
   }
 
   @override

@@ -73,9 +73,12 @@ class _ServiceHomeScreenState extends State<ServiceHomeScreen> {
                               idServiceType: categories[index]['id'], title: categories[index]['name']),
                         ));
                       },
-                      child: ServiceCard(
-                        title: categories[index]['title'],
-                        image: categories[index]['image'],
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4, bottom: 4, left: 8, top: 8),
+                        child: ServiceCard(
+                          title: categories[index]['title'],
+                          image: categories[index]['image'],
+                        ),
                       ),
                     ),
                   ),
@@ -87,9 +90,12 @@ class _ServiceHomeScreenState extends State<ServiceHomeScreen> {
                               idServiceType: categories[index + 1]['id'], title: categories[index + 1]['name']),
                         ));
                       },
-                      child: ServiceCard(
-                        title: categories[index + 1]['title'],
-                        image: categories[index + 1]['image'],
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8, bottom: 4, left: 4, top: 8),
+                        child: ServiceCard(
+                          title: categories[index + 1]['title'],
+                          image: categories[index + 1]['image'],
+                        ),
                       ),
                     ),
                   ),
@@ -106,9 +112,12 @@ class _ServiceHomeScreenState extends State<ServiceHomeScreen> {
                               idServiceType: categories[index]['id'], title: categories[index]['name']),
                         ));
                       },
-                      child: ServiceCard(
-                        title: categories[index]['title'],
-                        image: categories[index]['image'],
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 4, bottom: 4, left: 8, top: 8),
+                        child: ServiceCard(
+                          title: categories[index]['title'],
+                          image: categories[index]['image'],
+                        ),
                       ),
                     ),
                   ),

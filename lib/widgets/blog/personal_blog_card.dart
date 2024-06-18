@@ -52,7 +52,7 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
     if (loading) {
       return;
     }
-    
+
     setState(() {
       loading = true;
     });

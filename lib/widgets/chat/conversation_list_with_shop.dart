@@ -106,7 +106,8 @@ class _ConversationListWithShopState extends State<ConversationListWithShop> {
   }
 
   String formatDateTime(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
+    DateTime dateTime =
+        DateTime.parse(dateTimeString).add(const Duration(hours: 7));
     DateTime now = DateTime.now();
 
     if (dateTime.year == now.year &&

@@ -91,19 +91,25 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     }
 
     loading = true;
-    ShopApi shopApi = ShopApi();
-    final dataResponse = await shopApi.checkIsActiveShop();
-
-    if (dataResponse['isSuccess'] == true) {
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
       loading = false;
-      if (itemDetail.idShop == dataResponse['shopId']) {
-        return true;
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        loading = false;
+        if (itemDetail.idShop == dataResponse['shopId']) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        loading = false;
+        return true;
       }
     } else {
       loading = false;
-      return true;
+      return false;
     }
   }
 

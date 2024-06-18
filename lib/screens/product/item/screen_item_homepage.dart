@@ -42,7 +42,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
     _scrollController.addListener(_onScroll);
     _scrollController.addListener(_listenerScroll);
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
 
     getListItemsInCards();
@@ -214,7 +214,6 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                 tabs: const [
                   Tab(text: 'Tất cả'),
                   Tab(text: 'Danh mục hàng'),
-                  Tab(text: 'Giảm giá'),
                 ],
               ),
             ),
@@ -330,7 +329,6 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                       }
                     },
                   ),
-
             loading
                 ? const Center(
                     child: CircularProgressIndicator(
@@ -387,11 +385,6 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                       );
                     },
                   ),
-
-            // Tab 3
-            const Center(
-              child: Text('Tab 3'),
-            ),
           ],
         ),
       ),

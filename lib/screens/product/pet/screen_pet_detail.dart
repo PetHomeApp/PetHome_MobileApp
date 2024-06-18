@@ -91,18 +91,25 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     }
 
     loading = true;
-    final dataResponse = await ShopApi().checkIsActiveShop();
-
-    if (dataResponse['isSuccess'] == true) {
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
       loading = false;
-      if (petDetail.idShop == dataResponse['shopId']) {
-        return true;
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        loading = false;
+        if (petDetail.idShop == dataResponse['shopId']) {
+          return true;
+        } else {
+          return false;
+        }
       } else {
-        return false;
+        loading = false;
+        return true;
       }
     } else {
       loading = false;
-      return true;
+      return false;
     }
   }
 
