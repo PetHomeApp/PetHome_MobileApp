@@ -36,7 +36,7 @@ class PetCartWidget extends StatelessWidget {
             children: [
               ClipRRect(
                 child: Image.network(
-                  petCart.imageUrl.toString(),
+                  petCart.picture.toString(),
                   height: 100,
                   width: 100,
                   fit: BoxFit.cover,
@@ -89,11 +89,11 @@ class PetCartWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
-                              color: petCart.inStock ? Colors.green : Colors.red,
+                              color: petCart.instock ? Colors.green : Colors.red,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              petCart.inStock ? '  Còn hàng  ' : '  Hết hàng  ',
+                              petCart.instock ? '  Còn hàng  ' : '  Hết hàng  ',
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,

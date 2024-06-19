@@ -1,37 +1,40 @@
 class PetCart {
   final String idPet;
-  final String? name;
-  final String? imageUrl;
-  final String? shopName;
-  final int? price;
-  final int? specieID;
-  final int? ageID;
-  final bool inStock;
-  final String? shopId;
+  final String name;
+  final int? idPetSpecie;
+  final int? idPetAge;
+  final int price;
+  final String picture;
+  final bool instock;
+  final String status;
+  final String idShop;
+  final String shopName;
 
   PetCart({
     required this.idPet,
-    this.name,
-    this.imageUrl,
-    this.shopName,
-    this.price,
-    this.specieID,
-    this.ageID,
-    this.inStock = false,
-    this.shopId,
+    required this.name,
+    required this.idPetSpecie,
+    required this.idPetAge,
+    required this.price,
+    required this.picture,
+    required this.instock,
+    required this.status,
+    required this.idShop,
+    required this.shopName,
   });
 
   factory PetCart.fromJson(Map<String, dynamic> json) {
     return PetCart(
       idPet: json['id_pet'],
       name: json['name'],
-      imageUrl: json['picture'],
-      shopName: json['shop_name'],
+      idPetSpecie: int.parse(json['id_pet_specie']),
+      idPetAge: int.parse(json['id_pet_age']),
       price: json['price'],
-      specieID: json['id_pet_specie'],
-      ageID: json['id_pet_age'],
-      inStock: json['instock'] ?? false,
-      shopId: json['id_shop'],
+      picture: json['picture'],
+      instock: json['instock'],
+      status: json['status'],
+      idShop: json['id_shop'],
+      shopName: json['shop_name'],
     );
   }
 }

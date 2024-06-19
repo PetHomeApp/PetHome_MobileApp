@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_add_service.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_manager_service_type.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -101,6 +102,20 @@ class _ManagerServiceScreenState extends State<ManagerServiceScreen>
           style: TextStyle(
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => AddServiceScreen(shopId: widget.shopId),
+              ));
+            },
+            icon: const Icon(
+              Icons.add,
+              size: 30,
+              color: iconButtonColor,
+            ),
+          ),
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

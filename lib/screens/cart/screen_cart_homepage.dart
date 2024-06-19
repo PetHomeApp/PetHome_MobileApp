@@ -183,7 +183,7 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                       builder: (context) => PetDetailScreen(
                                           idPet: pets[index].idPet,
                                           showCartIcon: false,
-                                          ageID: pets[index].ageID)));
+                                          ageID: pets[index].idPetAge)));
                                 },
                                 child: PetCartWidget(
                                   petCart: pets[index],
