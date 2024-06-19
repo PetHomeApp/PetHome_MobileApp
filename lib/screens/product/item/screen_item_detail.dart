@@ -47,16 +47,18 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   int price = 0;
   bool instock = false;
 
+  bool isShop = false;
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(() {
       _currentPageNotifier.value = _controller.page!.round() + 1;
     });
-    getItemDetail();
+    getItemDetailAndCheckShop();
   }
 
-  void getItemDetail() async {
+  void getItemDetailAndCheckShop() async {
     if (loading) {
       return;
     }
@@ -64,6 +66,17 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     loading = true;
     itemDetail = await ItemApi().getItemDetail(widget.idItem);
     checkRated = await ItemApi().checkRated(widget.idItem);
+
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        if (itemDetail.idShop == dataResponse['shopId']) {
+          isShop = true;
+        }
+      }
+    }
 
     // ignore: unnecessary_null_comparison
     if (itemDetail == null) {
@@ -85,34 +98,6 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         instock = detailItemClassifyList[selectedDetail].instock;
         loading = false;
       });
-    }
-  }
-
-  Future<bool> checkUserIsShop() async {
-    if (loading) {
-      return true;
-    }
-
-    loading = true;
-    final checkIsShop = await ShopApi().checkIsRegisterShop();
-    if (checkIsShop['isSuccess'] == true) {
-      loading = false;
-      final dataResponse = await ShopApi().checkIsActiveShop();
-
-      if (dataResponse['isSuccess'] == true) {
-        loading = false;
-        if (itemDetail.idShop == dataResponse['shopId']) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        loading = false;
-        return true;
-      }
-    } else {
-      loading = false;
-      return false;
     }
   }
 
@@ -690,7 +675,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                                 result == true) {
                                               setState(() {
                                                 checkRated = true;
-                                                getItemDetail();
+                                                getItemDetailAndCheckShop();
                                               });
                                             }
                                           },
@@ -722,7 +707,6 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   flex: 10,
                   child: InkWell(
                     onTap: () async {
-                      bool isShop = await checkUserIsShop();
                       if (isShop) {
                         showTopSnackBar(
                           // ignore: use_build_context_synchronously
@@ -791,6 +775,18 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   flex: 10,
                   child: InkWell(
                     onTap: () async {
+                      if (isShop) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        return;
+                      }
                       var result = await CartApi().addItemToCart(
                         widget.idItem,
                         detailItemClassifyList[selectedDetail].idItemDetail,
@@ -851,7 +847,6 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   flex: 15,
                   child: InkWell(
                     onTap: () async {
-                      bool isShop = await checkUserIsShop();
                       if (isShop) {
                         showTopSnackBar(
                           // ignore: use_build_context_synchronously

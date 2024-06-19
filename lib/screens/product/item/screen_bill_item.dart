@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pethome_mobileapp/model/payment/model_payment_method.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
+import 'package:pethome_mobileapp/model/product/item/model_item_sent_bill.dart';
 import 'package:pethome_mobileapp/model/user/model_user_address.dart';
+import 'package:pethome_mobileapp/services/api/bill_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class BillItemScreen extends StatefulWidget {
   const BillItemScreen(
@@ -22,7 +27,11 @@ class BillItemScreen extends StatefulWidget {
 
 class _BillItemScreenState extends State<BillItemScreen> {
   late TextEditingController _controller;
+
+  late List<PaymentMethod> paymentMethods;
+
   int selectAddressIndex = 0;
+  int selectPaymentMethodIndex = 0;
 
   bool loading = false;
   int quantity = 1;
@@ -31,6 +40,19 @@ class _BillItemScreenState extends State<BillItemScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: '$quantity');
+    getPaymentMethod();
+  }
+
+  void getPaymentMethod() async {
+    setState(() {
+      loading = true;
+    });
+
+    paymentMethods = await BillApi().getPaymentMethod();
+
+    setState(() {
+      loading = false;
+    });
   }
 
   void _incrementCounter() {
@@ -289,6 +311,62 @@ class _BillItemScreenState extends State<BillItemScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Phương thức thanh toán',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: paymentMethods.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Radio(
+                                        value: index,
+                                        groupValue: selectPaymentMethodIndex,
+                                        activeColor: buttonBackgroundColor,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectPaymentMethodIndex =
+                                                value as int;
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              paymentMethods[index]
+                                                  .description
+                                                  .toString(),
+                                              style:
+                                                  const TextStyle(fontSize: 16),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -312,7 +390,39 @@ class _BillItemScreenState extends State<BillItemScreen> {
                 Expanded(
                   flex: 10,
                   child: InkWell(
-                    onTap: () async {},
+                    onTap: () async {
+                      var response = await BillApi().sentBill([
+                        ItemSentBill(
+                            itemId: widget.itemDetail.idItem,
+                            itemDetailId: widget.itemClassify.idItemDetail,
+                            quantity: quantity),
+                      ],
+                          widget.userAddresses[selectAddressIndex].address,
+                          widget.userAddresses[selectAddressIndex].area,
+                          paymentMethods[selectPaymentMethodIndex].idMethod);
+
+                      if (response['isSuccess'] == true) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.success(
+                            message: 'Đặt hàng thành công',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pop();
+                      } else {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Đặt hàng thất bại, vui lòng thử lại sau',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                      }
+                    },
                     child: Container(
                       color: buttonBackgroundColor,
                       child: const Padding(

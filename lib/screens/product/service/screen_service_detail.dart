@@ -35,16 +35,18 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
   bool hasMessage = false;
 
+  bool isShop = false;
+
   @override
   void initState() {
     super.initState();
     _controller.addListener(() {
       _currentPageNotifier.value = (_controller.page!.round() + 1);
     });
-    getPetDetail();
+    getPetDetailAndCheckShop();
   }
 
-  Future<void> getPetDetail() async {
+  Future<void> getPetDetailAndCheckShop() async {
     if (loading) {
       return;
     }
@@ -52,6 +54,17 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
     loading = true;
     serviceDetail = await ServiceApi().getServiceDetail(widget.idService);
     checkRated = await ServiceApi().checkRated(widget.idService);
+
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        if (serviceDetail.idShop == dataResponse['shopId']) {
+          isShop = true;
+        }
+      }
+    }
 
     // ignore: unnecessary_null_comparison
     if (serviceDetail == null) {
@@ -68,35 +81,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
       });
     }
   }
-
-  Future<bool> checkUserIsShop() async {
-    if (loading) {
-      return true;
-    }
-
-    loading = true;
-    final checkIsShop = await ShopApi().checkIsRegisterShop();
-    if (checkIsShop['isSuccess'] == true) {
-      loading = false;
-      final dataResponse = await ShopApi().checkIsActiveShop();
-
-      if (dataResponse['isSuccess'] == true) {
-        loading = false;
-        if (serviceDetail.idShop == dataResponse['shopId']) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        loading = false;
-        return true;
-      }
-    } else {
-      loading = false;
-      return false;
-    }
-  }
-
 
   Future<ShopInfor> getShopInfor(String idShop) async {
     if (loading) {
@@ -538,7 +522,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                                 result == true) {
                                               setState(() {
                                                 checkRated = true;
-                                                getPetDetail();
+                                                getPetDetailAndCheckShop();
                                               });
                                             }
                                           },
@@ -570,14 +554,13 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   flex: 1,
                   child: InkWell(
                     onTap: () async {
-                      bool isShop = await checkUserIsShop();
                       if (isShop) {
                         showTopSnackBar(
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.error(
                             message:
-                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
+                                'Xin lỗi! Dịch vụ này thuộc cửa hàng của bạn!',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );

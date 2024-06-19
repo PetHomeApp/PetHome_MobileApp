@@ -44,6 +44,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
   bool checkRated = false;
 
   bool hasMessage = false;
+  bool isShop = false;
 
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     _controller.addListener(() {
       _currentPageNotifier.value = (_controller.page!.round() + 1);
     });
-    getPetDetail();
+    getPetDetailAndCheckShop();
 
     PetApi().getPetAges().then((value) {
       setState(() {
@@ -60,7 +61,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     });
   }
 
-  Future<void> getPetDetail() async {
+  Future<void> getPetDetailAndCheckShop() async {
     if (loading) {
       return;
     }
@@ -68,6 +69,17 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
     loading = true;
     petDetail = await PetApi().getPetDetail(widget.idPet);
     checkRated = await PetApi().checkRated(widget.idPet);
+
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        if (petDetail.idShop == dataResponse['shopId']) {
+          isShop = true;
+        }
+      }
+    }
 
     // ignore: unnecessary_null_comparison
     if (petDetail == null) {
@@ -82,34 +94,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
         imageUrlDescriptions.addAll(petDetail.imageUrlDescriptions);
         loading = false;
       });
-    }
-  }
-
-  Future<bool> checkUserIsShop() async {
-    if (loading) {
-      return true;
-    }
-
-    loading = true;
-    final checkIsShop = await ShopApi().checkIsRegisterShop();
-    if (checkIsShop['isSuccess'] == true) {
-      loading = false;
-      final dataResponse = await ShopApi().checkIsActiveShop();
-
-      if (dataResponse['isSuccess'] == true) {
-        loading = false;
-        if (petDetail.idShop == dataResponse['shopId']) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        loading = false;
-        return true;
-      }
-    } else {
-      loading = false;
-      return false;
     }
   }
 
@@ -658,7 +642,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                                 result == true) {
                                               setState(() {
                                                 checkRated = true;
-                                                getPetDetail();
+                                                getPetDetailAndCheckShop();
                                               });
                                             }
                                           },
@@ -690,7 +674,6 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   flex: 1,
                   child: InkWell(
                     onTap: () async {
-                      bool isShop = await checkUserIsShop();
                       if (isShop) {
                         showTopSnackBar(
                           // ignore: use_build_context_synchronously
@@ -753,6 +736,18 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                   flex: 1,
                   child: InkWell(
                     onTap: () async {
+                      if (isShop) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        return;
+                      }
                       var result = await CartApi().addPetToCart(widget.idPet);
                       if (result['isSuccess'] == true) {
                         showTopSnackBar(

@@ -509,26 +509,6 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                                   itemsSelected.add(item);
                                                 }
                                               }
-
-                                              for (var item in itemsSelected) {
-                                                bool isShop =
-                                                    await checkUserIsShop(
-                                                        item.shopId);
-                                                if (isShop) {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar.error(
-                                                      message:
-                                                          'Xin lỗi! Có sản phẩm thuộc cửa hàng của bạn!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                  return;
-                                                }
-                                              }
                                               List<UserAddress> addressList =
                                                   await getUserAddress();
                                               if (addressList.isEmpty) {
