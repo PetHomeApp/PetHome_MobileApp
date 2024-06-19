@@ -3,13 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
+import 'package:pethome_mobileapp/model/user/model_user_address.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
+import 'package:pethome_mobileapp/screens/product/item/screen_bill_item.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/services/api/item_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
+import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_item_rate_sheet.dart';
@@ -139,6 +142,28 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         areas: [],
       );
     }
+  }
+
+  Future<List<UserAddress>> getUserAddress() async {
+    if (loading) {
+      return List.empty(growable: true);
+    }
+
+    loading = true;
+    var response = await UserApi().getAddress();
+
+    List<UserAddress> addressList = [];
+    if (response['isSuccess']) {
+      addressList = response['addressList'];
+    } else {
+      addressList = List.empty(growable: true);
+      setState(() {
+        loading = false;
+      });
+      return addressList;
+    }
+    loading = false;
+    return addressList;
   }
 
   @override
@@ -825,7 +850,46 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 Expanded(
                   flex: 15,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      bool isShop = await checkUserIsShop();
+                      if (isShop) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message:
+                                'Xin lỗi! Sản phẩm này thuộc cửa hàng của bạn!',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                      } else {
+                        List<UserAddress> addressList = await getUserAddress();
+                        if (addressList.isEmpty) {
+                          showTopSnackBar(
+                            // ignore: use_build_context_synchronously
+                            Overlay.of(context),
+                            const CustomSnackBar.error(
+                              message: 'Vui lòng thêm địa chỉ giao hàng!',
+                            ),
+                            displayDuration: const Duration(seconds: 0),
+                          );
+                          return;
+                        }
+
+                        Navigator.push(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BillItemScreen(
+                              itemDetail: itemDetail,
+                              itemClassify:
+                                  detailItemClassifyList[selectedDetail],
+                              userAddresses: addressList,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     child: Container(
                       color: buttonBackgroundColor,
                       child: const Padding(

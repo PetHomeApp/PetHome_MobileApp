@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_cart.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_cart.dart';
+import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
+import 'package:pethome_mobileapp/model/user/model_user_address.dart';
+import 'package:pethome_mobileapp/screens/cart/screen_bill_item_cart.dart';
 import 'package:pethome_mobileapp/screens/product/item/screen_item_detail.dart';
 import 'package:pethome_mobileapp/screens/product/pet/screen_pet_detail.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
+import 'package:pethome_mobileapp/services/api/shop_api.dart';
+import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/cart/item_cart_widget.dart';
 import 'package:pethome_mobileapp/widgets/cart/pet_cart_widget.dart';
@@ -71,6 +76,84 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
 
       loading = false;
     });
+  }
+
+  Future<bool> checkUserIsShop(String shopId) async {
+    if (loading) {
+      return true;
+    }
+
+    loading = true;
+    final checkIsShop = await ShopApi().checkIsRegisterShop();
+    if (checkIsShop['isSuccess'] == true) {
+      loading = false;
+      final dataResponse = await ShopApi().checkIsActiveShop();
+
+      if (dataResponse['isSuccess'] == true) {
+        loading = false;
+        if (shopId == dataResponse['shopId']) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        loading = false;
+        return true;
+      }
+    } else {
+      loading = false;
+      return false;
+    }
+  }
+
+  Future<ShopInfor> getShopInfor(String idShop) async {
+    if (loading) {
+      return ShopInfor(
+        idShop: '',
+        name: '',
+        logo: '',
+        areas: [],
+      );
+    }
+
+    loading = true;
+    ShopApi shopApi = ShopApi();
+    final dataResponse = await shopApi.getShopInfor(idShop);
+
+    if (dataResponse['isSuccess'] == true) {
+      loading = false;
+      return ShopInfor.fromJson(dataResponse['shopInfor']);
+    } else {
+      loading = false;
+      return ShopInfor(
+        idShop: '',
+        name: '',
+        logo: '',
+        areas: [],
+      );
+    }
+  }
+
+  Future<List<UserAddress>> getUserAddress() async {
+    if (loading) {
+      return List.empty(growable: true);
+    }
+
+    loading = true;
+    var response = await UserApi().getAddress();
+
+    List<UserAddress> addressList = [];
+    if (response['isSuccess']) {
+      addressList = response['addressList'];
+    } else {
+      addressList = List.empty(growable: true);
+      setState(() {
+        loading = false;
+      });
+      return addressList;
+    }
+    loading = false;
+    return addressList;
   }
 
   @override
@@ -405,9 +488,75 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                           ),
                                           const SizedBox(width: 20),
                                           GestureDetector(
-                                            onTap: () {
-                                              // Điều hướng đến màn hình thanh toán
-                                              // Navigator.of(context).push(MaterialPageRoute(builder: (context) => const CheckoutScreen()));
+                                            onTap: () async {
+                                              if (total == 0) {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.error(
+                                                    message:
+                                                        'Vui lòng chọn ít nhất một vật phẩm để mua',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(
+                                                          seconds: 0),
+                                                );
+                                                return;
+                                              }
+                                              List<ItemCart> itemsSelected = [];
+                                              for (var item in items) {
+                                                if (item.isCheckBox) {
+                                                  itemsSelected.add(item);
+                                                }
+                                              }
+
+                                              for (var item in itemsSelected) {
+                                                bool isShop =
+                                                    await checkUserIsShop(
+                                                        item.shopId);
+                                                if (isShop) {
+                                                  showTopSnackBar(
+                                                    // ignore: use_build_context_synchronously
+                                                    Overlay.of(context),
+                                                    const CustomSnackBar.error(
+                                                      message:
+                                                          'Xin lỗi! Có sản phẩm thuộc cửa hàng của bạn!',
+                                                    ),
+                                                    displayDuration:
+                                                        const Duration(
+                                                            seconds: 0),
+                                                  );
+                                                  return;
+                                                }
+                                              }
+                                              List<UserAddress> addressList =
+                                                  await getUserAddress();
+                                              if (addressList.isEmpty) {
+                                                showTopSnackBar(
+                                                  // ignore: use_build_context_synchronously
+                                                  Overlay.of(context),
+                                                  const CustomSnackBar.error(
+                                                    message:
+                                                        'Vui lòng thêm địa chỉ giao hàng!',
+                                                  ),
+                                                  displayDuration:
+                                                      const Duration(
+                                                          seconds: 0),
+                                                );
+                                                return;
+                                              }
+
+                                              Navigator.push(
+                                                // ignore: use_build_context_synchronously
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      BillItemCartScreen(
+                                                    itemCart: itemsSelected,
+                                                    userAddresses: addressList,
+                                                  ),
+                                                ),
+                                              );
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
