@@ -47,9 +47,7 @@ class _BillItemScreenState extends State<BillItemScreen> {
     setState(() {
       loading = true;
     });
-
     paymentMethods = await BillApi().getPaymentMethod();
-
     setState(() {
       loading = false;
     });
@@ -417,7 +415,8 @@ class _BillItemScreenState extends State<BillItemScreen> {
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.error(
-                            message: 'Đặt hàng thất bại, vui lòng thử lại sau',
+                            message:
+                                'Đặt hàng thất bại, số lượng đặt quá lớn, vui lòng thử lại sau',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );

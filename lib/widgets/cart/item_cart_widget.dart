@@ -86,12 +86,14 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                 Checkbox(
                   value: widget.itemCart.isCheckBox,
                   checkColor: Colors.white,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      widget.itemCart.isCheckBox = value ?? false;
-                      widget.onChanged();
-                    });
-                  },
+                  onChanged: widget.itemCart.inStock == true
+                      ? (bool? value) {
+                          setState(() {
+                            widget.itemCart.isCheckBox = value ?? false;
+                            widget.onChanged();
+                          });
+                        }
+                      : null,
                   activeColor: buttonBackgroundColor,
                 ),
                 ClipRRect(
@@ -128,14 +130,16 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                       Text(
                         '${widget.itemCart.size} ${widget.itemCart.unit}',
                         style: const TextStyle(
-                            fontSize: 16, color: Color.fromARGB(255, 84, 84, 84)),
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 84, 84, 84)),
                       ),
                       Text(
                         widget.itemCart.shopName.toString().length > 20
                             ? '${widget.itemCart.shopName.toString().substring(0, 20)}...'
                             : widget.itemCart.shopName.toString(),
                         style: const TextStyle(
-                            fontSize: 14, color: Color.fromARGB(255, 84, 84, 84)),
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 84, 84, 84)),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),

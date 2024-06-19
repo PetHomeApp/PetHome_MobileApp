@@ -858,6 +858,19 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           displayDuration: const Duration(seconds: 0),
                         );
                       } else {
+                        if (itemDetail.details[selectedDetail].instock ==
+                            false) {
+                          showTopSnackBar(
+                            // ignore: use_build_context_synchronously
+                            Overlay.of(context),
+                            const CustomSnackBar.error(
+                              message: 'Sản phẩm đã hết hàng!',
+                            ),
+                            displayDuration: const Duration(seconds: 0),
+                          );
+                          return;
+                        }
+
                         List<UserAddress> addressList = await getUserAddress();
                         if (addressList.isEmpty) {
                           showTopSnackBar(

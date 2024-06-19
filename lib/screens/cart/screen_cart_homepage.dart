@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_cart.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_cart.dart';
-import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/model/user/model_user_address.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_bill_item_cart.dart';
 import 'package:pethome_mobileapp/screens/product/item/screen_item_detail.dart';
 import 'package:pethome_mobileapp/screens/product/pet/screen_pet_detail.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
-import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/cart/item_cart_widget.dart';
@@ -45,7 +43,9 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
       return;
     }
 
-    loading = true;
+    setState(() {
+      loading = true;
+    });
     final dataResPet = await CartApi().getListPetsCart();
     final dataResItem = await CartApi().getListItemsCart();
 
@@ -76,62 +76,6 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
 
       loading = false;
     });
-  }
-
-  Future<bool> checkUserIsShop(String shopId) async {
-    if (loading) {
-      return true;
-    }
-
-    loading = true;
-    final checkIsShop = await ShopApi().checkIsRegisterShop();
-    if (checkIsShop['isSuccess'] == true) {
-      loading = false;
-      final dataResponse = await ShopApi().checkIsActiveShop();
-
-      if (dataResponse['isSuccess'] == true) {
-        loading = false;
-        if (shopId == dataResponse['shopId']) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        loading = false;
-        return true;
-      }
-    } else {
-      loading = false;
-      return false;
-    }
-  }
-
-  Future<ShopInfor> getShopInfor(String idShop) async {
-    if (loading) {
-      return ShopInfor(
-        idShop: '',
-        name: '',
-        logo: '',
-        areas: [],
-      );
-    }
-
-    loading = true;
-    ShopApi shopApi = ShopApi();
-    final dataResponse = await shopApi.getShopInfor(idShop);
-
-    if (dataResponse['isSuccess'] == true) {
-      loading = false;
-      return ShopInfor.fromJson(dataResponse['shopInfor']);
-    } else {
-      loading = false;
-      return ShopInfor(
-        idShop: '',
-        name: '',
-        logo: '',
-        areas: [],
-      );
-    }
   }
 
   Future<List<UserAddress>> getUserAddress() async {
@@ -442,7 +386,9 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                                 isCheckAllItem = value!;
                                                 if (isCheckAllItem) {
                                                   for (var element in items) {
-                                                    element.isCheckBox = true;
+                                                    if (element.inStock) {
+                                                      element.isCheckBox = true;
+                                                    }
                                                   }
                                                 } else {
                                                   for (var element in items) {
@@ -536,7 +482,9 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                                     userAddresses: addressList,
                                                   ),
                                                 ),
-                                              );
+                                              ).then((value) {
+                                                getListPetsAndItemsCart();
+                                              });
                                             },
                                             child: Container(
                                               decoration: BoxDecoration(
