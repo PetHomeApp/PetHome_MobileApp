@@ -21,6 +21,7 @@ class BillItemCartScreen extends StatefulWidget {
 }
 
 class _BillItemCartScreenState extends State<BillItemCartScreen> {
+  final TextEditingController _phoneController = TextEditingController();
   int amount = 0;
 
   int selectAddressIndex = 0;
@@ -233,6 +234,51 @@ class _BillItemCartScreenState extends State<BillItemCartScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
+                            'Số điện thoại người nhận',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            controller: _phoneController,
+                            keyboardType: TextInputType.phone,
+                            cursorColor: buttonBackgroundColor,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.grey,
+                                  width: 0.75,
+                                ),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.grey,
+                                  width: 0.75,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: const BorderSide(
+                                  color: buttonBackgroundColor,
+                                  width: 1.0,
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10.0, horizontal: 12.0),
+                              hintText: 'Nhập số điện thoại người nhận',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
                             'Địa chỉ nhận hàng',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
@@ -278,64 +324,60 @@ class _BillItemCartScreenState extends State<BillItemCartScreen> {
                               );
                             },
                           ),
-                          const SizedBox(height: 20),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Phương thức thanh toán',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 10),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: paymentMethods.length,
-                                  itemBuilder: (context, index) {
-                                    return Column(
-                                      children: [
-                                        Row(
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Phương thức thanh toán',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: paymentMethods.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Radio(
+                                        value: index,
+                                        groupValue: selectPaymentMethodIndex,
+                                        activeColor: buttonBackgroundColor,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectPaymentMethodIndex =
+                                                value as int;
+                                          });
+                                        },
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Radio(
-                                              value: index,
-                                              groupValue:
-                                                  selectPaymentMethodIndex,
-                                              activeColor:
-                                                  buttonBackgroundColor,
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  selectPaymentMethodIndex =
-                                                      value as int;
-                                                });
-                                              },
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    paymentMethods[index]
-                                                        .description
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        fontSize: 16),
-                                                  ),
-                                                ],
-                                              ),
+                                            Text(
+                                              paymentMethods[index]
+                                                  .description
+                                                  .toString(),
+                                              style:
+                                                  const TextStyle(fontSize: 16),
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -364,6 +406,18 @@ class _BillItemCartScreenState extends State<BillItemCartScreen> {
                   flex: 10,
                   child: InkWell(
                     onTap: () async {
+                      if (_phoneController.text == '') {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Vui lòng nhập số điện thoại người nhận',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        return;
+                      }
+
                       List<ItemSentBill> listItemBill = [];
                       for (var item in widget.itemCart) {
                         listItemBill.add(ItemSentBill(
@@ -373,6 +427,7 @@ class _BillItemCartScreenState extends State<BillItemCartScreen> {
                       }
                       var response = await BillApi().sentBill(
                           listItemBill,
+                          _phoneController.text,
                           widget.userAddresses[selectAddressIndex].address,
                           widget.userAddresses[selectAddressIndex].area,
                           paymentMethods[selectPaymentMethodIndex].idMethod);

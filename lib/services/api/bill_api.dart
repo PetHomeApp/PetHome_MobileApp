@@ -31,7 +31,7 @@ class BillApi {
   }
 
   Future<Map<String, dynamic>> sentBill(List<ItemSentBill> listItemSenBill,
-      String address, String area, int idMethod) async {
+      String phoneNumber, String address, String area, int idMethod) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/bills/create');
 
     AuthApi authApi = AuthApi();
@@ -46,6 +46,7 @@ class BillApi {
     Dio dio = Dio();
 
     FormData formData = FormData.fromMap({
+      'phone_number': phoneNumber,
       'address': address,
       'area': area,
       'id_method': idMethod,
@@ -194,6 +195,45 @@ class BillApi {
       return listBillItem;
     } else {
       return [];
+    }
+  }
+
+  Future<bool> updateStatusBillByUser(String idBill, String status) async {
+    var url = Uri.parse('${pethomeApiUrl}api/user/bills/$idBill');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return false;
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    Map<String, dynamic> data = {
+      'status': status,
+    };
+
+    try {
+      final response = await dio.put(
+        url.toString(),
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

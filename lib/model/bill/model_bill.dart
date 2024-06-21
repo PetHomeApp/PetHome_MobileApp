@@ -4,6 +4,7 @@ class BillItem {
   final String idUser;
   final String idItem;
   final String idItemDetail;
+  final String phoneNumber;
   final String address;
   final String area;
   final int price;
@@ -24,6 +25,7 @@ class BillItem {
     required this.idUser,
     required this.idItem,
     required this.idItemDetail,
+    required this.phoneNumber,
     required this.address,
     required this.area,
     required this.price,
@@ -46,6 +48,7 @@ class BillItem {
       idUser: json['id_user'],
       idItem: json['id_item'],
       idItemDetail: json['id_item_detail'],
+      phoneNumber: json['phone_number'],
       address: json['address'],
       area: json['area'],
       price: json['price'],

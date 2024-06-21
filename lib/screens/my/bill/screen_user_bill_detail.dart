@@ -211,6 +211,37 @@ class _UserBillDetailScreenState extends State<UserBillDetailScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(
+                              Icons.phone,
+                              color: buttonBackgroundColor,
+                              size: 25,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Số điện thoại nhận hàng:',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: buttonBackgroundColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(widget.billItem.phoneNumber,
+                            style: const TextStyle(
+                                fontSize: 18,
+                                color: Color.fromARGB(255, 84, 84, 84))),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
                               Icons.location_on,
                               color: buttonBackgroundColor,
                               size: 25,

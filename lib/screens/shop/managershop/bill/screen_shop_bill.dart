@@ -8,14 +8,14 @@ import 'package:pethome_mobileapp/widgets/bill/user_bill_widget.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-class UserBillScreen extends StatefulWidget {
-  const UserBillScreen({super.key});
+class ShopBillScreen extends StatefulWidget {
+  const ShopBillScreen({super.key});
 
   @override
-  State<UserBillScreen> createState() => _UserBillScreenState();
+  State<ShopBillScreen> createState() => _ShopBillScreenState();
 }
 
-class _UserBillScreenState extends State<UserBillScreen>
+class _ShopBillScreenState extends State<ShopBillScreen>
     with SingleTickerProviderStateMixin {
   bool loading = false;
 
