@@ -8,6 +8,7 @@ import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/address/screen_list_address.dart';
 import 'package:pethome_mobileapp/screens/my/screen_change_password.dart';
 import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
+import 'package:pethome_mobileapp/screens/my/bill/screen_user_bill.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_4.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/screen_manager_shop.dart';
@@ -277,7 +278,8 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                       ),
                                       const SizedBox(height: 10),
                                       Padding(
-                                        padding: const EdgeInsets.only(right: 30),
+                                        padding:
+                                            const EdgeInsets.only(right: 30),
                                         child: Text(
                                           'ID:  ${userInfor.idUser}',
                                           style: const TextStyle(
@@ -431,7 +433,11 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                     padding: const EdgeInsets.all(15),
                                     child: InkWell(
                                       onTap: () {
-                                        // Handle 'Tin nhắn' tap
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UserBillScreen(),
+                                        ));
                                       },
                                       child: Column(
                                         mainAxisAlignment:
@@ -606,11 +612,9 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const ListAddressScreen(),
-                              ));
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ListAddressScreen(),
+                          ));
                         },
                         child: Container(
                           decoration: const BoxDecoration(
@@ -649,11 +653,9 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const ChangePasswordScreen(),
-                              ));
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const ChangePasswordScreen(),
+                          ));
                         },
                         child: Container(
                           decoration: const BoxDecoration(

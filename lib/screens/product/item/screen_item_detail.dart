@@ -895,7 +895,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               userAddresses: addressList,
                             ),
                           ),
-                        );
+                        ).then((value) {
+                          getItemDetailAndCheckShop();
+                        });
                       }
                     },
                     child: Container(

@@ -118,9 +118,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.itemCart.name.toString().length > 30
-                            ? '${widget.itemCart.name.toString().substring(0, 30)}...'
-                            : widget.itemCart.name.toString(),
+                        widget.itemCart.name.toString(),
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                         overflow: TextOverflow.ellipsis,
@@ -128,15 +126,13 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${widget.itemCart.size} ${widget.itemCart.unit}',
+                        '${widget.itemCart.size} ${widget.itemCart.unit} - Số lượng: ${widget.itemCart.quantityInStock}',
                         style: const TextStyle(
                             fontSize: 16,
                             color: Color.fromARGB(255, 84, 84, 84)),
                       ),
                       Text(
-                        widget.itemCart.shopName.toString().length > 20
-                            ? '${widget.itemCart.shopName.toString().substring(0, 20)}...'
-                            : widget.itemCart.shopName.toString(),
+                        widget.itemCart.shopName.toString(),
                         style: const TextStyle(
                             fontSize: 14,
                             color: Color.fromARGB(255, 84, 84, 84)),

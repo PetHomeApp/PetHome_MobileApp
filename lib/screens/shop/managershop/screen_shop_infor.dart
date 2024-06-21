@@ -204,7 +204,7 @@ class _ShopDetailInforScreenState extends State<ShopDetailInforScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(60.0),
+                          borderRadius: BorderRadius.circular(12.0),
                           child: Image.network(
                             _shopDetailInfor.frontIdCard,
                             fit: BoxFit.cover,
@@ -243,7 +243,7 @@ class _ShopDetailInforScreenState extends State<ShopDetailInforScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(60.0),
+                          borderRadius: BorderRadius.circular(12.0),
                           child: Image.network(
                             _shopDetailInfor.backIdCard,
                             fit: BoxFit.cover,

@@ -158,7 +158,7 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      '${widget.itemClassify.size} ${widget.itemDetail.unit}',
+                                      '${widget.itemClassify.size} ${widget.itemDetail.unit}   -   Còn lại: ${widget.itemClassify.quantity} sản phẩm',
                                       style: const TextStyle(
                                           fontSize: 16,
                                           color:
@@ -389,6 +389,18 @@ class _BillItemScreenState extends State<BillItemScreen> {
                   flex: 10,
                   child: InkWell(
                     onTap: () async {
+                      if (quantity > widget.itemClassify.quantity) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Số lượng sản phẩm không đủ',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        return;
+                      }
+
                       var response = await BillApi().sentBill([
                         ItemSentBill(
                             itemId: widget.itemDetail.idItem,
@@ -415,8 +427,7 @@ class _BillItemScreenState extends State<BillItemScreen> {
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.error(
-                            message:
-                                'Đặt hàng thất bại, số lượng đặt quá lớn, vui lòng thử lại sau',
+                            message: 'Đặt hàng thất bại, vui lòng thử lại sau',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );

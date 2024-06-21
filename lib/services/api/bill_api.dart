@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pethome_mobileapp/model/bill/model_bill.dart';
 import 'package:pethome_mobileapp/model/payment/model_payment_method.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_sent_bill.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
@@ -72,8 +73,127 @@ class BillApi {
         return {'isSuccess': false};
       }
     } catch (e) {
-      print(e);
       return {'isSuccess': false};
+    }
+  }
+
+  Future<List<BillItem>> getListBillAll(int start, int limit) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending','preparing','delivering','delivered'");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().get(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<BillItem> listBillItem = [];
+      var data = response.data;
+
+      if (data == null) {
+        return listBillItem;
+      }
+
+      for (var item in data) {
+        listBillItem.add(BillItem.fromJson(item));
+      }
+
+      return listBillItem;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<BillItem>> getListBillSuccess(int start, int limit) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='done'");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().get(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<BillItem> listBillItem = [];
+      var data = response.data;
+
+      if (data == null) {
+        return listBillItem;
+      }
+
+      for (var item in data) {
+        listBillItem.add(BillItem.fromJson(item));
+      }
+
+      return listBillItem;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<BillItem>> getListBillCancel(int start, int limit) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='canceled'");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().get(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<BillItem> listBillItem = [];
+      var data = response.data;
+
+      if (data == null) {
+        return listBillItem;
+      }
+
+      for (var item in data) {
+        listBillItem.add(BillItem.fromJson(item));
+      }
+
+      return listBillItem;
+    } else {
+      return [];
     }
   }
 }

@@ -453,8 +453,25 @@ class _CartHomePageScreenState extends State<CartHomePageScreen> {
                                               for (var item in items) {
                                                 if (item.isCheckBox) {
                                                   itemsSelected.add(item);
+                                                  if (item.quantity >
+                                                      item.quantityInStock) {
+                                                    showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      Overlay.of(context),
+                                                      const CustomSnackBar
+                                                          .error(
+                                                        message:
+                                                            'Số lượng vật phẩm trong giỏ hàng vượt quá số lượng tồn kho',
+                                                      ),
+                                                      displayDuration:
+                                                          const Duration(
+                                                              seconds: 0),
+                                                    );
+                                                    return;
+                                                  }
                                                 }
                                               }
+
                                               List<UserAddress> addressList =
                                                   await getUserAddress();
                                               if (addressList.isEmpty) {

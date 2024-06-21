@@ -109,7 +109,6 @@ class CartApi {
           };
         }
 
-
         for (var item in data['data']) {
           try {
             ItemCart itemCart = ItemCart.fromJson(item);

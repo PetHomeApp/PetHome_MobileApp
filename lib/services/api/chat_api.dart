@@ -214,7 +214,6 @@ class ChatApi {
           'isSuccess': true,
           'has_messages': data['has_messages'],
         };
-
       } else {
         return {'isSuccess': false};
       }

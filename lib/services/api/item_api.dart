@@ -95,7 +95,6 @@ class ItemApi {
 
   Future<List<ItemInCard>> searchItemsInCard(
       String keyword, int limit, int start) async {
-
     var url = Uri.parse(
         '${pethomeApiUrl}items?name=$keyword&limit=$limit&start=$start');
 
@@ -256,7 +255,7 @@ class ItemApi {
 
       return itemTypes;
     } else {
-      throw Exception('Failed to load item types'); 
+      throw Exception('Failed to load item types');
     }
   }
 }

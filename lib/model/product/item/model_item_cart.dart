@@ -8,6 +8,7 @@ class ItemCart {
   final int price;
   final String picture;
   final String size;
+  final int quantityInStock;
   final bool inStock;
   int quantity = 1;
   bool isCheckBox = false;
@@ -20,6 +21,7 @@ class ItemCart {
     required this.price,
     required this.picture,
     required this.size,
+    required this.quantityInStock,
     required this.inStock,
     required this.shopId,
     required this.shopName,
@@ -34,6 +36,7 @@ class ItemCart {
       price: json['price'],
       picture: json['picture'],
       size: json['size'],
+      quantityInStock: json['quantity'],
       inStock: json['instock'],
       shopId: json['id_shop'],
       shopName: json['shop_name'],
