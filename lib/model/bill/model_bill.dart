@@ -10,13 +10,14 @@ class BillItem {
   final int price;
   final int quantity;
   final int totalPrice;
-  final String status;
+  String status;
   final String createdAt;
   final String itemImage;
   final String itemName;
   final String itemSize;
   final String itemUnit;
   final String shopName;
+  final String userName;
   final String paymentMethod;
 
   BillItem({
@@ -38,6 +39,7 @@ class BillItem {
     required this.itemSize,
     required this.itemUnit,
     required this.shopName,
+    required this.userName,
     required this.paymentMethod,
   });
 
@@ -60,8 +62,9 @@ class BillItem {
       itemName: json['item_name'],
       itemSize: json['item_size'],
       itemUnit: json['item_unit'],
-      shopName: json['shop_name'],
-      paymentMethod: json['payment_desciption'],
+      shopName: json['shop_name'] ?? '',
+      userName: json['username'] ?? '',
+      paymentMethod: json['payment_description'],
     );
   }
 }

@@ -236,4 +236,124 @@ class BillApi {
       return false;
     }
   }
+
+  Future<List<BillItem>> getListOtherBillForShop(int start, int limit) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/shop/bills?start=$start&limit=$limit&status='preparing','delivering','delivered'");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().get(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<BillItem> listBillItem = [];
+      var data = response.data;
+
+      if (data == null) {
+        return listBillItem;
+      }
+
+      for (var item in data) {
+        listBillItem.add(BillItem.fromJson(item));
+      }
+
+      return listBillItem;
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<BillItem>> getListStatusBillForShop(
+      int start, int limit, String status) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/shop/bills?start=$start&limit=$limit&status='$status'");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().get(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      List<BillItem> listBillItem = [];
+      var data = response.data;
+
+      if (data == null) {
+        return listBillItem;
+      }
+
+      for (var item in data) {
+        listBillItem.add(BillItem.fromJson(item));
+      }
+
+      return listBillItem;
+    } else {
+      return [];
+    }
+  }
+
+  Future<bool> updateStatusBillByShop(String idBill, String status) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/bills/$idBill');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return false;
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    Map<String, dynamic> data = {
+      'status': status,
+    };
+
+    try {
+      final response = await dio.put(
+        url.toString(),
+        data: data,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 }
