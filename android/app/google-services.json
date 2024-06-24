@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "672475916836",
+    "project_id": "quixotic-treat-427308-d1",
+    "storage_bucket": "quixotic-treat-427308-d1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672475916836:android:a3084f11a453ce072546b1",
+        "android_client_info": {
+          "package_name": "com.example.pethome_mobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvFcHBJPj92xZcjoACng7_EfY1uIb9ze0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

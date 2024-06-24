@@ -51,6 +51,15 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        debug {
+            storeFile file('login-keystore.jks')
+            storePassword '151102'
+            keyAlias 'login'
+            keyPassword '151102'
+        }
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
@@ -58,10 +67,16 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+
 }
 
 flutter {
     source '../..'
 }
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
-dependencies {}
+dependencies {
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+}

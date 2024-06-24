@@ -1,3 +1,4 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_otp_forgot_password.dart';
@@ -28,6 +29,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   late SharedPreferences sharedPreferences;
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+    
+  );
+
+  void _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+      print(_googleSignIn.currentUser?.email);
+      print(_googleSignIn.currentUser?.displayName);
+    } catch (error) {
+      print('Lỗi đăng nhập: $error');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
   _saveRefreshToken(String refreshToken) async {
     await sharedPreferences.setString('refreshToken', refreshToken);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +276,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            showTopSnackBar(
+                              // ignore: use_build_context_synchronously
+                              Overlay.of(context),
+                              const CustomSnackBar.error(
+                                message: 'Chức năng đang phát triển!',
+                              ),
+                              displayDuration: const Duration(seconds: 0),
+                            );
+                          },
                           child: Container(
                             width: 50,
                             height: 50,
@@ -279,7 +308,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(width: 50),
                         InkWell(
-                          onTap: () {},
+                          onTap: () async {
+                            _handleSignIn();
+                          },
                           child: Container(
                             width: 50,
                             height: 50,
