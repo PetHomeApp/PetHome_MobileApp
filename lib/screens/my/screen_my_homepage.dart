@@ -281,7 +281,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                         padding:
                                             const EdgeInsets.only(right: 30),
                                         child: Text(
-                                          'ID:  ${userInfor.idUser}',
+                                          'ID: ${userInfor.idUser.substring(0, 8)}...',
                                           style: const TextStyle(
                                             fontSize: 14.0,
                                             fontStyle: FontStyle.italic,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_image_gallery.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type_detail.dart';
@@ -258,6 +259,33 @@ class ServiceApi {
       return rates;
     } else {
       throw Exception('Failed to load service rates');
+    }
+  }
+
+  Future<Map<String, dynamic>> getListImageGallery(String idService) async {
+    var url = Uri.parse('${pethomeApiUrl}service/$idService/gallery');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ServiceImageGallry> images = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': images, 'count': 0};
+      }
+
+      for (var service in data) {
+        images.add(ServiceImageGallry.fromJson(service));
+      }
+      return {'isSuccess': true, 'data': images};
+    } else {
+      throw Exception('Failed to load images gallery');
     }
   }
 }

@@ -6,9 +6,9 @@
     <uses-sdk tools:overrideLibrary="com.google.firebase.firebase_analytics" />
 
     <application
-        android:label="pethome_mobileapp"
+        android:label="PetHome"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true">
         
         <activity

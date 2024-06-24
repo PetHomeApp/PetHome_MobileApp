@@ -4,6 +4,7 @@ import 'package:pethome_mobileapp/model/product/service/model_service_detail.dar
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
 import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
+import 'package:pethome_mobileapp/screens/product/service/screen_service_gallery.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
@@ -605,6 +606,38 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             Text(
                               'Liên hệ Shop',
                               style: TextStyle(color: buttonBackgroundColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ServiceGalleryViewScreen(
+                          idService: widget.idService,
+                        ),
+                      ));
+                    },
+                    child: Container(
+                      color: buttonBackgroundColor,
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              Icons.photo,
+                              color: Colors.white,
+                            ),
+                            Text(
+                              'Xem ảnh dịch vụ',
+                              style: TextStyle(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],

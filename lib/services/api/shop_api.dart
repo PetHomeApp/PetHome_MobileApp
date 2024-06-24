@@ -7,6 +7,7 @@ import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_request.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_in_card.dart';
+import 'package:pethome_mobileapp/model/product/service/model_service_image_gallery.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_in_card.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_request.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_detail_infor.dart';
@@ -1221,6 +1222,128 @@ class ShopApi {
 
     try {
       final response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getListImageGallery(String idService) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService/gallery');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<ServiceImageGallry> images = [];
+      var data = json.decode(response.body);
+
+      if (data == null) {
+        return {'isSuccess': false, 'data': images, 'count': 0};
+      }
+
+      for (var service in data) {
+        images.add(ServiceImageGallry.fromJson(service));
+      }
+      return {'isSuccess': true, 'data': images};
+    } else {
+      throw Exception('Failed to load images gallery');
+    }
+  }
+
+  Future<Map<String, dynamic>> addImageGallery(
+      String idService, List<XFile> images) async {
+    var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService/gallery');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    Dio dio = Dio();
+
+    FormData formData = FormData.fromMap({});
+
+    formData.fields.add(MapEntry('id_service', idService));
+
+    for (var image in images) {
+      formData.files.add(MapEntry(
+        'images',
+        await MultipartFile.fromFile(image.path),
+      ));
+    }
+
+    try {
+      final response = await dio.post(
+        url.toString(),
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {'isSuccess': true};
+      } else {
+        return {'isSuccess': false, 'message': response.data};
+      }
+    } catch (e) {
+      // ignore: deprecated_member_use
+      if (e is DioError) {
+        return {'isSuccess': false, 'message': e.response?.data};
+      } else {
+        return {'isSuccess': false, 'message': e.toString()};
+      }
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteImageGallery(
+      String idService, String idImage) async {
+    var url = Uri.parse(
+        '${pethomeApiUrl}api/shop/services/$idService/gallery/$idImage?status=inactive');
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {'isSuccess': true};

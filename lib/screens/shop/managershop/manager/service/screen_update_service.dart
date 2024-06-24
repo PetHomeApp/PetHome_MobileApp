@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_address.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_service_gallery.dart';
 import 'package:pethome_mobileapp/services/api/service_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
@@ -324,6 +326,38 @@ class _UpdateServiceScreenState extends State<UpdateServiceScreen> {
                       },
                     );
                   }),
+                  const SizedBox(height: 20.0),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ServiceGalleryScreen(
+                                serviceId: widget.idService),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: buttonBackgroundColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Thư viện ảnh',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
                 ],
               ),
             ),
