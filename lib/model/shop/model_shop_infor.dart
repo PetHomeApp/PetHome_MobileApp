@@ -16,8 +16,8 @@ class ShopInfor {
   factory ShopInfor.fromJson(Map<String, dynamic> json) {
     return ShopInfor(
       idShop: json['id_shop'],
-      name: json['name'],
-      logo: json['logo'],
+      name: json['name'] ?? '',
+      logo: json['logo'] ?? '',
       areas: (json['areas'] as List)
           .map((area) => ShopAddress.fromJson(area))
           .toList(),

@@ -12,7 +12,7 @@ class ShopInforInProduct {
         list.map((i) => ShopAddress.fromJson(i)).toList();
 
     return ShopInforInProduct(
-      name: json['name'],
+      name: json['name'] ?? '',
       shopAddress: shopAddressList,
     );
   }

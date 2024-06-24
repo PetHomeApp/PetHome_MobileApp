@@ -20,12 +20,12 @@ class UserInfor {
   factory UserInfor.fromJson(Map<String, dynamic> json) {
     return UserInfor(
       idUser: json['id_user'],
-      name: json['name'],
-      email: json['email'],
-      gender: json['gender'],
-      phoneNum: json['phone_num'],
-      dayOfBirth: json['day_of_birth'],
-      avatar: json['avatar'],
+      name: json['name'] ?? '' ,
+      email: json['email'] ?? '',
+      gender: json['gender'] ?? '',
+      phoneNum: json['phone_num'] ?? '',
+      dayOfBirth: json['day_of_birth'] ?? '',
+      avatar: json['avatar'] ?? '',
     );
   }
 }

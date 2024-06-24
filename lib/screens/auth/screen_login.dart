@@ -34,16 +34,48 @@ class _LoginScreenState extends State<LoginScreen> {
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',
     ],
-    
   );
 
   void _handleSignIn() async {
     try {
       await _googleSignIn.signIn();
-      print(_googleSignIn.currentUser?.email);
-      print(_googleSignIn.currentUser?.displayName);
+      String email = _googleSignIn.currentUser!.email;
+      String? name = _googleSignIn.currentUser!.displayName;
+
+      var dataResponse = await AuthApi().loginWithGoogle(email, name);
+
+      if (dataResponse['isSuccess'] == true) {
+        _saveAccessToken(dataResponse['accessToken'].toString());
+        _saveRefreshToken(dataResponse['refreshToken'].toString());
+
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: 'Đăng nhập thành công!',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (context) => const MainScreen(initialIndex: 0)),
+        );
+      } else {
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      }
     } catch (error) {
-      print('Lỗi đăng nhập: $error');
+      //print(error);
+    } finally {
+      _googleSignIn.signOut();
     }
   }
 
@@ -64,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   _saveRefreshToken(String refreshToken) async {
     await sharedPreferences.setString('refreshToken', refreshToken);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,17 +183,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             if (dataResponse['isSuccess'] == true) {
                               Navigator.push(
-                              // ignore: use_build_context_synchronously
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgotPasswordOtpScreen(
-                                  email: _emailEdititngController.text,
-                                  expiredAt:
-                                      dataResponse['expiredAt'].toString(),
-                                  token: dataResponse['token'].toString(),
+                                // ignore: use_build_context_synchronously
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordOtpScreen(
+                                    email: _emailEdititngController.text,
+                                    expiredAt:
+                                        dataResponse['expiredAt'].toString(),
+                                    token: dataResponse['token'].toString(),
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
                             } else if (dataResponse['message'] ==
                                 'Email chưa tồn tại!') {
                               showTopSnackBar(

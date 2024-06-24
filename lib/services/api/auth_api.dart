@@ -126,6 +126,33 @@ class AuthApi {
     }
   }
 
+  Future<Map<String, Object?>> loginWithGoogle(
+      String email, String? name) async {
+    try {
+      var url = Uri.parse('${authApiUrl}google_login');
+      final response = await http.post(url,
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'email': email,
+            'name': name,
+          }));
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return {
+          'isSuccess': true,
+          'accessToken': json.decode(response.body)['accessToken'],
+          'refreshToken': json.decode(response.body)['refreshToken'],
+        };
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {
+        'isSuccess': false,
+        'message': e.toString(),
+      };
+    }
+  }
+
   Future<Map<String, Object?>> refreshToken() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String refreshToken = sharedPreferences.getString('refreshToken') ?? '';

@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   _initPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    print(sharedPreferences.getString('accessToken'));
+    //print(sharedPreferences.getString('accessToken'));
     var dataResponse = await AuthApi().authorize();
 
     if (dataResponse['isSuccess'] == true) {
@@ -61,7 +61,9 @@ class _MyAppState extends State<MyApp> {
       home: isLoading
           ? const LoadingScreen()
           : isLogin
-              ? const MainScreen(initialIndex: 0,)
+              ? const MainScreen(
+                  initialIndex: 0,
+                )
               : const LoginScreen(),
     );
   }

@@ -8,9 +8,9 @@ class UserAddress {
 
   factory UserAddress.fromJson(Map<String, dynamic> json) {
     return UserAddress(
-      idAddress: json['id_address'],
-      address: json['address'],
-      area: json['area'],
+      idAddress: json['id_address'] ?? '',
+      address: json['address'] ?? '',
+      area: json['area'] ?? '',
     );
   }
 }
