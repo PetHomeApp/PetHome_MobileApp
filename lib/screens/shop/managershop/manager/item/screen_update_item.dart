@@ -4,7 +4,7 @@ import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_add_item_detal.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/item/screen_update_item_detail.dart';
-import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/product/item_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';

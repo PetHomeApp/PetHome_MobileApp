@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_type.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_add_service.dart';
 import 'package:pethome_mobileapp/screens/shop/managershop/manager/service/screen_manager_service_type.dart';
-import 'package:pethome_mobileapp/services/api/service_api.dart';
+import 'package:pethome_mobileapp/services/api/product/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class ManagerServiceScreen extends StatefulWidget {

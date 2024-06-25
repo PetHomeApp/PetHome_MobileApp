@@ -6,7 +6,7 @@ import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
-import 'package:pethome_mobileapp/services/api/pet_api.dart';
+import 'package:pethome_mobileapp/services/api/product/pet_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/widgets/rate/sent_pet_rate_sheet.dart';
 import 'package:readmore/readmore.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/product/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';

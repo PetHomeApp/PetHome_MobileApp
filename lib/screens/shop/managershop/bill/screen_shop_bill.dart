@@ -554,7 +554,8 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                                         );
                                       },
                                     );
-                                  } else {
+                                  } else if (otherBills[index].status ==
+                                      'delivering') {
                                     showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -599,6 +600,74 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                                                   setState(() {
                                                     otherBills[index].status =
                                                         'delivered';
+                                                  });
+                                                } else {
+                                                  showTopSnackBar(
+                                                    // ignore: use_build_context_synchronously
+                                                    Overlay.of(context),
+                                                    const CustomSnackBar.error(
+                                                      message:
+                                                          'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                    ),
+                                                    displayDuration:
+                                                        const Duration(
+                                                            seconds: 0),
+                                                  );
+                                                }
+                                              },
+                                              child: const Text("Xác nhận",
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 46, 159, 71))),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text("Xác nhận"),
+                                          content: const Text(
+                                              "Bạn đã hoàn thành đơn hàng này?"),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text("Không",
+                                                  style: TextStyle(
+                                                      color: Color.fromARGB(
+                                                          255, 84, 84, 84))),
+                                            ),
+                                            TextButton(
+                                              onPressed: () async {
+                                                bool check = await BillApi()
+                                                    .updateStatusBillByShop(
+                                                        otherBills[index]
+                                                            .idBill,
+                                                        'done');
+
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.of(context).pop();
+
+                                                if (check) {
+                                                  showTopSnackBar(
+                                                    // ignore: use_build_context_synchronously
+                                                    Overlay.of(context),
+                                                    const CustomSnackBar
+                                                        .success(
+                                                      message:
+                                                          'Cập nhật đơn hàng thành công!',
+                                                    ),
+                                                    displayDuration:
+                                                        const Duration(
+                                                            seconds: 0),
+                                                  );
+                                                  setState(() {
+                                                    otherBills.removeAt(index);
                                                   });
                                                 } else {
                                                   showTopSnackBar(
@@ -720,39 +789,63 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
-                                                const SizedBox(height: 2),
                                                 Text(
                                                   'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(successBills[index].createdAt).add(const Duration(hours: 7)))}',
                                                   style: const TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                       color: Color.fromARGB(
                                                           255, 84, 84, 84)),
                                                 ),
-                                                const SizedBox(height: 5),
                                                 Text(
                                                   'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(successBills[index].totalPrice)} đ',
                                                   style: const TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                     color: priceColor,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 5),
-                                                const Row(
+                                                Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      'Đã nhận hàng',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
+                                                      '${successBills[index].paymentMethod}  -  ',
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.green),
+                                                              FontWeight.w500,
+                                                          color:
+                                                              buttonBackgroundColor),
                                                     ),
-                                                    SizedBox(width: 5),
+                                                    const SizedBox(width: 5),
+                                                    Text(
+                                                      successBills[index]
+                                                                  .paymentStatus ==
+                                                              'pending'
+                                                          ? 'Chưa thanh toán'
+                                                          : 'Đã thanh toán',
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: successBills[
+                                                                          index]
+                                                                      .paymentStatus ==
+                                                                  'pending'
+                                                              ? Colors.red
+                                                              : buttonBackgroundColor),
+                                                    ),
                                                   ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                const Text(
+                                                  'Đã hoàn thành',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.green),
                                                 ),
                                               ],
                                             ),
@@ -857,39 +950,29 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
-                                                const SizedBox(height: 2),
                                                 Text(
                                                   'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(cancelBills[index].createdAt).add(const Duration(hours: 7)))}',
                                                   style: const TextStyle(
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                       color: Color.fromARGB(
                                                           255, 84, 84, 84)),
                                                 ),
-                                                const SizedBox(height: 5),
                                                 Text(
                                                   'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(cancelBills[index].totalPrice)} đ',
                                                   style: const TextStyle(
-                                                    fontSize: 16,
+                                                    fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                     color: priceColor,
                                                   ),
                                                 ),
                                                 const SizedBox(height: 5),
-                                                const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Đã hủy',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.red),
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                  ],
+                                                const Text(
+                                                  'Đã hủy',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.red),
                                                 ),
                                               ],
                                             ),

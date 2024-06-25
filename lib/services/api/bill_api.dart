@@ -80,7 +80,7 @@ class BillApi {
 
   Future<List<BillItem>> getListBillAll(int start, int limit) async {
     var url = Uri.parse(
-        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending','preparing','delivering','delivered'");
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending','preparing','delivering','delivered'&payment_status='pending','paid'");
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();
@@ -91,36 +91,39 @@ class BillApi {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     String accessToken = sharedPreferences.getString('accessToken') ?? '';
 
-    final response = await Dio().get(
-      url.toString(),
-      options: Options(
-        headers: {
-          'Authorization': accessToken,
-        },
-      ),
-    );
+    try {
+      final response = await Dio().get(
+        url.toString(),
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        List<BillItem> listBillItem = [];
+        var data = response.data;
 
-    if (response.statusCode == 200) {
-      List<BillItem> listBillItem = [];
-      var data = response.data;
+        if (data == null) {
+          return listBillItem;
+        }
 
-      if (data == null) {
+        for (var item in data) {
+          listBillItem.add(BillItem.fromJson(item));
+        }
+
         return listBillItem;
+      } else {
+        return [];
       }
-
-      for (var item in data) {
-        listBillItem.add(BillItem.fromJson(item));
-      }
-
-      return listBillItem;
-    } else {
+    } catch (e) {
       return [];
     }
   }
 
   Future<List<BillItem>> getListBillSuccess(int start, int limit) async {
     var url = Uri.parse(
-        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='done'");
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='done'&payment_status='pending','paid'");
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();
@@ -160,7 +163,7 @@ class BillApi {
 
   Future<List<BillItem>> getListBillCancel(int start, int limit) async {
     var url = Uri.parse(
-        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='canceled'");
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='canceled'&payment_status='pending'");
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();

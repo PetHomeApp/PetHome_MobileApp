@@ -7,7 +7,7 @@ import 'package:pethome_mobileapp/model/product/service/model_service_type.dart'
 import 'package:pethome_mobileapp/model/product/service/model_service_type_detail.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_address.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
-import 'package:pethome_mobileapp/services/api/service_api.dart';
+import 'package:pethome_mobileapp/services/api/product/service_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/shop/enter_infor_widget.dart';

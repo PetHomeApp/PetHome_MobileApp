@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
-import 'package:pethome_mobileapp/services/api/service_api.dart';
+import 'package:pethome_mobileapp/services/api/product/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:readmore/readmore.dart';

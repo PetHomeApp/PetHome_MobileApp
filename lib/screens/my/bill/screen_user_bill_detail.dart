@@ -95,15 +95,15 @@ class _UserBillDetailScreenState extends State<UserBillDetailScreen> {
                         const SizedBox(width: 10),
                         Text(
                             widget.billItem.status == 'pending'
-                                ? 'Đang chờ xác nhận'
+                                ? 'Chưa nhận đơn'
                                 : widget.billItem.status == 'preparing'
-                                    ? 'Đang chuẩn bị'
+                                    ? 'Đã nhận đơn'
                                     : widget.billItem.status == 'delivering'
                                         ? 'Đang giao hàng'
                                         : widget.billItem.status == 'delivered'
                                             ? 'Đã giao hàng'
                                             : widget.billItem.status == 'done'
-                                                ? 'Đã nhận hàng'
+                                                ? 'Đã hoàn thành'
                                                 : 'Đã hủy',
                             style: TextStyle(
                                 fontSize: 16,
@@ -292,6 +292,43 @@ class _UserBillDetailScreenState extends State<UserBillDetailScreen> {
                             style: const TextStyle(
                                 fontSize: 18,
                                 color: Color.fromARGB(255, 84, 84, 84))),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.ads_click_rounded,
+                              color: buttonBackgroundColor,
+                              size: 25,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Tình trạng thanh toán:',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: buttonBackgroundColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                            widget.billItem.paymentStatus == 'pending'
+                                ? 'Chưa thanh toán'
+                                : 'Đã thanh toán',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: widget.billItem.paymentStatus == 'pending'
+                                  ? Colors.red
+                                  : buttonBackgroundColor,
+                            )),
                       ],
                     ),
                   ),

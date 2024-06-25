@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_classify.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_detail.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
-import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/product/item_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/rate/list_rate.dart';
 import 'package:readmore/readmore.dart';

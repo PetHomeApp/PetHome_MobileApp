@@ -19,6 +19,7 @@ class BillItem {
   final String shopName;
   final String userName;
   final String paymentMethod;
+  final String paymentStatus;
 
   BillItem({
     required this.idBill,
@@ -41,6 +42,7 @@ class BillItem {
     required this.shopName,
     required this.userName,
     required this.paymentMethod,
+    required this.paymentStatus,
   });
 
   factory BillItem.fromJson(Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class BillItem {
       shopName: json['shop_name'] ?? '',
       userName: json['username'] ?? '',
       paymentMethod: json['payment_description'],
+      paymentStatus: json['payment_status'],
     );
   }
 }

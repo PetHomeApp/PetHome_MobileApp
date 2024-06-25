@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_image_gallery.dart';
-import 'package:pethome_mobileapp/services/api/service_api.dart';
+import 'package:pethome_mobileapp/services/api/product/service_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 
 class ServiceGalleryViewScreen extends StatefulWidget {

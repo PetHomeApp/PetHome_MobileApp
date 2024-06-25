@@ -1,11 +1,26 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/screen_loading.dart';
 import 'package:pethome_mobileapp/screens/screen_homepage.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
+import 'package:pethome_mobileapp/services/utils/trigger_notification.dart';
+import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  AwesomeNotifications().initialize(
+    'resource://drawable/res_app_icon',
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic notifications',
+        channelDescription: 'Notification channel for basic tests',
+        defaultColor: buttonBackgroundColor,
+        ledColor: buttonBackgroundColor,
+      )
+    ],
+  );
   runApp(const MyApp());
 }
 
@@ -25,6 +40,12 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    TriggerNotification('Hello', 'Welcome to PetHome');
     _initPrefs();
   }
 

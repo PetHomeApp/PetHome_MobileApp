@@ -10,7 +10,7 @@ import 'package:pethome_mobileapp/screens/product/item/screen_bill_item.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
-import 'package:pethome_mobileapp/services/api/item_api.dart';
+import 'package:pethome_mobileapp/services/api/product/item_api.dart';
 import 'package:pethome_mobileapp/services/api/shop_api.dart';
 import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';

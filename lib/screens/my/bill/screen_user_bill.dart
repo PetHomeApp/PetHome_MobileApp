@@ -220,7 +220,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                       unselectedLabelColor: Colors.black,
                       tabs: [
                         Tab(text: 'Tất cả'),
-                        Tab(text: 'Dơn đã nhận'),
+                        Tab(text: 'Đơn đã nhận'),
                         Tab(text: 'Đơn hủy'),
                       ],
                     ),
@@ -283,58 +283,8 @@ class _UserBillScreenState extends State<UserBillScreen>
                               },
                               child: UserBillWidget(
                                 billItem: allBills[index],
-                                onDone: () async {
-                                  if (allBills[index].status == 'delivered') {
-                                    bool check = await BillApi()
-                                        .updateStatusBillByUser(
-                                            allBills[index].idBill, 'done');
+                                onPayment: () async {
 
-                                    if (check) {
-                                      showTopSnackBar(
-                                        // ignore: use_build_context_synchronously
-                                        Overlay.of(context),
-                                        const CustomSnackBar.success(
-                                          message:
-                                              'Bạn đã xác nhận nhận hàng thành công!',
-                                        ),
-                                        displayDuration:
-                                            const Duration(seconds: 0),
-                                      );
-                                      setState(() {
-                                        currentPageAll = 0;
-                                        currentPageSuccess = 0;
-                                        currentPageCancel = 0;
-
-                                        allBills.clear();
-                                        successBills.clear();
-                                        cancelBills.clear();
-                                      });
-                                      getBill();
-                                    } else {
-                                      showTopSnackBar(
-                                        // ignore: use_build_context_synchronously
-                                        Overlay.of(context),
-                                        const CustomSnackBar.error(
-                                          message:
-                                              'Xác nhận nhận hàng không thành công! Vui lòng thử lại sau!',
-                                        ),
-                                        displayDuration:
-                                            const Duration(seconds: 0),
-                                      );
-                                    }
-                                  } else {
-                                    if (mounted) {
-                                      showTopSnackBar(
-                                        Overlay.of(context),
-                                        const CustomSnackBar.error(
-                                          message:
-                                              'Bạn chưa thể xác nhận nhận hàng!',
-                                        ),
-                                        displayDuration:
-                                            const Duration(seconds: 0),
-                                      );
-                                    }
-                                  }
                                 },
                                 onCancel: () {
                                   showDialog(
@@ -561,7 +511,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                                                           .spaceBetween,
                                                   children: [
                                                     Text(
-                                                      'Đã nhận hàng',
+                                                      'Đã hoàn thành',
                                                       style: TextStyle(
                                                           fontSize: 16,
                                                           fontWeight:

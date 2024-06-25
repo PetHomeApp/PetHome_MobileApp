@@ -13,25 +13,25 @@ class ShopOtherBillWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      endActionPane: billItem.status != 'delivered'
-          ? ActionPane(
-              motion: const ScrollMotion(),
-              extentRatio: 0.3,
-              children: [
-                SlidableAction(
-                  onPressed: (context) {
-                    onConfirm();
-                  },
-                  icon: Icons.edit,
-                  label: billItem.status == 'preparing'
-                      ? "Giao hàng"
-                      : "Đã giao",
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.green,
-                ),
-              ],
-            )
-          : null,
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        extentRatio: 0.3,
+        children: [
+          SlidableAction(
+            onPressed: (context) {
+              onConfirm();
+            },
+            icon: Icons.edit,
+            label: billItem.status == 'preparing'
+                ? "Giao hàng"
+                : billItem.status == 'delivering'
+                    ? "Giao xong"
+                    : "Xong đơn",
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.green,
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Container(
@@ -69,43 +69,60 @@ class ShopOtherBillWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
-                        const SizedBox(height: 2),
                         Text(
                           'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(billItem.createdAt).add(const Duration(hours: 7)))}',
                           style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 14,
                               color: Color.fromARGB(255, 84, 84, 84)),
                         ),
-                        const SizedBox(height: 5),
                         Text(
                           'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(billItem.totalPrice)} đ',
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: priceColor,
                           ),
                         ),
                         const SizedBox(height: 5),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              billItem.status == 'preparing'
-                                  ? 'Đang chuẩn bị'
-                                  : billItem.status == 'delivering'
-                                      ? 'Đang giao hàng'
-                                      : 'Đã giao hàng',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: billItem.status == 'preparing'
-                                      ? buttonBackgroundColor
-                                      : billItem.status == 'delivering'
-                                          ? buttonBackgroundColor
-                                          : Colors.green),
+                              '${billItem.paymentMethod}  -  ',
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: buttonBackgroundColor),
                             ),
                             const SizedBox(width: 5),
+                            Text(
+                              billItem.paymentStatus == 'pending'
+                                  ? 'Chưa thanh toán'
+                                  : 'Đã thanh toán',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: billItem.paymentStatus == 'pending'
+                                      ? Colors.red
+                                      : buttonBackgroundColor),
+                            ),
                           ],
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          billItem.status == 'preparing'
+                              ? 'Đã nhận đơn'
+                              : billItem.status == 'delivering'
+                                  ? 'Đang giao hàng'
+                                  : 'Đã giao hàng',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: billItem.status == 'preparing'
+                                  ? buttonBackgroundColor
+                                  : billItem.status == 'delivering'
+                                      ? buttonBackgroundColor
+                                      : Colors.green),
                         ),
                       ],
                     ),
