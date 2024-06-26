@@ -341,7 +341,7 @@ class _ShopBillDetailScreenState extends State<ShopBillDetailScreen> {
                               fontSize: 18,
                               color: widget.billItem.paymentStatus == 'pending'
                                   ? Colors.red
-                                  : buttonBackgroundColor,
+                                  : Colors.green,
                             )),
                       ],
                     ),

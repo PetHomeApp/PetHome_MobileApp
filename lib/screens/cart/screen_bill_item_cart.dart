@@ -470,7 +470,7 @@ class _BillItemCartScreenState extends State<BillItemCartScreen> {
                               color: Colors.white,
                             ),
                             Text(
-                              'Thanh toán',
+                              'Đặt hàng',
                               style: TextStyle(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                             ),

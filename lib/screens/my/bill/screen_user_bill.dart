@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/bill/model_bill.dart';
 import 'package:pethome_mobileapp/screens/my/bill/screen_user_bill_detail.dart';
+import 'package:pethome_mobileapp/screens/my/bill/screen_web_payment.dart';
 import 'package:pethome_mobileapp/services/api/bill_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/bill/user_bill_widget.dart';
@@ -220,7 +221,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                       unselectedLabelColor: Colors.black,
                       tabs: [
                         Tab(text: 'Tất cả'),
-                        Tab(text: 'Đơn đã nhận'),
+                        Tab(text: 'Hoàn thành'),
                         Tab(text: 'Đơn hủy'),
                       ],
                     ),
@@ -284,7 +285,41 @@ class _UserBillScreenState extends State<UserBillScreen>
                               child: UserBillWidget(
                                 billItem: allBills[index],
                                 onPayment: () async {
+                                  String url = await BillApi()
+                                      .createPaymentUrl(allBills[index].idBill);
 
+                                  if (url.isNotEmpty) {
+                                    Navigator.push(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            WebPaymentScreen(url: url),
+                                      ),
+                                    ).then((value) {
+                                      setState(() {
+                                        currentPageAll = 0;
+                                        currentPageSuccess = 0;
+                                        currentPageCancel = 0;
+
+                                        allBills.clear();
+                                        successBills.clear();
+                                        cancelBills.clear();
+                                      });
+                                      getBill();
+                                    });
+                                  } else {
+                                    showTopSnackBar(
+                                      // ignore: use_build_context_synchronously
+                                      Overlay.of(context),
+                                      const CustomSnackBar.error(
+                                        message:
+                                            'Thanh toán không thành công! Vui lòng thử lại sau!',
+                                      ),
+                                      displayDuration:
+                                          const Duration(seconds: 0),
+                                    );
+                                  }
                                 },
                                 onCancel: () {
                                   showDialog(

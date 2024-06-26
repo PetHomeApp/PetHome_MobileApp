@@ -7,6 +7,7 @@ import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/address/screen_list_address.dart';
 import 'package:pethome_mobileapp/screens/my/screen_change_password.dart';
+import 'package:pethome_mobileapp/screens/my/screen_notification.dart';
 import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
 import 'package:pethome_mobileapp/screens/my/bill/screen_user_bill.dart';
 import 'package:pethome_mobileapp/screens/shop/createShop/screen_create_shop_1.dart';
@@ -292,6 +293,20 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                       ),
                                     ],
                                   ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.notifications,
+                                    color: buttonBackgroundColor,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NotificationScreen(),
+                                    ));
+                                  },
                                 ),
                               ],
                             ),

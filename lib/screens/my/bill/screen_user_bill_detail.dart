@@ -327,7 +327,7 @@ class _UserBillDetailScreenState extends State<UserBillDetailScreen> {
                               fontSize: 18,
                               color: widget.billItem.paymentStatus == 'pending'
                                   ? Colors.red
-                                  : buttonBackgroundColor,
+                                  : Colors.green,
                             )),
                       ],
                     ),

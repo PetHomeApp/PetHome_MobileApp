@@ -359,4 +359,38 @@ class BillApi {
       return false;
     }
   }
+
+  Future<String> createPaymentUrl(
+      String idBill) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}payment/create_url?id_bill=$idBill");
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return '';
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    final response = await Dio().post(
+      url.toString(),
+      options: Options(
+        headers: {
+          'Authorization': accessToken,
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      var data = response.data;
+
+      if (data == null) {
+        return '';
+      }
+      return data['vnpay_redirect_url'];
+    } else {
+      return '';
+    }
+  }
 }

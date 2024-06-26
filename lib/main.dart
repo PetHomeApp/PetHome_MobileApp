@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:pethome_mobileapp/model/notification/model_notification.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_login.dart';
 import 'package:pethome_mobileapp/screens/screen_loading.dart';
 import 'package:pethome_mobileapp/screens/screen_homepage.dart';
 import 'package:pethome_mobileapp/services/api/auth_api.dart';
+import 'package:pethome_mobileapp/services/api/noti_api.dart';
 import 'package:pethome_mobileapp/services/utils/trigger_notification.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,8 +48,29 @@ class _MyAppState extends State<MyApp> {
         AwesomeNotifications().requestPermissionToSendNotifications();
       }
     });
-    TriggerNotification('Hello', 'Welcome to PetHome');
     _initPrefs();
+    startNotificationTimer();
+  }
+
+  void startNotificationTimer() {
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      fetchNotifications();
+    });
+  }
+
+  Future<void> fetchNotifications() async {
+    var respons = await NotificationApi().getNotification(0, 1);
+
+    if (respons['isSuccess'] == true) {
+      List<NotificationCustom> notifications = respons['notifications'];
+
+      if (notifications.isNotEmpty) {
+        if (notifications[0].isShowed == false) {
+          triggerNotification(notifications[0].title, notifications[0].content);
+          NotificationApi().updateShowNotification([notifications[0].idNoti]);
+        }
+      }
+    }
   }
 
   _initPrefs() async {
@@ -65,6 +89,11 @@ class _MyAppState extends State<MyApp> {
         isLogin = false;
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

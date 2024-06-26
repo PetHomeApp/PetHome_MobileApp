@@ -1,7 +1,7 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 
 // ignore: non_constant_identifier_names
-void TriggerNotification(String title, String content) {
+void triggerNotification(String title, String content) {
   AwesomeNotifications().createNotification(
     content: NotificationContent(
       id: 10,

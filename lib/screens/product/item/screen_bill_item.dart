@@ -503,7 +503,7 @@ class _BillItemScreenState extends State<BillItemScreen> {
                               color: Colors.white,
                             ),
                             Text(
-                              'Thanh toán',
+                              'Đặt hàng',
                               style: TextStyle(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                             ),

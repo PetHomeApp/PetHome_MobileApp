@@ -56,10 +56,10 @@ class _ShopBillScreenState extends State<ShopBillScreen>
         await BillApi().getListOtherBillForShop(currentPageOther * 10, 10);
 
     List<BillItem> resSuccess = await BillApi()
-        .getListStatusBillForShop(currentPageNew * 10, 10, 'done');
+        .getListStatusBillForShop(currentPageSuccess * 10, 10, 'done');
 
     List<BillItem> resCancel = await BillApi()
-        .getListStatusBillForShop(currentPageNew * 10, 10, 'canceled');
+        .getListStatusBillForShop(currentPageCancel * 10, 10, 'canceled');
 
     if (resNew.isNotEmpty) {
       newBills.addAll(resNew);
@@ -67,7 +67,7 @@ class _ShopBillScreenState extends State<ShopBillScreen>
     }
     if (resOther.isNotEmpty) {
       otherBills.addAll(resOther);
-      currentPageNew++;
+      currentPageOther++;
     }
 
     if (resSuccess.isNotEmpty) {
@@ -264,7 +264,7 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                       tabs: [
                         Tab(text: 'Đơn mới'),
                         Tab(text: 'Đang xử lí'),
-                        Tab(text: 'Đã nhận'),
+                        Tab(text: 'Đơn xong'),
                         Tab(text: 'Đơn hủy'),
                       ],
                     ),
