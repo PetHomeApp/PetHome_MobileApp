@@ -78,7 +78,7 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
 
     loading = true;
     final List<PetInCard> pets =
-        await PetApi().searchPetsInCard(widget.title, 10, currentPage * 10);
+        await PetApi().searchPetsInCard(widget.title, 40, currentPage * 40);
 
     if (pets.isEmpty) {
       loading = false;

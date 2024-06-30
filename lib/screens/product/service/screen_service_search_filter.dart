@@ -55,7 +55,7 @@ class _ServiceSearchAndFulterScreenState
     loading = true;
     final List<ServiceInCard> listService = await ServiceApi()
         .searchServicesInCard(
-            widget.serviceTypeId, widget.title, 10, currentPage * 10);
+            widget.serviceTypeId, widget.title, 40, currentPage * 40);
 
     if (listService.isEmpty) {
       loading = false;

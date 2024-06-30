@@ -91,8 +91,8 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
 
     loading = true;
     final List<ServiceInCard> serviceInCard = await ServiceApi()
-        .getServiceInCard(selectedServiceTypeDetail.idServiceTypeDetail, 10,
-            currentPage * 10);
+        .getServiceInCard(selectedServiceTypeDetail.idServiceTypeDetail, 40,
+            currentPage * 40);
 
     if (serviceInCard.isEmpty) {
       setState(() {

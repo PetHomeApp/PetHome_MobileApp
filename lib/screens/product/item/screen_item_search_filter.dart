@@ -65,7 +65,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
 
     loading = true;
     final List<ItemInCard> items =
-        await ItemApi().searchItemsInCard(widget.title, 10, currentPage * 10);
+        await ItemApi().searchItemsInCard(widget.title, 40, currentPage * 40);
 
     if (items.isEmpty) {
       loading = false;
@@ -101,7 +101,7 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
 
     loading = true;
     final List<ItemInCard> items = await ItemApi()
-        .getItemsByTypeInCard(widget.detailTypeID, 10, currentPage * 10);
+        .getItemsByTypeInCard(widget.detailTypeID, 40, currentPage * 40);
 
     if (items.isEmpty) {
       loading = false;

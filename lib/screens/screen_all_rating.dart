@@ -64,7 +64,7 @@ class _AllRatingScreenState extends State<AllRatingScreen> {
 
     if (widget.productType == 'pet') {
       final List<Rate> rates =
-          await PetApi().getPetRates(widget.id, 5, currentPage * 5);
+          await PetApi().getPetRates(widget.id, 20, currentPage * 20);
 
       if (rates.isEmpty) {
         loading = false;
@@ -78,7 +78,7 @@ class _AllRatingScreenState extends State<AllRatingScreen> {
     } else if (widget.productType == 'item') {
       ItemApi itemApi = ItemApi();
       final List<Rate> rates =
-          await itemApi.getItemRates(widget.id, 5, currentPage * 5);
+          await itemApi.getItemRates(widget.id, 20, currentPage * 20);
 
       if (rates.isEmpty) {
         loading = false;

@@ -98,7 +98,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
 
     loading = true;
     final List<ItemInCard> items =
-        await ItemApi().getItemsInCard(10, currentPage * 10);
+        await ItemApi().getItemsInCard(40, currentPage * 40);
 
     if (items.isEmpty) {
       loading = false;

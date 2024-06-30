@@ -81,7 +81,7 @@ class _PetHomeScreenState extends State<PetHomeScreen> {
 
     loading = true;
     final List<PetInCard> pets =
-        await PetApi().getPetsInCard(10, currentPage * 10);
+        await PetApi().getPetsInCard(40, currentPage * 40);
 
     if (pets.isEmpty) {
       loading = false;

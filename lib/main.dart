@@ -75,7 +75,6 @@ class _MyAppState extends State<MyApp> {
 
   _initPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
-    //print(sharedPreferences.getString('accessToken'));
     var dataResponse = await AuthApi().authorize();
 
     if (dataResponse['isSuccess'] == true) {
