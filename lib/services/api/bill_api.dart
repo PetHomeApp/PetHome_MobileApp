@@ -57,6 +57,8 @@ class BillApi {
           'cart', '${item.itemId}^${item.itemDetailId}^${item.quantity}'));
     }
 
+    print(url.toString());
+
     try {
       final response = await dio.post(
         url.toString(),
@@ -74,7 +76,7 @@ class BillApi {
         return {'isSuccess': false};
       }
     } catch (e) {
-      return {'isSuccess': false};
+      return {'isSuccess': false, 'error': e.toString()};
     }
   }
 
@@ -360,10 +362,8 @@ class BillApi {
     }
   }
 
-  Future<String> createPaymentUrl(
-      String idBill) async {
-    var url = Uri.parse(
-        "${pethomeApiUrl}payment/create_url?id_bill=$idBill");
+  Future<String> createPaymentUrl(String idBill) async {
+    var url = Uri.parse("${pethomeApiUrl}payment/create_url?id_bill=$idBill");
 
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();

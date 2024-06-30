@@ -469,6 +469,18 @@ class _BillItemScreenState extends State<BillItemScreen> {
                           widget.userAddresses[selectAddressIndex].area,
                           paymentMethods[selectPaymentMethodIndex].idMethod);
 
+                      if (response['isSuccess'] == false && response['error'] != null) {
+                        showTopSnackBar(
+                          // ignore: use_build_context_synchronously
+                          Overlay.of(context),
+                          const CustomSnackBar.error(
+                            message: 'Tài khoản của bạn đã bị hạn chế, vui lòng liên hệ với chúng tôi để được hỗ trợ',
+                          ),
+                          displayDuration: const Duration(seconds: 0),
+                        );
+                        return;
+                      }
+
                       if (response['isSuccess'] == true) {
                         showTopSnackBar(
                           // ignore: use_build_context_synchronously

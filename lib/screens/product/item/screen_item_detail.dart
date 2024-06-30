@@ -175,7 +175,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 },
               ),
               title: const Text(
-                "Thông tin sản phẩm",
+                "Thông tin vật phẩm",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,

@@ -149,7 +149,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                 },
               ),
               title: const Text(
-                "Thông tin sản phẩm",
+                "Thông tin thú cưng",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
