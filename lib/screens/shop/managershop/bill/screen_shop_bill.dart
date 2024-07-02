@@ -305,137 +305,147 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                           shrinkWrap: true,
                           padding: const EdgeInsets.only(top: 16),
                           itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ShopBillDetailScreen(
-                                      billItem: newBills[index],
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: ShopNewBillWidget(
-                                billItem: newBills[index],
-                                onConfirm: () async {
-                                  bool check = await BillApi()
-                                      .updateStatusBillByShop(
-                                          newBills[index].idBill, 'preparing');
-
-                                  if (check) {
-                                    showTopSnackBar(
-                                      // ignore: use_build_context_synchronously
-                                      Overlay.of(context),
-                                      const CustomSnackBar.success(
-                                        message:
-                                            'Bạn đã xác nhận đơn hàng thành công!',
+                            return Column(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ShopBillDetailScreen(
+                                          billItem: newBills[index],
+                                        ),
                                       ),
-                                      displayDuration:
-                                          const Duration(seconds: 0),
                                     );
-                                    setState(() {
-                                      currentPageNew = 0;
-                                      currentPageOther = 0;
-                                      currentPageSuccess = 0;
-                                      currentPageCancel = 0;
+                                  },
+                                  child: ShopNewBillWidget(
+                                    billItem: newBills[index],
+                                    onConfirm: () async {
+                                      bool check = await BillApi()
+                                          .updateStatusBillByShop(
+                                              newBills[index].idBill,
+                                              'preparing');
 
-                                      newBills.clear();
-                                      otherBills.clear();
-                                      successBills.clear();
-                                      cancelBills.clear();
-                                    });
-                                    getBill();
-                                  } else {
-                                    showTopSnackBar(
-                                      // ignore: use_build_context_synchronously
-                                      Overlay.of(context),
-                                      const CustomSnackBar.error(
-                                        message:
-                                            'Xác nhận đơn hàng không thành công! Vui lòng thử lại sau!',
-                                      ),
-                                      displayDuration:
-                                          const Duration(seconds: 0),
-                                    );
-                                  }
-                                },
-                                onCancel: () async {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Xác nhận"),
-                                        content: const Text(
-                                            "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("Không",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 84, 84, 84))),
+                                      if (check) {
+                                        showTopSnackBar(
+                                          // ignore: use_build_context_synchronously
+                                          Overlay.of(context),
+                                          const CustomSnackBar.success(
+                                            message:
+                                                'Bạn đã xác nhận đơn hàng thành công!',
                                           ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              bool check = await BillApi()
-                                                  .updateStatusBillByShop(
-                                                      newBills[index].idBill,
-                                                      'canceled');
+                                          displayDuration:
+                                              const Duration(seconds: 0),
+                                        );
+                                        setState(() {
+                                          currentPageNew = 0;
+                                          currentPageOther = 0;
+                                          currentPageSuccess = 0;
+                                          currentPageCancel = 0;
 
-                                              // ignore: use_build_context_synchronously
-                                              Navigator.of(context).pop();
-
-                                              if (check) {
-                                                showTopSnackBar(
-                                                  // ignore: use_build_context_synchronously
-                                                  Overlay.of(context),
-                                                  const CustomSnackBar.success(
-                                                    message:
-                                                        'Bạn đã hủy đơn hàng thành công!',
-                                                  ),
-                                                  displayDuration:
-                                                      const Duration(
-                                                          seconds: 0),
-                                                );
-                                                setState(() {
-                                                  currentPageNew = 0;
-                                                  currentPageOther = 0;
-                                                  currentPageSuccess = 0;
-                                                  currentPageCancel = 0;
-
-                                                  newBills.clear();
-                                                  otherBills.clear();
-                                                  successBills.clear();
-                                                  cancelBills.clear();
-                                                });
-                                                getBill();
-                                              } else {
-                                                showTopSnackBar(
-                                                  // ignore: use_build_context_synchronously
-                                                  Overlay.of(context),
-                                                  const CustomSnackBar.error(
-                                                    message:
-                                                        'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                  ),
-                                                  displayDuration:
-                                                      const Duration(
-                                                          seconds: 0),
-                                                );
-                                              }
-                                            },
-                                            child: const Text("Hủy",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 209, 87, 78))),
+                                          newBills.clear();
+                                          otherBills.clear();
+                                          successBills.clear();
+                                          cancelBills.clear();
+                                        });
+                                        getBill();
+                                      } else {
+                                        showTopSnackBar(
+                                          // ignore: use_build_context_synchronously
+                                          Overlay.of(context),
+                                          const CustomSnackBar.error(
+                                            message:
+                                                'Xác nhận đơn hàng không thành công! Vui lòng thử lại sau!',
                                           ),
-                                        ],
+                                          displayDuration:
+                                              const Duration(seconds: 0),
+                                        );
+                                      }
+                                    },
+                                    onCancel: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Xác nhận"),
+                                            content: const Text(
+                                                "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text("Không",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 84, 84, 84))),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  bool check = await BillApi()
+                                                      .updateStatusBillByShop(
+                                                          newBills[index]
+                                                              .idBill,
+                                                          'canceled');
+
+                                                  // ignore: use_build_context_synchronously
+                                                  Navigator.of(context).pop();
+
+                                                  if (check) {
+                                                    showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      Overlay.of(context),
+                                                      const CustomSnackBar
+                                                          .success(
+                                                        message:
+                                                            'Bạn đã hủy đơn hàng thành công!',
+                                                      ),
+                                                      displayDuration:
+                                                          const Duration(
+                                                              seconds: 0),
+                                                    );
+                                                    setState(() {
+                                                      currentPageNew = 0;
+                                                      currentPageOther = 0;
+                                                      currentPageSuccess = 0;
+                                                      currentPageCancel = 0;
+
+                                                      newBills.clear();
+                                                      otherBills.clear();
+                                                      successBills.clear();
+                                                      cancelBills.clear();
+                                                    });
+                                                    getBill();
+                                                  } else {
+                                                    showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      Overlay.of(context),
+                                                      const CustomSnackBar
+                                                          .error(
+                                                        message:
+                                                            'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                      ),
+                                                      displayDuration:
+                                                          const Duration(
+                                                              seconds: 0),
+                                                    );
+                                                  }
+                                                },
+                                                child: const Text("Hủy",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 209, 87, 78))),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                              ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                             );
                           },
                         ),
@@ -471,230 +481,261 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                           shrinkWrap: true,
                           padding: const EdgeInsets.only(top: 16),
                           itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ShopBillDetailScreen(
-                                      billItem: otherBills[index],
-                                    ),
+                            return Column(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ShopBillDetailScreen(
+                                          billItem: otherBills[index],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ShopOtherBillWidget(
+                                    billItem: otherBills[index],
+                                    onConfirm: () {
+                                      if (otherBills[index].status ==
+                                          'preparing') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text("Xác nhận"),
+                                              content: const Text(
+                                                  "Bạn đã vận chuyển đơn hàng này?"),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("Không",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              84,
+                                                              84,
+                                                              84))),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    bool check = await BillApi()
+                                                        .updateStatusBillByShop(
+                                                            otherBills[index]
+                                                                .idBill,
+                                                            'delivering');
+
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+
+                                                    if (check) {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .success(
+                                                          message:
+                                                              'Cập nhật đơn hàng thành công!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                      setState(() {
+                                                        otherBills[index]
+                                                                .status =
+                                                            'delivering';
+                                                      });
+                                                    } else {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .error(
+                                                          message:
+                                                              'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: const Text("Xác nhận",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              46,
+                                                              159,
+                                                              71))),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else if (otherBills[index].status ==
+                                          'delivering') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text("Xác nhận"),
+                                              content: const Text(
+                                                  "Bạn đã giao hàng thành công?"),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("Không",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              84,
+                                                              84,
+                                                              84))),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    bool check = await BillApi()
+                                                        .updateStatusBillByShop(
+                                                            otherBills[index]
+                                                                .idBill,
+                                                            'delivered');
+
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+
+                                                    if (check) {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .success(
+                                                          message:
+                                                              'Cập nhật đơn hàng thành công!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                      setState(() {
+                                                        otherBills[index]
+                                                                .status =
+                                                            'delivered';
+                                                      });
+                                                    } else {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .error(
+                                                          message:
+                                                              'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: const Text("Xác nhận",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              46,
+                                                              159,
+                                                              71))),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text("Xác nhận"),
+                                              content: const Text(
+                                                  "Bạn đã hoàn thành đơn hàng này?"),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text("Không",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              84,
+                                                              84,
+                                                              84))),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    bool check = await BillApi()
+                                                        .updateStatusBillByShop(
+                                                            otherBills[index]
+                                                                .idBill,
+                                                            'done');
+
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+
+                                                    if (check) {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .success(
+                                                          message:
+                                                              'Cập nhật đơn hàng thành công!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                      setState(() {
+                                                        otherBills
+                                                            .removeAt(index);
+                                                      });
+                                                    } else {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .error(
+                                                          message:
+                                                              'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                    }
+                                                  },
+                                                  child: const Text("Xác nhận",
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              46,
+                                                              159,
+                                                              71))),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
                                   ),
-                                );
-                              },
-                              child: ShopOtherBillWidget(
-                                billItem: otherBills[index],
-                                onConfirm: () {
-                                  if (otherBills[index].status == 'preparing') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Xác nhận"),
-                                          content: const Text(
-                                              "Bạn đã vận chuyển đơn hàng này?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Không",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84))),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                bool check = await BillApi()
-                                                    .updateStatusBillByShop(
-                                                        otherBills[index]
-                                                            .idBill,
-                                                        'delivering');
-
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.of(context).pop();
-
-                                                if (check) {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar
-                                                        .success(
-                                                      message:
-                                                          'Cập nhật đơn hàng thành công!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                  setState(() {
-                                                    otherBills[index].status =
-                                                        'delivering';
-                                                  });
-                                                } else {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar.error(
-                                                      message:
-                                                          'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                }
-                                              },
-                                              child: const Text("Xác nhận",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 46, 159, 71))),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  } else if (otherBills[index].status ==
-                                      'delivering') {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Xác nhận"),
-                                          content: const Text(
-                                              "Bạn đã giao hàng thành công?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Không",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84))),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                bool check = await BillApi()
-                                                    .updateStatusBillByShop(
-                                                        otherBills[index]
-                                                            .idBill,
-                                                        'delivered');
-
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.of(context).pop();
-
-                                                if (check) {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar
-                                                        .success(
-                                                      message:
-                                                          'Cập nhật đơn hàng thành công!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                  setState(() {
-                                                    otherBills[index].status =
-                                                        'delivered';
-                                                  });
-                                                } else {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar.error(
-                                                      message:
-                                                          'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                }
-                                              },
-                                              child: const Text("Xác nhận",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 46, 159, 71))),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text("Xác nhận"),
-                                          content: const Text(
-                                              "Bạn đã hoàn thành đơn hàng này?"),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: const Text("Không",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84))),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                bool check = await BillApi()
-                                                    .updateStatusBillByShop(
-                                                        otherBills[index]
-                                                            .idBill,
-                                                        'done');
-
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.of(context).pop();
-
-                                                if (check) {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar
-                                                        .success(
-                                                      message:
-                                                          'Cập nhật đơn hàng thành công!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                  setState(() {
-                                                    otherBills.removeAt(index);
-                                                  });
-                                                } else {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar.error(
-                                                      message:
-                                                          'Cập nhật đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                }
-                                              },
-                                              child: const Text("Xác nhận",
-                                                  style: TextStyle(
-                                                      color: Color.fromARGB(
-                                                          255, 46, 159, 71))),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
-                              ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                             );
                           },
                         ),

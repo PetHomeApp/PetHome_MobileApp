@@ -241,7 +241,7 @@ class _ItemCartWidgetState extends State<ItemCartWidget> {
         child: TextField(
           controller: _controller,
           cursorColor: buttonBackgroundColor,
-          keyboardType: TextInputType.number,
+          enabled: false,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 18, color: Colors.black),
           decoration: const InputDecoration(

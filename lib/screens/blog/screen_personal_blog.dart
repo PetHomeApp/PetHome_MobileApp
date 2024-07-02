@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/blog/model_blog.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
+import 'package:pethome_mobileapp/screens/blog/screen_add_blog.dart';
 import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/blog/personal_blog_card.dart';
@@ -96,6 +97,19 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
             ),
           ),
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.post_add, color: iconButtonColor, size: 30),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddBlogScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: CustomScrollView(
         controller: _scrollController,
@@ -149,7 +163,8 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                             ),
                             const SizedBox(width: 30.0),
                             Image.asset('lib/assets/pictures/logo_app.png',
-                                width: 80, height: 80),
+                                width: 50, height: 50),
+                            const SizedBox(width: 10.0),
                             Image.asset('lib/assets/pictures/name_app.png',
                                 width: 100, height: 100),
                           ],
@@ -202,7 +217,7 @@ class _PersonalBlogScreenState extends State<PersonalBlogScreen> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    'Hãy trở về trang chủ để thêm bài viêt mới nhé!',
+                                    'Hãy trở về trang chủ để thêm bài viết mới nhé!',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,

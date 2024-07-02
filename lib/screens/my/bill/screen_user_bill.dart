@@ -282,135 +282,140 @@ class _UserBillScreenState extends State<UserBillScreen>
                                   ),
                                 );
                               },
-                              child: UserBillWidget(
-                                billItem: allBills[index],
-                                onPayment: () async {
-                                  String url = await BillApi()
-                                      .createPaymentUrl(allBills[index].idBill);
-
-                                  if (url.isNotEmpty) {
-                                    Navigator.push(
-                                      // ignore: use_build_context_synchronously
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            WebPaymentScreen(url: url),
-                                      ),
-                                    ).then((value) {
-                                      setState(() {
-                                        currentPageAll = 0;
-                                        currentPageSuccess = 0;
-                                        currentPageCancel = 0;
-
-                                        allBills.clear();
-                                        successBills.clear();
-                                        cancelBills.clear();
-                                      });
-                                      getBill();
-                                    });
-                                  } else {
-                                    showTopSnackBar(
-                                      // ignore: use_build_context_synchronously
-                                      Overlay.of(context),
-                                      const CustomSnackBar.error(
-                                        message:
-                                            'Thanh toán không thành công! Vui lòng thử lại sau!',
-                                      ),
-                                      displayDuration:
-                                          const Duration(seconds: 0),
-                                    );
-                                  }
-                                },
-                                onCancel: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Xác nhận"),
-                                        content: const Text(
-                                            "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text("Không",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 84, 84, 84))),
+                              child: Column(
+                                children: [
+                                  UserBillWidget(
+                                    billItem: allBills[index],
+                                    onPayment: () async {
+                                      String url = await BillApi()
+                                          .createPaymentUrl(allBills[index].idBill);
+                                  
+                                      if (url.isNotEmpty) {
+                                        Navigator.push(
+                                          // ignore: use_build_context_synchronously
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                WebPaymentScreen(url: url),
                                           ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              if (allBills[index].status ==
-                                                  'pending') {
-                                                bool check = await BillApi()
-                                                    .updateStatusBillByUser(
-                                                        allBills[index].idBill,
-                                                        'canceled');
-
-                                                // ignore: use_build_context_synchronously
-                                                Navigator.of(context).pop();
-
-                                                if (check) {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar
-                                                        .success(
-                                                      message:
-                                                          'Bạn đã hủy đơn hàng thành công!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                  setState(() {
-                                                    currentPageAll = 0;
-                                                    currentPageSuccess = 0;
-                                                    currentPageCancel = 0;
-
-                                                    allBills.clear();
-                                                    successBills.clear();
-                                                    cancelBills.clear();
-                                                  });
-                                                  getBill();
-                                                } else {
-                                                  showTopSnackBar(
-                                                    // ignore: use_build_context_synchronously
-                                                    Overlay.of(context),
-                                                    const CustomSnackBar.error(
-                                                      message:
-                                                          'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                    ),
-                                                    displayDuration:
-                                                        const Duration(
-                                                            seconds: 0),
-                                                  );
-                                                }
-                                              } else {
-                                                showTopSnackBar(
-                                                  // ignore: use_build_context_synchronously
-                                                  Overlay.of(context),
-                                                  const CustomSnackBar.error(
-                                                    message:
-                                                        'Đơn hàng đã được xử lý, không thể hủy!',
-                                                  ),
-                                                  displayDuration:
-                                                      const Duration(
-                                                          seconds: 0),
-                                                );
-                                              }
-                                            },
-                                            child: const Text("Hủy",
-                                                style: TextStyle(
-                                                    color: Color.fromARGB(
-                                                        255, 209, 87, 78))),
+                                        ).then((value) {
+                                          setState(() {
+                                            currentPageAll = 0;
+                                            currentPageSuccess = 0;
+                                            currentPageCancel = 0;
+                                  
+                                            allBills.clear();
+                                            successBills.clear();
+                                            cancelBills.clear();
+                                          });
+                                          getBill();
+                                        });
+                                      } else {
+                                        showTopSnackBar(
+                                          // ignore: use_build_context_synchronously
+                                          Overlay.of(context),
+                                          const CustomSnackBar.error(
+                                            message:
+                                                'Thanh toán không thành công! Vui lòng thử lại sau!',
                                           ),
-                                        ],
+                                          displayDuration:
+                                              const Duration(seconds: 0),
+                                        );
+                                      }
+                                    },
+                                    onCancel: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Xác nhận"),
+                                            content: const Text(
+                                                "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text("Không",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 84, 84, 84))),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  if (allBills[index].status ==
+                                                      'pending') {
+                                                    bool check = await BillApi()
+                                                        .updateStatusBillByUser(
+                                                            allBills[index].idBill,
+                                                            'canceled');
+                                  
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+                                  
+                                                    if (check) {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .success(
+                                                          message:
+                                                              'Bạn đã hủy đơn hàng thành công!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                      setState(() {
+                                                        currentPageAll = 0;
+                                                        currentPageSuccess = 0;
+                                                        currentPageCancel = 0;
+                                  
+                                                        allBills.clear();
+                                                        successBills.clear();
+                                                        cancelBills.clear();
+                                                      });
+                                                      getBill();
+                                                    } else {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar.error(
+                                                          message:
+                                                              'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                    }
+                                                  } else {
+                                                    showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      Overlay.of(context),
+                                                      const CustomSnackBar.error(
+                                                        message:
+                                                            'Đơn hàng đã được xử lý, không thể hủy!',
+                                                      ),
+                                                      displayDuration:
+                                                          const Duration(
+                                                              seconds: 0),
+                                                    );
+                                                  }
+                                                },
+                                                child: const Text("Hủy",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 209, 87, 78))),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
                               ),
                             );
                           },
@@ -428,7 +433,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                               ),
                               SizedBox(height: 10),
                               Text(
-                                'Bạn không có đơn hàng nào đã nhận',
+                                'Bạn không có đơn hàng thành công nào',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
