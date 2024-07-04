@@ -57,8 +57,6 @@ class BillApi {
           'cart', '${item.itemId}^${item.itemDetailId}^${item.quantity}'));
     }
 
-    print(url.toString());
-
     try {
       final response = await dio.post(
         url.toString(),

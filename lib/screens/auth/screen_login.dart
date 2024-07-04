@@ -1,3 +1,4 @@
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/screens/auth/screen_email.dart';
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ],
   );
 
-  void _handleSignIn() async {
+  void _handleGoogleSignIn() async {
     try {
       await _googleSignIn.signIn();
       String email = _googleSignIn.currentUser!.email;
@@ -76,6 +77,53 @@ class _LoginScreenState extends State<LoginScreen> {
       //print(error);
     } finally {
       _googleSignIn.signOut();
+    }
+  }
+
+  void _handleFacebookSignIn() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    if (result.status == LoginStatus.success) {
+      // final AccessToken accessToken = result.accessToken!;
+      // final userData = await FacebookAuth.instance.getUserData();
+
+      // print(userData['id']);
+      // print(userData['email']);
+      // print(userData['name']);
+      // print(userData['picture']['data']['url']);
+
+      // var dataResponse = await AuthApi().loginWithFacebook(
+      //     userData['email'],
+      //     userData['name'],
+      //     accessToken.token);
+
+      // if (dataResponse['isSuccess'] == true) {
+      //   _saveAccessToken(dataResponse['accessToken'].toString());
+      //   _saveRefreshToken(dataResponse['refreshToken'].toString());
+
+      //   showTopSnackBar(
+      //     // ignore: use_build_context_synchronously
+      //     Overlay.of(context),
+      //     const CustomSnackBar.success(
+      //       message: 'Đăng nhập thành công!',
+      //     ),
+      //     displayDuration: const Duration(seconds: 0),
+      //   );
+
+      //   // ignore: use_build_context_synchronously
+      //   Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(
+      //         builder: (context) => const MainScreen(initialIndex: 0)),
+      //   );
+      // } else {
+      //   showTopSnackBar(
+      //     // ignore: use_build_context_synchronously
+      //     Overlay.of(context),
+      //     const CustomSnackBar.error(
+      //       message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
+      //     ),
+      //     displayDuration: const Duration(seconds: 0),
+      //   );
     }
   }
 
@@ -308,14 +356,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         InkWell(
                           onTap: () {
-                            showTopSnackBar(
-                              // ignore: use_build_context_synchronously
-                              Overlay.of(context),
-                              const CustomSnackBar.error(
-                                message: 'Chức năng đang phát triển!',
-                              ),
-                              displayDuration: const Duration(seconds: 0),
-                            );
+                            _handleFacebookSignIn();
                           },
                           child: Container(
                             width: 50,
@@ -340,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(width: 50),
                         InkWell(
                           onTap: () async {
-                            _handleSignIn();
+                            _handleGoogleSignIn();
                           },
                           child: Container(
                             width: 50,

@@ -60,8 +60,10 @@ class _UpdateInforUserScreenState extends State<UpdateInforUserScreen> {
           getDayString = '';
         } else {
           getDayString = userInfor.dayOfBirth.substring(0, 10);
+          _selectedDate = DateTime.parse(getDayString);
         }
-        _userDoBController.text = getDayString;
+        _userDoBController.text =
+            '${getDayString.substring(8, 10)}-${getDayString.substring(5, 7)}-${getDayString.substring(0, 4)}';
       });
     } else {
       setState(() {
@@ -73,7 +75,8 @@ class _UpdateInforUserScreenState extends State<UpdateInforUserScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      // String to DateTime
+      initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
@@ -82,7 +85,7 @@ class _UpdateInforUserScreenState extends State<UpdateInforUserScreen> {
       setState(() {
         _selectedDate = picked;
         _userDoBController.text =
-            "${picked.year.toString()}-${picked.month.toString().padLeft(2, "0")}-${picked.day.toString().padLeft(2, "0")}";
+            "${picked.day.toString().padLeft(2, "0")}-${picked.month.toString().padLeft(2, "0")}-${picked.year.toString()}";
       });
     }
   }
@@ -158,11 +161,10 @@ class _UpdateInforUserScreenState extends State<UpdateInforUserScreen> {
                     }
 
                     var response = await UserApi().updateInfor(
-                      _userNameController.text,
-                      _userNumberPhoneController.text,
-                      genderSend,
-                      _userDoBController.text
-                    );
+                        _userNameController.text,
+                        _userNumberPhoneController.text,
+                        genderSend,
+                        _userDoBController.text);
 
                     if (response['isSuccess'] == true) {
                       showTopSnackBar(

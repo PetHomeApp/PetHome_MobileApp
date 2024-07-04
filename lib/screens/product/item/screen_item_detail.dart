@@ -511,12 +511,23 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 10, left: 12),
-                                child: Text(
-                                  itemDetail.shop.name,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: buttonBackgroundColor),
+                                child: Row(
+                                  children: [
+                                    //Logo
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                          itemDetail.shop.logo.toString()),
+                                    ),
+                                    const SizedBox(width: 20),
+                                    Text(
+                                      itemDetail.shop.name,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: buttonBackgroundColor),
+                                    ),
+                                  ],
                                 ),
                               ),
                               Padding(

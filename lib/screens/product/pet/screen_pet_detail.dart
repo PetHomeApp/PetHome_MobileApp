@@ -481,12 +481,22 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                               Padding(
                                 padding:
                                     const EdgeInsets.only(top: 10, left: 12),
-                                child: Text(
-                                  petDetail.shop.name,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: buttonBackgroundColor),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                          petDetail.shop.logo.toString()),
+                                    ),
+                                    const SizedBox(width: 20),
+                                    Text(
+                                      petDetail.shop.name,
+                                      style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: buttonBackgroundColor),
+                                    ),
+                                  ],
                                 ),
                               ),
                               Padding(

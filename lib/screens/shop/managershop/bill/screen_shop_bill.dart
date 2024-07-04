@@ -233,7 +233,7 @@ class _ShopBillScreenState extends State<ShopBillScreen>
                   },
                 ),
                 title: const Text(
-                  "Quản lí đơn hàng",
+                  "Quản lý đơn hàng",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

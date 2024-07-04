@@ -562,7 +562,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                             ),
                                           ),
                                           const Text(
-                                            'Quản lí cửa hàng',
+                                            'Quản lý cửa hàng',
                                             style: TextStyle(
                                               color: buttonBackgroundColor,
                                               fontSize: 18,
@@ -653,7 +653,7 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    'Quản lí địa chỉ',
+                                    'Quản lý địa chỉ',
                                     style: TextStyle(
                                       color: buttonBackgroundColor,
                                       fontSize: 16,
