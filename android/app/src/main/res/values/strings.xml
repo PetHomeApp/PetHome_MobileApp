@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PetHome</string>
+    <string name="facebook_app_id">958132789443763</string>
+    <string name="fb_login_protocol_scheme">fb958132789443763</string>
+    <string name="facebook_client_token">7f7a524463cf9f7547f3c110da7d074d</string>
+</resources>
