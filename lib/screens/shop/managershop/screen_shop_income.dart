@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/bill/model_bill.dart';
+import 'package:pethome_mobileapp/screens/shop/managershop/bill/screen_shop_bill_detail.dart';
+import 'package:pethome_mobileapp/services/api/bill_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -24,6 +27,46 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
 
   DateTime _selectedStartDate = DateTime.now();
   DateTime _selectedEndDate = DateTime.now();
+
+  int totalIncome = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startDateController.text =
+        "${_selectedStartDate.day.toString().padLeft(2, "0")}-${_selectedStartDate.month.toString().padLeft(2, "0")}-${_selectedStartDate.year.toString()}";
+    _endDateController.text =
+        "${_selectedEndDate.day.toString().padLeft(2, "0")}-${_selectedEndDate.month.toString().padLeft(2, "0")}-${_selectedEndDate.year.toString()}";
+    _scrollController.addListener(_listenerScroll);
+  }
+
+  Future<Map<String, dynamic>> getBillDone() async {
+    var res = await BillApi()
+        .getIncome(currentPage * 50, 50, _selectedStartDate, _selectedEndDate);
+
+    if (res['isSuccess']) {
+      return res;
+    } else {
+      return {};
+    }
+  }
+
+  void _listenerScroll() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels != 0) {
+        setState(() {
+          currentPage++;
+        });
+        getBillDone().then((value) {
+          if (value.isNotEmpty) {
+            setState(() {
+              billItems.addAll(value['bills']);
+            });
+          }
+        });
+      }
+    }
+  }
 
   Future<void> _selectDateStart(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -92,7 +135,7 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
           IconButton(
             icon:
                 const Icon(Icons.search_off, color: iconButtonColor, size: 30),
-            onPressed: () {
+            onPressed: () async {
               if (_startDateController.text.isEmpty ||
                   _endDateController.text.isEmpty) {
                 showTopSnackBar(
@@ -116,6 +159,15 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
                   displayDuration: const Duration(seconds: 0),
                 );
                 return;
+              }
+              currentPage = 0;
+              var res = await BillApi().getIncome(
+                  currentPage * 50, 50, _selectedStartDate, _selectedEndDate);
+              if (res['isSuccess']) {
+                setState(() {
+                  billItems = res['bills'];
+                  totalIncome = res['total'];
+                });
               }
             },
           ),
@@ -259,15 +311,142 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
                               ),
                             ),
                           )
-                        // : ListView.builder(
-                        //     shrinkWrap: true,
-                        //     physics: const NeverScrollableScrollPhysics(),
-                        //     itemCount: blogs.length,
-                        //     itemBuilder: (context, index) {
-                        //       return PersonalBlogCard(blog: blogs[index]);
-                        //     },
-                        //   ),
-                        : Container(),
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: billItems.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ShopBillDetailScreen(
+                                        billItem: billItems[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Container(
+                                    color: Colors.grey[100],
+                                    padding: const EdgeInsets.only(
+                                        top: 4, bottom: 4),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            ClipRRect(
+                                              child: Image.network(
+                                                billItems[index]
+                                                    .itemImage
+                                                    .toString(),
+                                                height: 100,
+                                                width: 100,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (BuildContext
+                                                        context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                                  return Image.asset(
+                                                    'lib/assets/pictures/placeholder_image.png',
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    billItems[index]
+                                                        .itemName
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                  Text(
+                                                    'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(billItems[index].createdAt).add(const Duration(hours: 7)))}',
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        color: Color.fromARGB(
+                                                            255, 84, 84, 84)),
+                                                  ),
+                                                  Text(
+                                                    'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(billItems[index].totalPrice)} đ',
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: priceColor,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        '${billItems[index].paymentMethod}  -  ',
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                buttonBackgroundColor),
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Text(
+                                                        billItems[index]
+                                                                    .paymentStatus ==
+                                                                'pending'
+                                                            ? 'Chưa thanh toán'
+                                                            : 'Đã thanh toán',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: billItems[
+                                                                            index]
+                                                                        .paymentStatus ==
+                                                                    'pending'
+                                                                ? Colors.red
+                                                                : buttonBackgroundColor),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 5),
+                                                  const Text(
+                                                    'Đã hoàn thành',
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.green),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
               ],
             ),
           ),
@@ -285,15 +464,13 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
                   right: BorderSide(color: buttonBackgroundColor, width: 1.0),
                 ),
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(10),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //SPACE BETWEEN
-
                   children: <Widget>[
-                    Text(
+                    const Text(
                       'Tổng doanh thu:',
                       style: TextStyle(
                           color: buttonBackgroundColor,
@@ -301,10 +478,10 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
                           fontSize: 16.0),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(width: 4.0),
+                    const SizedBox(width: 4.0),
                     Text(
-                      '0 VNĐ',
-                      style: TextStyle(
+                      '${NumberFormat('#,##0', 'vi').format(totalIncome)} VNĐ',
+                      style: const TextStyle(
                           color: buttonBackgroundColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 18.0),

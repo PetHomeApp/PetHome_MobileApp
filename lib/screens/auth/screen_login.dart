@@ -84,46 +84,39 @@ class _LoginScreenState extends State<LoginScreen> {
     final LoginResult result = await FacebookAuth.instance.login();
 
     if (result.status == LoginStatus.success) {
-      // final AccessToken accessToken = result.accessToken!;
-      // final userData = await FacebookAuth.instance.getUserData();
+      final userData = await FacebookAuth.instance.getUserData();
 
-      // print(userData['id']);
-      // print(userData['email']);
-      // print(userData['name']);
-      // print(userData['picture']['data']['url']);
+      var dataResponse = await AuthApi().loginWithFacebook(
+          userData['email'], userData['name'], userData['id']);
 
-      // var dataResponse = await AuthApi().loginWithFacebook(
-      //     userData['email'],
-      //     userData['name'],
-      //     accessToken.token);
+      if (dataResponse['isSuccess'] == true) {
+        _saveAccessToken(dataResponse['accessToken'].toString());
+        _saveRefreshToken(dataResponse['refreshToken'].toString());
 
-      // if (dataResponse['isSuccess'] == true) {
-      //   _saveAccessToken(dataResponse['accessToken'].toString());
-      //   _saveRefreshToken(dataResponse['refreshToken'].toString());
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.success(
+            message: 'Đăng nhập thành công!',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
 
-      //   showTopSnackBar(
-      //     // ignore: use_build_context_synchronously
-      //     Overlay.of(context),
-      //     const CustomSnackBar.success(
-      //       message: 'Đăng nhập thành công!',
-      //     ),
-      //     displayDuration: const Duration(seconds: 0),
-      //   );
-
-      //   // ignore: use_build_context_synchronously
-      //   Navigator.of(context).pushReplacement(
-      //     MaterialPageRoute(
-      //         builder: (context) => const MainScreen(initialIndex: 0)),
-      //   );
-      // } else {
-      //   showTopSnackBar(
-      //     // ignore: use_build_context_synchronously
-      //     Overlay.of(context),
-      //     const CustomSnackBar.error(
-      //       message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
-      //     ),
-      //     displayDuration: const Duration(seconds: 0),
-      //   );
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (context) => const MainScreen(initialIndex: 0)),
+        );
+      } else {
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.error(
+            message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      }
     }
   }
 

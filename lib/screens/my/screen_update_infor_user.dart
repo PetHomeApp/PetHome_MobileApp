@@ -58,12 +58,13 @@ class _UpdateInforUserScreenState extends State<UpdateInforUserScreen> {
         String getDayString = '';
         if (userInfor.dayOfBirth == '') {
           getDayString = '';
+          _userDoBController.text = '';
         } else {
           getDayString = userInfor.dayOfBirth.substring(0, 10);
           _selectedDate = DateTime.parse(getDayString);
+          _userDoBController.text =
+              '${getDayString.substring(8, 10)}-${getDayString.substring(5, 7)}-${getDayString.substring(0, 4)}';
         }
-        _userDoBController.text =
-            '${getDayString.substring(8, 10)}-${getDayString.substring(5, 7)}-${getDayString.substring(0, 4)}';
       });
     } else {
       setState(() {

@@ -67,7 +67,7 @@ class BillItem {
       shopName: json['shop_name'] ?? '',
       userName: json['username'] ?? '',
       paymentMethod: json['payment_description'],
-      paymentStatus: json['payment_status'],
+      paymentStatus: json['payment_status'] ?? '',
     );
   }
 }

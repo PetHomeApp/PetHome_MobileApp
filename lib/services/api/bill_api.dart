@@ -391,4 +391,54 @@ class BillApi {
       return '';
     }
   }
+
+  Future<Map<String, dynamic>> getIncome(
+      int start, int limit, DateTime startDate, DateTime endDate) async {
+    String startStr = startDate.toString().substring(0, 10);
+    String endStr = endDate.toString().substring(0, 10);
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/shop/income?start=$start&limit=$limit&from=$startStr&to=$endStr");
+
+    print(url.toString());
+
+    AuthApi authApi = AuthApi();
+    var authRes = await authApi.authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await Dio().get(
+        url.toString(),
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        List<BillItem> listBillItem = [];
+        var data = response.data;
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+
+        for (var item in data['bills']) {
+          listBillItem.add(BillItem.fromJson(item));
+        }
+        int total = data['total'];
+
+        return {'isSuccess': true, 'bills': listBillItem, 'total': total};
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
 }
