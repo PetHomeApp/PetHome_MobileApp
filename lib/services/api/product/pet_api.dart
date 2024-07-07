@@ -60,10 +60,10 @@ class PetApi {
     }
   }
 
-  Future<List<PetInCard>> searchPetsInCard(
-      String keyword, int limit, int start) async {
+  Future<List<PetInCard>> searchPetsInCard(String keyword, int limit, int start,
+      String sortPrice, String sortRating) async {
     var url = Uri.parse(
-        '${pethomeApiUrl}pets?name=$keyword&limit=$limit&start=$start');
+        '${pethomeApiUrl}pets?name=$keyword&limit=$limit&start=$start&priceOrder=$sortPrice&ratingOrder=$sortRating');
 
     final response = await http.get(
       url,

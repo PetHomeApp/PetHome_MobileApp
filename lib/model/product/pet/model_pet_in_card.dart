@@ -8,6 +8,7 @@ class PetInCard {
   final int? specieID;
   final List<String>? areas;
   final bool inStock;
+  final double avgRating;
 
   PetInCard({
     required this.idPet,
@@ -19,6 +20,7 @@ class PetInCard {
     this.specieID,
     this.areas,
     this.inStock = false,
+    this.avgRating = 0.0,
   });
 
   factory PetInCard.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class PetInCard {
       specieID: json['specie_id'],
       areas: json['areas'].cast<String>(),
       inStock: json['instock'] ?? false,
+      avgRating: (json['avg_rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

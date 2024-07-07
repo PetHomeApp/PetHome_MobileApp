@@ -51,6 +51,22 @@ class PetCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                      size: 10,
+                    ),
+                    Text(
+                      petInCard.avgRating == 0
+                          ? '0.0/0.0'
+                          : '${petInCard.avgRating.toStringAsFixed(1)}/5.0',
+                      style: const TextStyle(
+                          fontSize: 12, color: Colors.amber, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
                 Text(
                   '${formatter.format(petInCard.price)} đ',
                   style: const TextStyle(

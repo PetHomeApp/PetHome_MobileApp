@@ -25,7 +25,15 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
   List<ItemInCard> listItemsInCard = List.empty(growable: true);
   List<ItemInCard> listItemsFilter = List.empty(growable: true);
 
+  List<String> filterPrice = ['Không', 'Tăng dần', 'Giảm dần'];
+  List<String> filterRate = ['Không', 'Tăng dần', 'Giảm dần'];
   List<String> filterArea = area;
+
+  String selectedPriceSort = 'Không';
+  String selectedRateSort = 'Không';
+
+  Set<String> selectedPriceFilters = {};
+  Set<String> selectedRateFilters = {};
   Set<String> selectedAreaFilters = {};
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,33 +47,47 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_listenerScroll);
+    selectedPriceFilters.add(filterPrice[0]);
+    selectedRateFilters.add(filterRate[0]);
     if (widget.searchType == 'search') {
-      getListItemsBySearchInCards();
+      getListItemsBySearchInCards('NONE', 'NONE');
     } else {
-      getListItemsByCategoryInCards();
+      getListItemsByCategoryInCards('NONE', 'NONE');
     }
   }
 
   void _listenerScroll() {
     if (_scrollController.position.atEdge) {
       if (_scrollController.position.pixels != 0) {
+        String sortPrice = selectedPriceSort == 'Tăng dần'
+            ? 'ASC'
+            : selectedPriceSort == 'Giảm dần'
+                ? 'DESC'
+                : 'NONE';
+
+        String sortRating = selectedRateSort == 'Tăng dần'
+            ? 'ASC'
+            : selectedRateSort == 'Giảm dần'
+                ? 'DESC'
+                : 'NONE';
         if (widget.searchType == 'search') {
-          getListItemsBySearchInCards();
+          getListItemsBySearchInCards(sortPrice, sortRating);
         } else {
-          getListItemsByCategoryInCards();
+          getListItemsByCategoryInCards(sortPrice, sortRating);
         }
       }
     }
   }
 
-  Future<void> getListItemsBySearchInCards() async {
+  Future<void> getListItemsBySearchInCards(
+      String sortPrice, String sortRating) async {
     if (loading) {
       return;
     }
 
     loading = true;
-    final List<ItemInCard> items =
-        await ItemApi().searchItemsInCard(widget.title, 40, currentPage * 40);
+    final List<ItemInCard> items = await ItemApi().searchItemsInCard(
+        widget.title, 40, currentPage * 40, sortPrice, sortRating);
 
     if (items.isEmpty) {
       loading = false;
@@ -94,14 +116,15 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
     });
   }
 
-  Future<void> getListItemsByCategoryInCards() async {
+  Future<void> getListItemsByCategoryInCards(
+      String sortPrice, String sortRating) async {
     if (loading) {
       return;
     }
 
     loading = true;
-    final List<ItemInCard> items = await ItemApi()
-        .getItemsByTypeInCard(widget.detailTypeID, 40, currentPage * 40);
+    final List<ItemInCard> items = await ItemApi().getItemsByTypeInCard(
+        widget.detailTypeID, 40, currentPage * 40, sortPrice, sortRating);
 
     if (items.isEmpty) {
       loading = false;
@@ -311,6 +334,108 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        const Text('Giá: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: 8.0,
+                                  runSpacing: 8.0,
+                                  children: filterPrice.map((filterPrice) {
+                                    final isSelected =
+                                        selectedPriceSort == filterPrice;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedPriceSort = filterPrice;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.grey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          filterPrice,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(color: Colors.grey),
+                        const Text('Đánh giá: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: 8.0,
+                                  runSpacing: 8.0,
+                                  children: filterRate.map((filterRate) {
+                                    final isSelected =
+                                        selectedRateSort == filterRate;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedRateSort = filterRate;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.grey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          filterRate,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(color: Colors.grey),
                         const Text('Khu vực: ',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
@@ -407,6 +532,8 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
+                            selectedPriceSort = 'Không';
+                            selectedRateSort = 'Không';
                             selectedAreaFilters.clear();
                           });
                         },
@@ -431,18 +558,51 @@ class _ItemSearchAndFilterScreenState extends State<ItemSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            listItemsFilter = listItemsInCard.where((item) {
-                              if (selectedAreaFilters.isEmpty) {
-                                return true;
-                              }
+                            if (selectedPriceFilters.first !=
+                                    selectedPriceSort ||
+                                selectedRateFilters.first != selectedRateSort) {
+                              selectedPriceFilters.clear();
+                              selectedPriceFilters.add(selectedPriceSort);
+                              selectedRateFilters.clear();
+                              selectedRateFilters.add(selectedRateSort);
 
-                              if (selectedAreaFilters.isEmpty ||
-                                  selectedAreaFilters.any((element) =>
-                                      item.areas.contains(element))) {
-                                return true;
+                              listItemsInCard.clear();
+                              listItemsFilter.clear();
+                              currentPage = 0;
+
+                              String sortPrice = selectedPriceSort == 'Tăng dần'
+                                  ? 'ASC'
+                                  : selectedPriceSort == 'Giảm dần'
+                                      ? 'DESC'
+                                      : 'NONE';
+
+                              String sortRating = selectedRateSort == 'Tăng dần'
+                                  ? 'ASC'
+                                  : selectedRateSort == 'Giảm dần'
+                                      ? 'DESC'
+                                      : 'NONE';
+
+                              if (widget.searchType == 'search') {
+                                getListItemsBySearchInCards(
+                                    sortPrice, sortRating);
+                              } else {
+                                getListItemsByCategoryInCards(
+                                    sortPrice, sortRating);
                               }
-                              return false;
-                            }).toList();
+                            } else {
+                              listItemsFilter = listItemsInCard.where((item) {
+                                if (selectedAreaFilters.isEmpty) {
+                                  return true;
+                                }
+
+                                if (selectedAreaFilters.isEmpty ||
+                                    selectedAreaFilters.any((element) =>
+                                        item.areas.contains(element))) {
+                                  return true;
+                                }
+                                return false;
+                              }).toList();
+                            }
                             Navigator.of(context).pop();
                           });
                         },

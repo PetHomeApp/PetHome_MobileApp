@@ -28,10 +28,17 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
 
   List<String> filterSpecie = [];
   List<String> filterAge = [];
+  List<String> filterPrice = ['Không', 'Tăng dần', 'Giảm dần'];
+  List<String> filterRate = ['Không', 'Tăng dần', 'Giảm dần'];
   List<String> filterArea = area;
+
+  String selectedPriceSort = 'Không';
+  String selectedRateSort = 'Không';
 
   Set<String> selectedSpecieFilters = {};
   Set<String> selectedAgeFilters = {};
+  Set<String> selectedPriceFilters = {};
+  Set<String> selectedRateFilters = {};
   Set<String> selectedAreaFilters = {};
 
   var scaffoldKey = GlobalKey<ScaffoldState>();
@@ -45,8 +52,9 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_listenerScroll);
-
-    getListPetInCards();
+    selectedPriceFilters.add(filterPrice[0]);
+    selectedRateFilters.add(filterRate[0]);
+    getListPetInCards('NONE', 'NONE');
 
     PetApi().getPetSpecies().then((value) {
       setState(() {
@@ -66,19 +74,30 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
   void _listenerScroll() {
     if (_scrollController.position.atEdge) {
       if (_scrollController.position.pixels != 0) {
-        getListPetInCards();
+        String sortPrice = selectedPriceSort == 'Tăng dần'
+            ? 'ASC'
+            : selectedPriceSort == 'Giảm dần'
+                ? 'DESC'
+                : 'NONE';
+
+        String sortRating = selectedRateSort == 'Tăng dần'
+            ? 'ASC'
+            : selectedRateSort == 'Giảm dần'
+                ? 'DESC'
+                : 'NONE';
+        getListPetInCards(sortPrice, sortRating);
       }
     }
   }
 
-  Future<void> getListPetInCards() async {
+  Future<void> getListPetInCards(String sortPrice, String sortRating) async {
     if (loading) {
       return;
     }
 
     loading = true;
-    final List<PetInCard> pets =
-        await PetApi().searchPetsInCard(widget.title, 40, currentPage * 40);
+    final List<PetInCard> pets = await PetApi().searchPetsInCard(
+        widget.title, 40, currentPage * 40, sortPrice, sortRating);
 
     if (pets.isEmpty) {
       loading = false;
@@ -419,6 +438,108 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                           ),
                         ),
                         const Divider(color: Colors.grey),
+                        const Text('Giá: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: 8.0,
+                                  runSpacing: 8.0,
+                                  children: filterPrice.map((filterPrice) {
+                                    final isSelected =
+                                        selectedPriceSort == filterPrice;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedPriceSort = filterPrice;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.grey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          filterPrice,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(color: Colors.grey),
+                        const Text('Đánh giá: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: 8.0,
+                                  runSpacing: 8.0,
+                                  children: filterRate.map((filterRate) {
+                                    final isSelected =
+                                        selectedRateSort == filterRate;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedRateSort = filterRate;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.grey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          filterRate,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(color: Colors.grey),
                         const Text('Khu vực: ',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
@@ -515,6 +636,8 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
+                            selectedPriceSort = 'Không';
+                            selectedRateSort = 'Không';
                             selectedSpecieFilters.clear();
                             selectedAgeFilters.clear();
                             selectedAreaFilters.clear();
@@ -541,31 +664,58 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            listPetsFilter = listPetsInCard.where((pet) {
-                              if (selectedSpecieFilters.isEmpty &&
-                                  selectedAgeFilters.isEmpty &&
-                                  selectedAreaFilters.isEmpty) {
-                                return true;
-                              }
-                              PetSpecie petSpecieItem = petSpecie.firstWhere(
-                                  (element) => element.id == pet.specieID,
-                                  orElse: () => PetSpecie(id: 0, name: ''));
-                              PetAge petAgeItem = petAge.firstWhere(
-                                  (element) => element.id == pet.ageID,
-                                  orElse: () => PetAge(id: 0, name: ''));
-                              if ((selectedSpecieFilters.isEmpty ||
-                                      selectedSpecieFilters
-                                          .contains(petSpecieItem.name)) &&
-                                  (selectedAgeFilters.isEmpty ||
-                                      selectedAgeFilters
-                                          .contains(petAgeItem.name)) &&
-                                  (selectedAreaFilters.isEmpty ||
-                                      selectedAreaFilters.any((element) =>
-                                          pet.areas!.contains(element)))) {
-                                return true;
-                              }
-                              return false;
-                            }).toList();
+                            if (selectedPriceFilters.first !=
+                                    selectedPriceSort ||
+                                selectedRateFilters.first != selectedRateSort) {
+                              selectedPriceFilters.clear();
+                              selectedPriceFilters.add(selectedPriceSort);
+                              selectedRateFilters.clear();
+                              selectedRateFilters.add(selectedRateSort);
+
+                              listPetsInCard.clear();
+                              listPetsFilter.clear();
+                              currentPage = 0;
+
+                              String sortPrice = selectedPriceSort == 'Tăng dần'
+                                  ? 'ASC'
+                                  : selectedPriceSort == 'Giảm dần'
+                                      ? 'DESC'
+                                      : 'NONE';
+
+                              String sortRating = selectedRateSort == 'Tăng dần'
+                                  ? 'ASC'
+                                  : selectedRateSort == 'Giảm dần'
+                                      ? 'DESC'
+                                      : 'NONE';
+
+                              getListPetInCards(sortPrice, sortRating);
+                            } else {
+                              listPetsFilter = listPetsInCard.where((pet) {
+                                if (selectedSpecieFilters.isEmpty &&
+                                    selectedAgeFilters.isEmpty &&
+                                    selectedAreaFilters.isEmpty) {
+                                  return true;
+                                }
+                                PetSpecie petSpecieItem = petSpecie.firstWhere(
+                                    (element) => element.id == pet.specieID,
+                                    orElse: () => PetSpecie(id: 0, name: ''));
+                                PetAge petAgeItem = petAge.firstWhere(
+                                    (element) => element.id == pet.ageID,
+                                    orElse: () => PetAge(id: 0, name: ''));
+                                if ((selectedSpecieFilters.isEmpty ||
+                                        selectedSpecieFilters
+                                            .contains(petSpecieItem.name)) &&
+                                    (selectedAgeFilters.isEmpty ||
+                                        selectedAgeFilters
+                                            .contains(petAgeItem.name)) &&
+                                    (selectedAreaFilters.isEmpty ||
+                                        selectedAreaFilters.any((element) =>
+                                            pet.areas!.contains(element)))) {
+                                  return true;
+                                }
+                                return false;
+                              }).toList();
+                            }
                             Navigator.of(context).pop();
                           });
                         },

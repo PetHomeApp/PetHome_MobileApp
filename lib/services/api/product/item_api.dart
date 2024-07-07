@@ -41,10 +41,10 @@ class ItemApi {
     }
   }
 
-  Future<List<ItemInCard>> getItemsByTypeInCard(
-      int detailTypeID, int limit, int start) async {
+  Future<List<ItemInCard>> getItemsByTypeInCard(int detailTypeID, int limit,
+      int start, String sortPrice, String sortRating) async {
     var url = Uri.parse(
-        '${pethomeApiUrl}items?detailTypeID=$detailTypeID&limit=$limit&start=$start');
+        '${pethomeApiUrl}items?detailTypeID=$detailTypeID&limit=$limit&start=$start&priceOrder=$sortPrice&ratingOrder=$sortRating');
 
     final response = await http.get(
       url,
@@ -93,10 +93,10 @@ class ItemApi {
     }
   }
 
-  Future<List<ItemInCard>> searchItemsInCard(
-      String keyword, int limit, int start) async {
+  Future<List<ItemInCard>> searchItemsInCard(String keyword, int limit,
+      int start, String sortPrice, String sortRating) async {
     var url = Uri.parse(
-        '${pethomeApiUrl}items?name=$keyword&limit=$limit&start=$start');
+        '${pethomeApiUrl}items?name=$keyword&limit=$limit&start=$start&priceOrder=$sortPrice&ratingOrder=$sortRating');
 
     final response = await http.get(
       url,
