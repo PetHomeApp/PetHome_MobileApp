@@ -399,8 +399,6 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/shop/income?start=$start&limit=$limit&from=$startStr&to=$endStr");
 
-    print(url.toString());
-
     AuthApi authApi = AuthApi();
     var authRes = await authApi.authorize();
 

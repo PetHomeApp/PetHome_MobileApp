@@ -7,6 +7,7 @@ import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_homepage.dart';
 import 'package:pethome_mobileapp/screens/my/address/screen_list_address.dart';
 import 'package:pethome_mobileapp/screens/my/screen_change_password.dart';
+import 'package:pethome_mobileapp/screens/my/screen_favorite_pets.dart';
 import 'package:pethome_mobileapp/screens/my/screen_notification.dart';
 import 'package:pethome_mobileapp/screens/my/screen_update_infor_user.dart';
 import 'package:pethome_mobileapp/screens/my/bill/screen_user_bill.dart';
@@ -581,6 +582,51 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                         ),
                       ),
                       const SizedBox(height: 15),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const FavoritePetsScreen(),
+                          ));
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                              bottom: BorderSide(
+                                color: Color.fromARGB(140, 158, 158, 158),
+                                width: 0.5,
+                              ),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  color: buttonBackgroundColor,
+                                  size: 30,
+                                ),
+                                SizedBox(width: 15),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Thú cưng yêu thích',
+                                    style: TextStyle(
+                                      color: buttonBackgroundColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                       InkWell(
                         onTap: () {
                           Navigator.of(context)

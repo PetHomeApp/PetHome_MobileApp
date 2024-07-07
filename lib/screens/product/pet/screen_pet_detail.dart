@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
-import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
+import 'package:pethome_mobileapp/screens/my/screen_favorite_pets.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
 import 'package:pethome_mobileapp/services/api/cart_api.dart';
 import 'package:pethome_mobileapp/services/api/chat_api.dart';
@@ -172,11 +172,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
               actions: <Widget>[
                 if (widget.showCartIcon)
                   IconButton(
-                    icon: const Icon(Icons.shopping_cart,
+                    icon: const Icon(Icons.favorite,
                         color: iconButtonColor, size: 30),
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const CartHomePageScreen(),
+                        builder: (context) => const FavoritePetsScreen(),
                       ));
                     },
                   ),
@@ -764,7 +764,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.success(
-                            message: 'Đã thêm vào giỏ hàng',
+                            message: 'Đã thêm vào danh sách yêu thích',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );
@@ -774,7 +774,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.error(
-                            message: 'Thú cưng đã có trong giỏ hàng',
+                            message: 'Thú cưng đã có trong danh sách yêu thích',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );
@@ -783,7 +783,7 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           // ignore: use_build_context_synchronously
                           Overlay.of(context),
                           const CustomSnackBar.error(
-                            message: 'Lỗi khi thêm vào giỏ hàng',
+                            message: 'Lỗi khi thêm vào danh sách yêu thích',
                           ),
                           displayDuration: const Duration(seconds: 0),
                         );
@@ -797,11 +797,11 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Icon(
-                              Icons.shopping_cart,
+                              Icons.favorite,
                               color: Colors.white,
                             ),
                             Text(
-                              'Thêm vào Giỏ hàng',
+                              'Thêm vào yêu thích',
                               style: TextStyle(color: Colors.white),
                               overflow: TextOverflow.ellipsis,
                             ),

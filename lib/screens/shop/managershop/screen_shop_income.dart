@@ -169,6 +169,14 @@ class _ShopIncomeScreenState extends State<ShopIncomeScreen> {
                   totalIncome = res['total'];
                 });
               }
+              showTopSnackBar(
+                // ignore: use_build_context_synchronously
+                Overlay.of(context),
+                const CustomSnackBar.success(
+                  message: 'Tiến hành tìm kiếm thành công',
+                ),
+                displayDuration: const Duration(seconds: 0),
+              );
             },
           ),
         ],
