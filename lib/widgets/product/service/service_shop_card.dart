@@ -43,11 +43,27 @@ class ServiceShopCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 5),
+              Row(
+                  children: [
+                    const Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                      size: 12,
+                    ),
+                    Text(
+                      serviceInCard.avgRating == 0
+                          ? '0.0/0.0'
+                          : '${serviceInCard.avgRating.toStringAsFixed(1)}/5.0',
+                      style: const TextStyle(
+                          fontSize: 14, color: Colors.amber, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               Text(
                 '${formatter.format(serviceInCard.minPrice)}đ - ${formatter.format(serviceInCard.maxPrice)}đ',
                 style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: priceColor,
                     fontWeight: FontWeight.bold),
               ),

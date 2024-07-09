@@ -7,6 +7,7 @@ class ServiceInCard {
   final int minPrice;
   final int maxPrice;
   final List<String> areas;
+  final double avgRating;
 
   ServiceInCard({
     required this.idShop,
@@ -17,6 +18,7 @@ class ServiceInCard {
     required this.minPrice,
     required this.maxPrice,
     required this.areas,
+    this.avgRating = 0.0,
   });
 
   factory ServiceInCard.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class ServiceInCard {
       minPrice: json['min_price'],
       maxPrice: json['max_price'],
       areas: List<String>.from(json['areas']),
+      avgRating: (json['avg_rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

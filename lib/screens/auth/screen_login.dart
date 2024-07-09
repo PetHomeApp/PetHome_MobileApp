@@ -81,42 +81,48 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleFacebookSignIn() async {
-    final LoginResult result = await FacebookAuth.instance.login();
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
 
-    if (result.status == LoginStatus.success) {
-      final userData = await FacebookAuth.instance.getUserData();
+      if (result.status == LoginStatus.success) {
+        final userData = await FacebookAuth.instance.getUserData();
 
-      var dataResponse = await AuthApi().loginWithFacebook(
-          userData['email'], userData['name'], userData['id']);
+        var dataResponse = await AuthApi().loginWithFacebook(
+            userData['email'], userData['name'], userData['id']);
 
-      if (dataResponse['isSuccess'] == true) {
-        _saveAccessToken(dataResponse['accessToken'].toString());
-        _saveRefreshToken(dataResponse['refreshToken'].toString());
+        if (dataResponse['isSuccess'] == true) {
+          _saveAccessToken(dataResponse['accessToken'].toString());
+          _saveRefreshToken(dataResponse['refreshToken'].toString());
 
-        showTopSnackBar(
+          showTopSnackBar(
+            // ignore: use_build_context_synchronously
+            Overlay.of(context),
+            const CustomSnackBar.success(
+              message: 'Đăng nhập thành công!',
+            ),
+            displayDuration: const Duration(seconds: 0),
+          );
+
           // ignore: use_build_context_synchronously
-          Overlay.of(context),
-          const CustomSnackBar.success(
-            message: 'Đăng nhập thành công!',
-          ),
-          displayDuration: const Duration(seconds: 0),
-        );
-
-        // ignore: use_build_context_synchronously
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (context) => const MainScreen(initialIndex: 0)),
-        );
-      } else {
-        showTopSnackBar(
-          // ignore: use_build_context_synchronously
-          Overlay.of(context),
-          const CustomSnackBar.error(
-            message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
-          ),
-          displayDuration: const Duration(seconds: 0),
-        );
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                builder: (context) => const MainScreen(initialIndex: 0)),
+          );
+        } else {
+          showTopSnackBar(
+            // ignore: use_build_context_synchronously
+            Overlay.of(context),
+            const CustomSnackBar.error(
+              message: 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin!',
+            ),
+            displayDuration: const Duration(seconds: 0),
+          );
+        }
       }
+    } catch (error) {
+      //print(error);
+    } finally {
+      FacebookAuth.instance.logOut();
     }
   }
 

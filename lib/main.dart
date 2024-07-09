@@ -12,6 +12,8 @@ import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   AwesomeNotifications().initialize(
     'resource://drawable/res_app_icon',
     [
@@ -49,13 +51,6 @@ class _MyAppState extends State<MyApp> {
       }
     });
     _initPrefs();
-    startNotificationTimer();
-  }
-
-  void startNotificationTimer() {
-    Timer.periodic(const Duration(seconds: 10), (timer) {
-      fetchNotifications();
-    });
   }
 
   Future<void> fetchNotifications() async {
@@ -76,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   _initPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
     var dataResponse = await AuthApi().authorize();
-    print(sharedPreferences.getString('accessToken'));
+    //print(sharedPreferences.getString('accessToken'));
 
     if (dataResponse['isSuccess'] == true) {
       setState(() {
