@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/notification/model_notification.dart';
@@ -11,7 +12,7 @@ import 'package:pethome_mobileapp/services/utils/trigger_notification.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   AwesomeNotifications().initialize(
@@ -27,6 +28,28 @@ void main() {
     ],
   );
   runApp(const MyApp());
+}
+
+void backgroundFetchNotifications() async {
+  print('Fetching notification');
+  var respons = await NotificationApi().getNotification(0, 1);
+
+  if (respons['isSuccess'] == true) {
+    List<NotificationCustom> notifications = respons['notifications'];
+
+    if (notifications.isNotEmpty) {
+      if (notifications[0].isShowed == false) {
+        triggerNotification(notifications[0].title, notifications[0].content);
+        NotificationApi().updateShowNotification([notifications[0].idNoti]);
+      }
+    }
+  }
+}
+
+void startNotificationTimer() {
+  Timer.periodic(const Duration(seconds: 10), (timer) {
+    backgroundFetchNotifications();
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -51,27 +74,12 @@ class _MyAppState extends State<MyApp> {
       }
     });
     _initPrefs();
-  }
-
-  Future<void> fetchNotifications() async {
-    var respons = await NotificationApi().getNotification(0, 1);
-
-    if (respons['isSuccess'] == true) {
-      List<NotificationCustom> notifications = respons['notifications'];
-
-      if (notifications.isNotEmpty) {
-        if (notifications[0].isShowed == false) {
-          triggerNotification(notifications[0].title, notifications[0].content);
-          NotificationApi().updateShowNotification([notifications[0].idNoti]);
-        }
-      }
-    }
+    startNotificationTimer();
   }
 
   _initPrefs() async {
     sharedPreferences = await SharedPreferences.getInstance();
     var dataResponse = await AuthApi().authorize();
-    //print(sharedPreferences.getString('accessToken'));
 
     if (dataResponse['isSuccess'] == true) {
       setState(() {

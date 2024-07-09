@@ -438,7 +438,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      "${serviceDetail.averageRate.toStringAsFixed(1)}/5.0",
+                                      serviceDetail.averageRate != 0.0
+                                          ? "${serviceDetail.averageRate.toStringAsFixed(1)}/5.0"
+                                          : "0.0/0.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,

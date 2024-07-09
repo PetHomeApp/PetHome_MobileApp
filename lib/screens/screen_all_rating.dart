@@ -198,7 +198,7 @@ class _AllRatingScreenState extends State<AllRatingScreen> {
                         ),
                       ),
                       Text(
-                        "${widget.averageRate.toStringAsFixed(1)}/5.0",
+                        widget.averageRate != 0.0 ? "${widget.averageRate.toStringAsFixed(1)}/5.0" : "0.0/0.0",
                         style: const TextStyle(
                           fontSize: 25.0,
                           color: buttonBackgroundColor,

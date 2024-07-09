@@ -66,7 +66,8 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
     final List<ServiceTypeDetail> serviceTypeDetail =
         await ServiceApi().getServiceTypeDetail(widget.idServiceType);
 
-    serviceTypeDetail.sort((a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
+    serviceTypeDetail
+        .sort((a, b) => a.idServiceTypeDetail.compareTo(b.idServiceTypeDetail));
 
     if (serviceTypeDetail.isEmpty) {
       setState(() {
@@ -160,7 +161,7 @@ class _ListServiceScreenState extends State<ListServiceScreen> {
                   return;
                 }
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ServiceSearchAndFulterScreen(
+                  builder: (context) => ServiceSearchAndFilterScreen(
                       serviceTypeId:
                           selectedServiceTypeDetail.idServiceTypeDetail,
                       title: searchKey),

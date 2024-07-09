@@ -6,19 +6,19 @@ import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/setting/list_area.dart';
 import 'package:pethome_mobileapp/widgets/product/service/service_shop_card.dart';
 
-class ServiceSearchAndFulterScreen extends StatefulWidget {
-  const ServiceSearchAndFulterScreen(
+class ServiceSearchAndFilterScreen extends StatefulWidget {
+  const ServiceSearchAndFilterScreen(
       {super.key, required this.title, required this.serviceTypeId});
   final int serviceTypeId;
   final String title;
 
   @override
-  State<ServiceSearchAndFulterScreen> createState() =>
-      _ServiceSearchAndFulterScreenState();
+  State<ServiceSearchAndFilterScreen> createState() =>
+      _ServiceSearchAndFilterScreenState();
 }
 
-class _ServiceSearchAndFulterScreenState
-    extends State<ServiceSearchAndFulterScreen> {
+class _ServiceSearchAndFilterScreenState
+    extends State<ServiceSearchAndFilterScreen> {
   List<ServiceInCard> listServiceInCard = List.empty(growable: true);
   List<ServiceInCard> listServiceFiltered = List.empty(growable: true);
 
@@ -58,7 +58,9 @@ class _ServiceSearchAndFulterScreenState
             widget.serviceTypeId, widget.title, 40, currentPage * 40);
 
     if (listService.isEmpty) {
-      loading = false;
+      setState(() {
+        loading = false;
+      });
       return;
     }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: unrelated_type_equality_checks
+
 import 'package:flutter/material.dart';
 import 'package:pethome_mobileapp/model/product/pet/model_pet_age.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
@@ -569,7 +571,9 @@ class _PetDetailScreenState extends State<PetDetailScreen> {
                                 Row(
                                   children: [
                                     Text(
-                                      "${petDetail.averageRate.toStringAsFixed(1)}/5.0",
+                                      petDetail.averageRate != 0.0
+                                          ? "${petDetail.averageRate.toStringAsFixed(1)}/5.0"
+                                          : "0.0/0.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,

@@ -602,9 +602,12 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                                     // ignore: prefer_interpolation_to_compose_strings
                                     Text(
                                       // ignore: prefer_interpolation_to_compose_strings
-                                      itemDetail.averageRating
-                                              .toStringAsFixed(1) +
-                                          "/5.0",
+                                      itemDetail.averageRating != 0.0
+                                          // ignore: prefer_interpolation_to_compose_strings
+                                          ? itemDetail.averageRating
+                                                  .toStringAsFixed(1) +
+                                              "/5.0"
+                                          : "0.0/0.0",
                                       style: const TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,

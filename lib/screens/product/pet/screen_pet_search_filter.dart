@@ -100,7 +100,9 @@ class _PetSearchAndFilterScreenState extends State<PetSearchAndFilterScreen> {
         widget.title, 40, currentPage * 40, sortPrice, sortRating);
 
     if (pets.isEmpty) {
-      loading = false;
+      setState(() {
+        loading = false;
+      });
       return;
     }
 
