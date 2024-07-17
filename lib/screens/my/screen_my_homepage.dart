@@ -596,10 +596,6 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                 color: Color.fromARGB(140, 158, 158, 158),
                                 width: 0.5,
                               ),
-                              bottom: BorderSide(
-                                color: Color.fromARGB(140, 158, 158, 158),
-                                width: 0.5,
-                              ),
                             ),
                           ),
                           child: const Padding(
