@@ -20,8 +20,7 @@ class ShopApi {
   Future<Map<String, dynamic>> checkIsRegisterShop() async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/check');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -63,8 +62,7 @@ class ShopApi {
   Future<Map<String, dynamic>> checkIsActiveShop() async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/status');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -108,8 +106,7 @@ class ShopApi {
       ShopInforRegister shopInforRegister) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/submit');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -190,8 +187,7 @@ class ShopApi {
   Future<Map<String, dynamic>> getShopDetailInfor() async {
     var url = Uri.parse('${pethomeApiUrl}api/shop');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -581,8 +577,7 @@ class ShopApi {
   Future<Map<String, dynamic>> insertPet(PetIsRequest pet) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/pets');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -638,8 +633,7 @@ class ShopApi {
   Future<Map<String, dynamic>> insertItem(ItemIsRequest item) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/items');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -698,8 +692,7 @@ class ShopApi {
   Future<Map<String, dynamic>> insertService(ServiceIsRequest service) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -760,8 +753,7 @@ class ShopApi {
   Future<Map<String, dynamic>> deletePet(String petId) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/pets/$petId/remove');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -791,8 +783,7 @@ class ShopApi {
   Future<Map<String, dynamic>> deleteItem(String itemId) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/items/$itemId/remove');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -822,8 +813,7 @@ class ShopApi {
   Future<Map<String, dynamic>> deleteService(String serviceId) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services/$serviceId/remove');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -855,8 +845,7 @@ class ShopApi {
       String idPet, int price, bool isInStock) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/pets/$idPet');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -901,8 +890,7 @@ class ShopApi {
       String idItem, int price, String size, int quantity) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/items/$idItem/detail/add');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -947,8 +935,7 @@ class ShopApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/shop/items/$idItem/detail/$idItemDetail');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -988,8 +975,7 @@ class ShopApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/shop/items/$idItem/detail/$idItemDetail');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1035,8 +1021,7 @@ class ShopApi {
       String idService, int minPrice, int maxPrice) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1082,8 +1067,7 @@ class ShopApi {
     var url =
         Uri.parse('${pethomeApiUrl}api/shop/services/$idService/addresses');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1137,8 +1121,7 @@ class ShopApi {
   Future<Map<String, dynamic>> addAddress(String address, String area) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/address');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1172,8 +1155,7 @@ class ShopApi {
   Future<Map<String, dynamic>> deleteAddress(String idAddress) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/address/$idAddress');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1203,8 +1185,7 @@ class ShopApi {
   Future<Map<String, dynamic>> updateLogo(XFile? avatar) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/logo');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1236,8 +1217,7 @@ class ShopApi {
   Future<Map<String, dynamic>> getListImageGallery(String idService) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService/gallery');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1274,8 +1254,7 @@ class ShopApi {
       String idService, List<XFile> images) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/services/$idService/gallery');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -1327,8 +1306,7 @@ class ShopApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/shop/services/$idService/gallery/$idImage?status=inactive');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

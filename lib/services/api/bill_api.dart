@@ -34,8 +34,7 @@ class BillApi {
       String phoneNumber, String address, String area, int idMethod) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/bills/create');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -82,8 +81,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending','preparing','delivering','delivered'&payment_status='pending','paid'");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -125,8 +123,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='done'&payment_status='pending','paid'");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -165,8 +162,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='canceled'&payment_status='pending'");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -204,8 +200,7 @@ class BillApi {
   Future<bool> updateStatusBillByUser(String idBill, String status) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/bills/$idBill');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -244,8 +239,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/shop/bills?start=$start&limit=$limit&status='preparing','delivering','delivered'");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -285,8 +279,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/shop/bills?start=$start&limit=$limit&status='$status'");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -324,8 +317,7 @@ class BillApi {
   Future<bool> updateStatusBillByShop(String idBill, String status) async {
     var url = Uri.parse('${pethomeApiUrl}api/shop/bills/$idBill');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -363,8 +355,7 @@ class BillApi {
   Future<String> createPaymentUrl(String idBill) async {
     var url = Uri.parse("${pethomeApiUrl}payment/create_url?id_bill=$idBill");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return '';
@@ -399,8 +390,7 @@ class BillApi {
     var url = Uri.parse(
         "${pethomeApiUrl}api/shop/income?start=$start&limit=$limit&from=$startStr&to=$endStr");
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

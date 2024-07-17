@@ -25,6 +25,10 @@ class _ServiceSearchAndFilterScreenState
   List<String> filterArea = area;
   Set<String> selectedAreaFilters = {};
 
+  List<String> filterRate = ['Không', 'Tăng dần', 'Giảm dần'];
+  String selectedRateSort = 'Không';
+  Set<String> selectedRateFilters = {};
+
   var scaffoldKey = GlobalKey<ScaffoldState>();
   bool showAll = false;
   bool loading = false;
@@ -36,26 +40,32 @@ class _ServiceSearchAndFilterScreenState
   void initState() {
     super.initState();
     _scrollController.addListener(_listenerScroll);
-    getListService();
+    selectedRateFilters.add(filterRate[0]);
+    getListService('NONE');
   }
 
   void _listenerScroll() {
     if (_scrollController.position.atEdge) {
       if (_scrollController.position.pixels != 0) {
-        getListService();
+        String sortRating = selectedRateSort == 'Tăng dần'
+            ? 'ASC'
+            : selectedRateSort == 'Giảm dần'
+                ? 'DESC'
+                : 'NONE';
+        getListService(sortRating);
       }
     }
   }
 
-  Future<void> getListService() async {
+  Future<void> getListService(String sortRating) async {
     if (loading) {
       return;
     }
 
     loading = true;
     final List<ServiceInCard> listService = await ServiceApi()
-        .searchServicesInCard(
-            widget.serviceTypeId, widget.title, 40, currentPage * 40);
+        .searchServicesInCard(widget.serviceTypeId, widget.title, 40,
+            currentPage * 40, sortRating);
 
     if (listService.isEmpty) {
       setState(() {
@@ -204,6 +214,57 @@ class _ServiceSearchAndFilterScreenState
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        const Text('Đánh giá: ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Wrap(
+                                  spacing: 8.0,
+                                  runSpacing: 8.0,
+                                  children: filterRate.map((filterRate) {
+                                    final isSelected =
+                                        selectedRateSort == filterRate;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedRateSort = filterRate;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 5, 10, 5),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.grey,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          filterRate,
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? buttonBackgroundColor
+                                                : Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Divider(color: Colors.grey),
                         const Text('Khu vực: ',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
@@ -300,6 +361,7 @@ class _ServiceSearchAndFilterScreenState
                       InkWell(
                         onTap: () {
                           setState(() {
+                            selectedRateSort = 'Không';
                             selectedAreaFilters.clear();
                           });
                         },
@@ -324,19 +386,36 @@ class _ServiceSearchAndFilterScreenState
                       InkWell(
                         onTap: () {
                           setState(() {
-                            listServiceFiltered =
-                                listServiceInCard.where((item) {
-                              if (selectedAreaFilters.isEmpty) {
-                                return true;
-                              }
+                            if (selectedRateFilters.first != selectedRateSort) {
+                              selectedRateFilters.clear();
+                              selectedRateFilters.add(selectedRateSort);
 
-                              if (selectedAreaFilters.isEmpty ||
-                                  selectedAreaFilters.any((element) =>
-                                      item.areas.contains(element))) {
-                                return true;
-                              }
-                              return false;
-                            }).toList();
+                              listServiceFiltered.clear();
+                              listServiceInCard.clear();
+                              currentPage = 0;
+                              selectedRateFilters.clear();
+                              selectedRateFilters.add(selectedRateSort);
+                              getListService(selectedRateSort == 'Tăng dần'
+                                  ? 'ASC'
+                                  : selectedRateSort == 'Giảm dần'
+                                      ? 'DESC'
+                                      : 'NONE');
+                            } else {
+                              listServiceFiltered =
+                                  listServiceInCard.where((item) {
+                                if (selectedAreaFilters.isEmpty) {
+                                  return true;
+                                }
+
+                                if (selectedAreaFilters.isEmpty ||
+                                    selectedAreaFilters.any((element) =>
+                                        item.areas.contains(element))) {
+                                  return true;
+                                }
+                                return false;
+                              }).toList();
+                            }
+
                             Navigator.of(context).pop();
                           });
                         },

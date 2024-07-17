@@ -12,6 +12,7 @@ import 'package:pethome_mobileapp/widgets/auth/custom_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
+//import 'package:workmanager/workmanager.dart';
 
 class LoginScreen extends StatefulWidget {
   // ignore: use_super_parameters
@@ -58,6 +59,12 @@ class _LoginScreenState extends State<LoginScreen> {
           displayDuration: const Duration(seconds: 0),
         );
 
+        // Workmanager().registerPeriodicTask(
+        //   "1",
+        //   "show_notification",
+        //   frequency: const Duration(minutes: 15),
+        // );
+
         // ignore: use_build_context_synchronously
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -102,6 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             displayDuration: const Duration(seconds: 0),
           );
+
+          // Workmanager().registerPeriodicTask(
+          //   "1",
+          //   "show_notification",
+          //   frequency: const Duration(minutes: 15),
+          // );
 
           // ignore: use_build_context_synchronously
           Navigator.of(context).pushReplacement(
@@ -311,6 +324,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 displayDuration: const Duration(seconds: 0),
                               );
+
+                              // Workmanager().registerPeriodicTask(
+                              //   "1",
+                              //   "show_notification",
+                              //   frequency: const Duration(minutes: 15),
+                              // );
 
                               // ignore: use_build_context_synchronously
                               Navigator.of(context).pushReplacement(

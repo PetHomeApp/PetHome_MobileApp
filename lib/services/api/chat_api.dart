@@ -11,8 +11,7 @@ class ChatApi {
   Future<Map<String, dynamic>> getChatRoomUser() async {
     var url = Uri.parse('${chatApiUrl}api/user/rooms');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -56,8 +55,7 @@ class ChatApi {
   Future<Map<String, dynamic>> getChatRoomShop() async {
     var url = Uri.parse('${chatApiUrl}api/shop/rooms');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -101,8 +99,7 @@ class ChatApi {
   Future<Map<String, dynamic>> userJoinRoomChat(String idShop) async {
     var url = Uri.parse('${chatApiUrl}api/user/createRoom?id_shop=$idShop');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -143,8 +140,7 @@ class ChatApi {
   Future<Map<String, dynamic>> shopJoinRoomChat(String idUser) async {
     var url = Uri.parse('${chatApiUrl}api/shop/createRoom?id_user=$idUser');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -185,8 +181,7 @@ class ChatApi {
   Future<Map<String, dynamic>> checkMessageWithShop(String idshop) async {
     var url = Uri.parse('${chatApiUrl}api/user/chat/shop/$idshop');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

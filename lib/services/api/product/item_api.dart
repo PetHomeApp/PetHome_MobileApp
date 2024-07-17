@@ -130,8 +130,7 @@ class ItemApi {
   Future<bool> checkRated(String itemId) async {
     var url = Uri.parse('${pethomeApiUrl}api/items/$itemId/rate');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -163,8 +162,7 @@ class ItemApi {
       String itemID, int rating, String comment) async {
     var url = Uri.parse('${pethomeApiUrl}api/items/$itemID/rate');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

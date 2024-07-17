@@ -11,9 +11,20 @@ import 'package:pethome_mobileapp/services/api/noti_api.dart';
 import 'package:pethome_mobileapp/services/utils/trigger_notification.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    if (task == "show_notification") {
+      backgroundFetchNotifications();
+    }
+    return Future.value(true);
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
 
   AwesomeNotifications().initialize(
     'resource://drawable/res_app_icon',
@@ -27,11 +38,11 @@ void main() async {
       )
     ],
   );
+
   runApp(const MyApp());
 }
 
 void backgroundFetchNotifications() async {
-  print('Fetching notification');
   var respons = await NotificationApi().getNotification(0, 1);
 
   if (respons['isSuccess'] == true) {
@@ -85,6 +96,12 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         isLoading = false;
         isLogin = true;
+
+        // Workmanager().registerPeriodicTask(
+        //   "1",
+        //   "show_notification",
+        //   frequency: const Duration(minutes: 15),
+        // );
       });
     } else {
       setState(() {

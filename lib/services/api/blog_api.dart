@@ -45,8 +45,7 @@ class BlogApi {
     var url =
         Uri.parse('${pethomeApiUrl}api/user/blogs?limit=$limit&start=$start');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return [];
@@ -104,8 +103,7 @@ class BlogApi {
   Future<bool> checkLike(String idBlog) async {
     var url = Uri.parse('${pethomeApiUrl}api/blogs/$idBlog/like');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -131,8 +129,7 @@ class BlogApi {
   Future<bool> postLike(String idBlog) async {
     var url = Uri.parse('${pethomeApiUrl}api/blogs/$idBlog/like');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -159,8 +156,7 @@ class BlogApi {
       String description, List<XFile> images, String status) async {
     var url = Uri.parse('${pethomeApiUrl}api/blogs');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -212,8 +208,7 @@ class BlogApi {
       String blogId, String description, String status) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/blogs/$blogId');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -257,8 +252,7 @@ class BlogApi {
   Future<Map<String, dynamic>> deleteBlog(String blogId) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/blogs/$blogId');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

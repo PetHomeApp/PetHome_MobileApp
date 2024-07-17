@@ -11,8 +11,7 @@ class NotificationApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/user/notifications?limit=$limit&start=$start');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -53,8 +52,7 @@ class NotificationApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/user/notifications/read?id=${notiId.join(',')}');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -85,8 +83,7 @@ class NotificationApi {
     var url = Uri.parse(
         '${pethomeApiUrl}api/user/notifications/showed?id=${notiId.join(',')}');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

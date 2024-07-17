@@ -125,10 +125,10 @@ class ServiceApi {
     }
   }
 
-  Future<List<ServiceInCard>> searchServicesInCard(
-      int serviceTypeId, String keyword, int limit, int start) async {
+  Future<List<ServiceInCard>> searchServicesInCard(int serviceTypeId,
+      String keyword, int limit, int start, String sortRating) async {
     var url = Uri.parse(
-        '${pethomeApiUrl}services?serviceTypeDetailID=$serviceTypeId&name=$keyword&limit=$limit&start=$start');
+        '${pethomeApiUrl}services?serviceTypeDetailID=$serviceTypeId&name=$keyword&limit=$limit&start=$start&ratingOrder=$sortRating');
 
     final response = await http.get(
       url,
@@ -162,8 +162,7 @@ class ServiceApi {
   Future<bool> checkRated(String serviceId) async {
     var url = Uri.parse('${pethomeApiUrl}api/services/$serviceId/rate');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return false;
@@ -195,8 +194,7 @@ class ServiceApi {
       String serviceId, int rating, String comment) async {
     var url = Uri.parse('${pethomeApiUrl}api/services/$serviceId/rate');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

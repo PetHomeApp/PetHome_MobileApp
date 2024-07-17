@@ -10,8 +10,7 @@ class CartApi {
   Future<Map<String, dynamic>> getListPetsCart() async {
     var url = Uri.parse('${pethomeApiUrl}api/cart/pets');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -73,8 +72,7 @@ class CartApi {
   Future<Map<String, dynamic>> getListItemsCart() async {
     var url = Uri.parse('${pethomeApiUrl}api/cart/items');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -137,8 +135,7 @@ class CartApi {
   Future<Map<String, dynamic>> addPetToCart(String petId) async {
     var url = Uri.parse('${pethomeApiUrl}api/pets/cart');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -178,8 +175,7 @@ class CartApi {
       String itemId, String itemDetailId) async {
     var url = Uri.parse('${pethomeApiUrl}api/items/cart');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -219,8 +215,7 @@ class CartApi {
   Future<Map<String, dynamic>> deletePetInCart(String petID) async {
     var url = Uri.parse('${pethomeApiUrl}api/cart/pets/$petID');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -256,8 +251,7 @@ class CartApi {
   Future<Map<String, dynamic>> deleteItemInCart(String itemDetailId) async {
     var url = Uri.parse('${pethomeApiUrl}api/cart/items/$itemDetailId');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};

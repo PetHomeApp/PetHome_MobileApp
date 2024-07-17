@@ -12,8 +12,7 @@ class UserApi {
   Future<Map<String, dynamic>> getUser() async {
     var url = Uri.parse('${pethomeApiUrl}api/user');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -53,8 +52,7 @@ class UserApi {
   Future<Map<String, dynamic>> updateAvatar(XFile? avatar) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/avatar');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -87,8 +85,7 @@ class UserApi {
       String name, String phoneNum, String gender, String doB) async {
     var url = Uri.parse('${pethomeApiUrl}api/user');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -125,8 +122,7 @@ class UserApi {
   Future<Map<String, dynamic>> getAddress() async {
     var url = Uri.parse('${pethomeApiUrl}api/user/addresses');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -170,8 +166,7 @@ class UserApi {
   Future<Map<String, dynamic>> addAddress(String address, String area) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/addresses');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -205,8 +200,7 @@ class UserApi {
   Future<Map<String, dynamic>> deleteAddress(String idAddress) async {
     var url = Uri.parse('${pethomeApiUrl}api/user/addresses/$idAddress');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
@@ -237,8 +231,7 @@ class UserApi {
       String oldPassword, String newPassword) async {
     var url = Uri.parse('${authApiUrl}jwt/change_pass');
 
-    AuthApi authApi = AuthApi();
-    var authRes = await authApi.authorize();
+    var authRes = await AuthApi().authorize();
 
     if (authRes['isSuccess'] == false) {
       return {'isSuccess': false};
