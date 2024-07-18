@@ -43,21 +43,45 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
     var dataResponseUser = await ChatApi().getChatRoomUser();
     var dataResponseShop = await ChatApi().getChatRoomShop();
 
-    if (dataResponseUser['isSuccess'] == true &&
-        dataResponseShop['isSuccess'] == true) {
-      if (checkIsActiveShop['isSuccess'] == true) {
-        setState(() {
-          isShop = true;
-          idShop = checkIsActiveShop['shopId'];
-          chatRoomUser = dataResponseUser['listChatRoomUser']
-              .where((chat) => chat.lastMessage != '')
-              .toList();
-          chatRoomShop = dataResponseShop['listChatRoomShop']
-              .where((chat) => chat.lastMessage != '')
-              .toList();
+    if (dataResponseUser['isSuccess'] == true) {
+      if (dataResponseShop['isSuccess'] == true) {
+        if (checkIsActiveShop['isSuccess'] == true) {
+          setState(() {
+            isShop = true;
+            idShop = checkIsActiveShop['shopId'];
+            chatRoomUser = dataResponseUser['listChatRoomUser']
+                .where((chat) => chat.lastMessage != '')
+                .toList();
+            chatRoomUser.sort((b, a) => DateTime.parse(a.createdAt)
+                .compareTo(DateTime.parse(b.createdAt)));
 
-          loading = false;
-        });
+            chatRoomShop = dataResponseShop['listChatRoomShop']
+                .where((chat) => chat.lastMessage != '')
+                .toList();
+            chatRoomShop.sort((b, a) => DateTime.parse(a.createdAt)
+                .compareTo(DateTime.parse(b.createdAt)));
+
+            loading = false;
+          });
+        } else {
+          setState(() {
+            isShop = false;
+            idShop = '';
+            chatRoomUser = dataResponseUser['listChatRoomUser']
+                .where((chat) => chat.lastMessage != '')
+                .toList();
+            chatRoomUser.sort((b, a) => DateTime.parse(a.createdAt)
+                .compareTo(DateTime.parse(b.createdAt)));
+
+            chatRoomShop = dataResponseShop['listChatRoomShop']
+                .where((chat) => chat.lastMessage != '')
+                .toList();
+            chatRoomShop.sort((b, a) => DateTime.parse(a.createdAt)
+                .compareTo(DateTime.parse(b.createdAt)));
+
+            loading = false;
+          });
+        }
       } else {
         setState(() {
           isShop = false;
@@ -65,9 +89,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> {
           chatRoomUser = dataResponseUser['listChatRoomUser']
               .where((chat) => chat.lastMessage != '')
               .toList();
-          chatRoomShop = dataResponseShop['listChatRoomShop']
-              .where((chat) => chat.lastMessage != '')
-              .toList();
+          chatRoomUser.sort((b, a) => DateTime.parse(a.createdAt)
+              .compareTo(DateTime.parse(b.createdAt)));
+
           loading = false;
         });
       }
