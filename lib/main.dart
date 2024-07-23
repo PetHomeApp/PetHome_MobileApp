@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
     sharedPreferences = await SharedPreferences.getInstance();
     var dataResponse = await AuthApi().authorize();
 
-    print(sharedPreferences.getString('accessToken'));
+    //print(sharedPreferences.getString('accessToken'));
     if (dataResponse['isSuccess'] == true) {
       setState(() {
         isLoading = false;

@@ -23,7 +23,8 @@ import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:workmanager/workmanager.dart';
 
 class MyHomePageScreen extends StatefulWidget {
-  const MyHomePageScreen({super.key});
+  final ValueNotifier<int> counterNotifier;
+  const MyHomePageScreen({super.key, required this.counterNotifier});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -42,11 +43,15 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
 
   XFile? avatarFile;
 
+  int countNotification = 0;
+
   @override
   void initState() {
     super.initState();
     _initPrefs();
     getUserInfor();
+    countNotification = widget.counterNotifier.value;
+    widget.counterNotifier.addListener(_updateCounter);
   }
 
   _initPrefs() async {
@@ -182,13 +187,76 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
   }
 
   @override
+  void dispose() {
+    widget.counterNotifier.removeListener(_updateCounter);
+    super.dispose();
+  }
+
+  void _updateCounter() {
+    setState(() {
+      countNotification = widget.counterNotifier.value;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Menu",
-          style: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Text(
+                  "Menu",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Stack(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ));
+                  },
+                  icon: const Icon(
+                    Icons.notifications,
+                    size: 30,
+                    color: iconButtonColor,
+                  ),
+                ),
+                if (countNotification > 0)
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                        countNotification.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+              ],
+            )
+          ],
         ),
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
@@ -295,20 +363,6 @@ class _MyHomePageScreenState extends State<MyHomePageScreen> {
                                       ),
                                     ],
                                   ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.notifications,
-                                    color: buttonBackgroundColor,
-                                    size: 30,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NotificationScreen(),
-                                    ));
-                                  },
                                 ),
                               ],
                             ),

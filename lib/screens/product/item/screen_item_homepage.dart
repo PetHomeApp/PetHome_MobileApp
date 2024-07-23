@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_in_card.dart';
 import 'package:pethome_mobileapp/model/product/item/model_item_type.dart';
+import 'package:pethome_mobileapp/screens/my/screen_notification.dart';
 import 'package:pethome_mobileapp/screens/product/item/screen_item_detail.dart';
 import 'package:pethome_mobileapp/screens/product/item/screen_item_search_filter.dart';
 import 'package:pethome_mobileapp/services/api/product/item_api.dart';
@@ -13,8 +14,12 @@ import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class ItemHomeScreen extends StatefulWidget {
+  final ValueNotifier<int> counterNotifier;
   final Function(bool) updateBottomBarVisibility;
-  const ItemHomeScreen({super.key, required this.updateBottomBarVisibility});
+  const ItemHomeScreen(
+      {super.key,
+      required this.counterNotifier,
+      required this.updateBottomBarVisibility});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -36,6 +41,8 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
 
   late TabController _tabController;
 
+  int countNotification = 0;
+
   @override
   void initState() {
     super.initState();
@@ -46,13 +53,22 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
     _tabController.addListener(_onTabChanged);
 
     getListItemsInCards();
+    countNotification = widget.counterNotifier.value;
+    widget.counterNotifier.addListener(_updateCounter);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _tabController.dispose();
+    widget.counterNotifier.removeListener(_updateCounter);
     super.dispose();
+  }
+
+  void _updateCounter() {
+    setState(() {
+      countNotification = widget.counterNotifier.value;
+    });
   }
 
   void _onScroll() {
@@ -191,6 +207,45 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
                   color: iconButtonColor,
                 ),
               ),
+              Stack(
+                children: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const NotificationScreen(),
+                      ));
+                    },
+                    icon: const Icon(
+                      Icons.notifications,
+                      size: 30,
+                      color: iconButtonColor,
+                    ),
+                  ),
+                  if (countNotification > 0)
+                    Positioned(
+                      right: 10,
+                      top: 10,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 12,
+                          minHeight: 12,
+                        ),
+                        child: Text(
+                          countNotification.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                ],
+              )
             ],
           ),
           flexibleSpace: Container(
@@ -203,7 +258,7 @@ class _ItemHomeScreenState extends State<ItemHomeScreen>
             ),
           ),
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
+            preferredSize: const Size.fromHeight(48.0),
             child: Container(
               color: Colors.white,
               child: TabBar(

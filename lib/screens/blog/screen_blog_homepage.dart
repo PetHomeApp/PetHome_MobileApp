@@ -4,14 +4,19 @@ import 'package:pethome_mobileapp/model/blog/model_blog.dart';
 import 'package:pethome_mobileapp/model/user/model_user_infor.dart';
 import 'package:pethome_mobileapp/screens/blog/screen_add_blog.dart';
 import 'package:pethome_mobileapp/screens/blog/screen_personal_blog.dart';
+import 'package:pethome_mobileapp/screens/my/screen_notification.dart';
 import 'package:pethome_mobileapp/services/api/blog_api.dart';
 import 'package:pethome_mobileapp/services/api/user_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/blog/blog_card.dart';
 
 class BlogHomeScreen extends StatefulWidget {
+  final ValueNotifier<int> counterNotifier;
   final Function(bool) updateBottomBarVisibility;
-  const BlogHomeScreen({super.key, required this.updateBottomBarVisibility});
+  const BlogHomeScreen(
+      {super.key,
+      required this.updateBottomBarVisibility,
+      required this.counterNotifier});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -30,18 +35,29 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
 
   late UserInfor userInfor;
 
+  int countNotification = 0;
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
     _scrollController.addListener(_listenerScroll);
     getUserInforAndBlogs();
+    countNotification = widget.counterNotifier.value;
+    widget.counterNotifier.addListener(_updateCounter);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    widget.counterNotifier.removeListener(_updateCounter);
     super.dispose();
+  }
+
+  void _updateCounter() {
+    setState(() {
+      countNotification = widget.counterNotifier.value;
+    });
   }
 
   void _onScroll() {
@@ -103,7 +119,8 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
     }
 
     loading = true;
-    final List<Blog> newBlogs = await BlogApi().getListBlog(10, currentPage * 10);
+    final List<Blog> newBlogs =
+        await BlogApi().getListBlog(10, currentPage * 10);
 
     if (newBlogs.isEmpty) {
       loading = false;
@@ -123,10 +140,61 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Kết nối cộng đồng PetHome",
-          style: TextStyle(
-              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Text(
+                  "Kết nối cộng đồng PetHome",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            Stack(
+              children: <Widget>[
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const NotificationScreen(),
+                    ));
+                  },
+                  icon: const Icon(
+                    Icons.notifications,
+                    size: 30,
+                    color: iconButtonColor,
+                  ),
+                ),
+                if (countNotification > 0)
+                  Positioned(
+                    right: 10,
+                    top: 10,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                        countNotification.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+              ],
+            )
+          ],
         ),
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
@@ -162,8 +230,8 @@ class _BlogHomeScreenState extends State<BlogHomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          PersonalBlogScreen(userInfor: userInfor),
+                                      builder: (context) => PersonalBlogScreen(
+                                          userInfor: userInfor),
                                     ),
                                   );
                                 },
