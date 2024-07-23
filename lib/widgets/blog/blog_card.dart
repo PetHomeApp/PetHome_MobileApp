@@ -32,6 +32,8 @@ class _BlogCardState extends State<BlogCard> {
       return;
     }
 
+    if (!mounted) return;
+
     loading = true;
     int numberLike = await BlogApi().getNumberLike(widget.blog.blogId);
     bool isLiked = await BlogApi().checkLike(widget.blog.blogId);

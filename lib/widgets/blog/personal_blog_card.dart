@@ -37,6 +37,8 @@ class _PersonalBlogCardState extends State<PersonalBlogCard> {
       return;
     }
 
+    if (!mounted) return;
+
     loading = true;
     int numberLike = await BlogApi().getNumberLike(myBlog.blogId);
     bool isLiked = await BlogApi().checkLike(myBlog.blogId);
