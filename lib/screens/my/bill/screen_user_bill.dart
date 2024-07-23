@@ -20,22 +20,26 @@ class _UserBillScreenState extends State<UserBillScreen>
     with SingleTickerProviderStateMixin {
   bool loading = false;
 
-  List<BillItem> allBills = [];
+  List<BillItem> newBills = [];
+  List<BillItem> ortherBills = [];
   List<BillItem> successBills = [];
   List<BillItem> cancelBills = [];
 
-  int currentPageAll = 0;
+  int currentPageNew = 0;
+  int currentPageOrther = 0;
   int currentPageSuccess = 0;
   int currentPageCancel = 0;
 
-  final ScrollController _scrollAllController = ScrollController();
+  final ScrollController _scrollNewController = ScrollController();
+  final ScrollController _scrollOrtherController = ScrollController();
   final ScrollController _scrollSuccessController = ScrollController();
   final ScrollController _scrollCancelController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _scrollAllController.addListener(_listenerScrollAll);
+    _scrollNewController.addListener(_listenerScrollNew);
+    _scrollOrtherController.addListener(_listenerScrollOrther);
     _scrollSuccessController.addListener(_listenerScrollSuccess);
     _scrollCancelController.addListener(_listenerScrollCancel);
     getBill();
@@ -45,9 +49,11 @@ class _UserBillScreenState extends State<UserBillScreen>
     setState(() {
       loading = true;
     });
+    List<BillItem> resNew =
+        await BillApi().getListBillNew(currentPageOrther * 10, 10);
 
-    List<BillItem> resAll =
-        await BillApi().getListBillAll(currentPageAll * 10, 10);
+    List<BillItem> resOrther =
+        await BillApi().getListBillAll(currentPageOrther * 10, 10);
 
     List<BillItem> resSuccess =
         await BillApi().getListBillSuccess(currentPageSuccess * 10, 10);
@@ -55,9 +61,14 @@ class _UserBillScreenState extends State<UserBillScreen>
     List<BillItem> resCancel =
         await BillApi().getListBillCancel(currentPageCancel * 10, 10);
 
-    if (resAll.isNotEmpty) {
-      allBills.addAll(resAll);
-      currentPageAll++;
+    if (resNew.isNotEmpty) {
+      newBills.addAll(resNew);
+      currentPageNew++;
+    }
+
+    if (resOrther.isNotEmpty) {
+      ortherBills.addAll(resOrther);
+      currentPageOrther++;
     }
     if (resSuccess.isNotEmpty) {
       successBills.addAll(resSuccess);
@@ -72,10 +83,18 @@ class _UserBillScreenState extends State<UserBillScreen>
     });
   }
 
-  void _listenerScrollAll() {
-    if (_scrollAllController.position.atEdge) {
-      if (_scrollAllController.position.pixels != 0) {
-        getAllBill();
+  void _listenerScrollNew() {
+    if (_scrollNewController.position.atEdge) {
+      if (_scrollNewController.position.pixels != 0) {
+        getNewBill();
+      }
+    }
+  }
+
+  void _listenerScrollOrther() {
+    if (_scrollOrtherController.position.atEdge) {
+      if (_scrollOrtherController.position.pixels != 0) {
+        getOrtherBill();
       }
     }
   }
@@ -96,14 +115,14 @@ class _UserBillScreenState extends State<UserBillScreen>
     }
   }
 
-  void getAllBill() async {
+  void getNewBill() async {
     if (loading) {
       return;
     }
 
     loading = true;
     final List<BillItem> items =
-        await BillApi().getListBillAll(currentPageAll * 10, 10);
+        await BillApi().getListBillNew(currentPageNew * 10, 10);
 
     if (items.isEmpty) {
       loading = false;
@@ -112,8 +131,31 @@ class _UserBillScreenState extends State<UserBillScreen>
 
     if (mounted) {
       setState(() {
-        allBills.addAll(items);
-        currentPageAll++;
+        newBills.addAll(items);
+        currentPageNew++;
+        loading = false;
+      });
+    }
+  }
+
+  void getOrtherBill() async {
+    if (loading) {
+      return;
+    }
+
+    loading = true;
+    final List<BillItem> items =
+        await BillApi().getListBillAll(currentPageOrther * 10, 10);
+
+    if (items.isEmpty) {
+      loading = false;
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        ortherBills.addAll(items);
+        currentPageOrther++;
         loading = false;
       });
     }
@@ -177,7 +219,7 @@ class _UserBillScreenState extends State<UserBillScreen>
             ),
           )
         : DefaultTabController(
-            length: 3,
+            length: 4,
             child: Scaffold(
               appBar: AppBar(
                 leading: IconButton(
@@ -220,8 +262,9 @@ class _UserBillScreenState extends State<UserBillScreen>
                       labelColor: buttonBackgroundColor,
                       unselectedLabelColor: Colors.black,
                       tabs: [
-                        Tab(text: 'Tất cả'),
-                        Tab(text: 'Hoàn thành'),
+                        Tab(text: 'Đơn mới'),
+                        Tab(text: 'Xử lí'),
+                        Tab(text: 'Đơn xong'),
                         Tab(text: 'Đơn hủy'),
                       ],
                     ),
@@ -230,7 +273,7 @@ class _UserBillScreenState extends State<UserBillScreen>
               ),
               body: TabBarView(
                 children: [
-                  allBills.isEmpty
+                  newBills.isEmpty
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +286,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                               ),
                               SizedBox(height: 10),
                               Text(
-                                'Bạn không có đơn hàng nào',
+                                'Bạn không có đơn hàng mới nào',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -266,8 +309,8 @@ class _UserBillScreenState extends State<UserBillScreen>
                           physics: const AlwaysScrollableScrollPhysics(
                             parent: BouncingScrollPhysics(),
                           ),
-                          itemCount: allBills.length,
-                          controller: _scrollAllController,
+                          itemCount: newBills.length,
+                          controller: _scrollOrtherController,
                           shrinkWrap: true,
                           padding: const EdgeInsets.only(top: 16),
                           itemBuilder: (context, index) {
@@ -277,7 +320,7 @@ class _UserBillScreenState extends State<UserBillScreen>
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => UserBillDetailScreen(
-                                      billItem: allBills[index],
+                                      billItem: newBills[index],
                                     ),
                                   ),
                                 );
@@ -285,11 +328,12 @@ class _UserBillScreenState extends State<UserBillScreen>
                               child: Column(
                                 children: [
                                   UserBillWidget(
-                                    billItem: allBills[index],
+                                    billItem: newBills[index],
                                     onPayment: () async {
                                       String url = await BillApi()
-                                          .createPaymentUrl(allBills[index].idBill);
-                                  
+                                          .createPaymentUrl(
+                                              newBills[index].idBill);
+
                                       if (url.isNotEmpty) {
                                         Navigator.push(
                                           // ignore: use_build_context_synchronously
@@ -300,11 +344,13 @@ class _UserBillScreenState extends State<UserBillScreen>
                                           ),
                                         ).then((value) {
                                           setState(() {
-                                            currentPageAll = 0;
+                                            currentPageNew = 0;
+                                            currentPageOrther = 0;
                                             currentPageSuccess = 0;
                                             currentPageCancel = 0;
-                                  
-                                            allBills.clear();
+
+                                            newBills.clear();
+                                            ortherBills.clear();
                                             successBills.clear();
                                             cancelBills.clear();
                                           });
@@ -343,16 +389,17 @@ class _UserBillScreenState extends State<UserBillScreen>
                                               ),
                                               TextButton(
                                                 onPressed: () async {
-                                                  if (allBills[index].status ==
+                                                  if (newBills[index].status ==
                                                       'pending') {
                                                     bool check = await BillApi()
                                                         .updateStatusBillByUser(
-                                                            allBills[index].idBill,
+                                                            newBills[index]
+                                                                .idBill,
                                                             'canceled');
-                                  
+
                                                     // ignore: use_build_context_synchronously
                                                     Navigator.of(context).pop();
-                                  
+
                                                     if (check) {
                                                       showTopSnackBar(
                                                         // ignore: use_build_context_synchronously
@@ -367,11 +414,13 @@ class _UserBillScreenState extends State<UserBillScreen>
                                                                 seconds: 0),
                                                       );
                                                       setState(() {
-                                                        currentPageAll = 0;
+                                                        currentPageNew = 0;
+                                                        currentPageOrther = 0;
                                                         currentPageSuccess = 0;
                                                         currentPageCancel = 0;
-                                  
-                                                        allBills.clear();
+
+                                                        newBills.clear();
+                                                        ortherBills.clear();
                                                         successBills.clear();
                                                         cancelBills.clear();
                                                       });
@@ -380,7 +429,8 @@ class _UserBillScreenState extends State<UserBillScreen>
                                                       showTopSnackBar(
                                                         // ignore: use_build_context_synchronously
                                                         Overlay.of(context),
-                                                        const CustomSnackBar.error(
+                                                        const CustomSnackBar
+                                                            .error(
                                                           message:
                                                               'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
                                                         ),
@@ -393,7 +443,203 @@ class _UserBillScreenState extends State<UserBillScreen>
                                                     showTopSnackBar(
                                                       // ignore: use_build_context_synchronously
                                                       Overlay.of(context),
-                                                      const CustomSnackBar.error(
+                                                      const CustomSnackBar
+                                                          .error(
+                                                        message:
+                                                            'Đơn hàng đã được xử lý, không thể hủy!',
+                                                      ),
+                                                      displayDuration:
+                                                          const Duration(
+                                                              seconds: 0),
+                                                    );
+                                                  }
+                                                },
+                                                child: const Text("Hủy",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 209, 87, 78))),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                  ortherBills.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(
+                                image: AssetImage(
+                                    'lib/assets/pictures/icon_order.png'),
+                                width: 50,
+                                height: 50,
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Bạn không có đơn hàng nào',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Hãy mua hàng tại PetHome ngay nào!',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: buttonBackgroundColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
+                          ),
+                          itemCount: ortherBills.length,
+                          controller: _scrollOrtherController,
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.only(top: 16),
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserBillDetailScreen(
+                                      billItem: ortherBills[index],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  UserBillWidget(
+                                    billItem: ortherBills[index],
+                                    onPayment: () async {
+                                      String url = await BillApi()
+                                          .createPaymentUrl(
+                                              ortherBills[index].idBill);
+
+                                      if (url.isNotEmpty) {
+                                        Navigator.push(
+                                          // ignore: use_build_context_synchronously
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                WebPaymentScreen(url: url),
+                                          ),
+                                        ).then((value) {
+                                          setState(() {
+                                            currentPageOrther = 0;
+                                            currentPageSuccess = 0;
+                                            currentPageCancel = 0;
+
+                                            ortherBills.clear();
+                                            successBills.clear();
+                                            cancelBills.clear();
+                                          });
+                                          getBill();
+                                        });
+                                      } else {
+                                        showTopSnackBar(
+                                          // ignore: use_build_context_synchronously
+                                          Overlay.of(context),
+                                          const CustomSnackBar.error(
+                                            message:
+                                                'Thanh toán không thành công! Vui lòng thử lại sau!',
+                                          ),
+                                          displayDuration:
+                                              const Duration(seconds: 0),
+                                        );
+                                      }
+                                    },
+                                    onCancel: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text("Xác nhận"),
+                                            content: const Text(
+                                                "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text("Không",
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 84, 84, 84))),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  if (ortherBills[index]
+                                                          .status ==
+                                                      'pending') {
+                                                    bool check = await BillApi()
+                                                        .updateStatusBillByUser(
+                                                            ortherBills[index]
+                                                                .idBill,
+                                                            'canceled');
+
+                                                    // ignore: use_build_context_synchronously
+                                                    Navigator.of(context).pop();
+
+                                                    if (check) {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .success(
+                                                          message:
+                                                              'Bạn đã hủy đơn hàng thành công!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                      setState(() {
+                                                        currentPageOrther = 0;
+                                                        currentPageSuccess = 0;
+                                                        currentPageCancel = 0;
+
+                                                        ortherBills.clear();
+                                                        successBills.clear();
+                                                        cancelBills.clear();
+                                                      });
+                                                      getBill();
+                                                    } else {
+                                                      showTopSnackBar(
+                                                        // ignore: use_build_context_synchronously
+                                                        Overlay.of(context),
+                                                        const CustomSnackBar
+                                                            .error(
+                                                          message:
+                                                              'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
+                                                        ),
+                                                        displayDuration:
+                                                            const Duration(
+                                                                seconds: 0),
+                                                      );
+                                                    }
+                                                  } else {
+                                                    showTopSnackBar(
+                                                      // ignore: use_build_context_synchronously
+                                                      Overlay.of(context),
+                                                      const CustomSnackBar
+                                                          .error(
                                                         message:
                                                             'Đơn hàng đã được xử lý, không thể hủy!',
                                                       ),

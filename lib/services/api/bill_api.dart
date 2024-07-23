@@ -77,9 +77,51 @@ class BillApi {
     }
   }
 
+  Future<List<BillItem>> getListBillNew(int start, int limit) async {
+    var url = Uri.parse(
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending'&payment_status='pending','paid'");
+
+    var authRes = await AuthApi().authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return [];
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await Dio().get(
+        url.toString(),
+        options: Options(
+          headers: {
+            'Authorization': accessToken,
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        List<BillItem> listBillItem = [];
+        var data = response.data;
+
+        if (data == null) {
+          return listBillItem;
+        }
+
+        for (var item in data) {
+          listBillItem.add(BillItem.fromJson(item));
+        }
+
+        return listBillItem;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<List<BillItem>> getListBillAll(int start, int limit) async {
     var url = Uri.parse(
-        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='pending','preparing','delivering','delivered'&payment_status='pending','paid'");
+        "${pethomeApiUrl}api/user/bills?start=$start&limit=$limit&status='preparing','delivering','delivered'&payment_status='pending','paid'");
 
     var authRes = await AuthApi().authorize();
 
