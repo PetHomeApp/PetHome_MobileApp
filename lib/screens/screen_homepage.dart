@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
     getNotificationCount();
 
     // Initialize and start the timer
-    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       getNotificationCountLoop();
     });
   }

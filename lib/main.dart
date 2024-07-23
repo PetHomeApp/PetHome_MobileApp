@@ -58,7 +58,7 @@ void backgroundFetchNotifications() async {
 }
 
 void startNotificationTimer() {
-  Timer.periodic(const Duration(seconds: 10), (timer) {
+  Timer.periodic(const Duration(seconds: 1), (timer) {
     backgroundFetchNotifications();
   });
 }
