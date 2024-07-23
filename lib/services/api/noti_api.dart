@@ -109,4 +109,40 @@ class NotificationApi {
       return {'isSuccess': false};
     }
   }
+
+  Future<Map<String, dynamic>> getCountNotification() async {
+    var url = Uri.parse('${pethomeApiUrl}api/user/notifications/count');
+
+    var authRes = await AuthApi().authorize();
+
+    if (authRes['isSuccess'] == false) {
+      return {'isSuccess': false};
+    }
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String accessToken = sharedPreferences.getString('accessToken') ?? '';
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+
+        if (data == null) {
+          return {'isSuccess': false};
+        }
+        return {'isSuccess': true, 'count': data['count']};
+      } else {
+        return {'isSuccess': false};
+      }
+    } catch (e) {
+      return {'isSuccess': false};
+    }
+  }
 }

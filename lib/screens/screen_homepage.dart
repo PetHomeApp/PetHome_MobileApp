@@ -6,6 +6,7 @@ import 'package:pethome_mobileapp/screens/product/item/screen_item_homepage.dart
 import 'package:pethome_mobileapp/screens/my/screen_my_homepage.dart';
 import 'package:pethome_mobileapp/screens/product/pet/screen_pet_homepage.dart';
 import 'package:pethome_mobileapp/screens/product/service/screen_service_homepage.dart';
+import 'package:pethome_mobileapp/services/api/noti_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
@@ -31,20 +32,45 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    getNotificationCount();
 
     // Initialize and start the timer
-    _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      _counterNotification++;
-      _counterNotifier.value = _counterNotification;
-      showTopSnackBar(
-        // ignore: use_build_context_synchronously
-        Overlay.of(context),
-        const CustomSnackBar.info(
-          message: 'Bạn có thông báo mới',
-        ),
-        displayDuration: const Duration(seconds: 0),
-      );
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      getNotificationCountLoop();
     });
+  }
+
+  // Get count of notification
+  Future<void> getNotificationCount() async {
+    var res = await NotificationApi().getCountNotification();
+
+    if (res['isSuccess'] == true) {
+      _counterNotification = res['count'];
+      _counterNotifier.value = _counterNotification;
+    }
+  }
+
+  // Get count of notification every 10 seconds
+  Future<void> getNotificationCountLoop() async {
+    var res = await NotificationApi().getCountNotification();
+
+    if (res['isSuccess'] == true) {
+      int count = res['count'];
+
+      if (count != _counterNotification && count > 0) {
+        showTopSnackBar(
+          // ignore: use_build_context_synchronously
+          Overlay.of(context),
+          const CustomSnackBar.info(
+            message: 'Bạn có thông báo mới',
+          ),
+          displayDuration: const Duration(seconds: 0),
+        );
+      }
+
+      _counterNotification = count;
+      _counterNotifier.value = _counterNotification;
+    }
   }
 
   @override
