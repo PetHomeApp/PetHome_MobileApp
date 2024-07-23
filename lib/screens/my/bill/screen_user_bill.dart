@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/bill/model_bill.dart';
 import 'package:pethome_mobileapp/screens/my/bill/screen_user_bill_detail.dart';
 import 'package:pethome_mobileapp/screens/my/bill/screen_web_payment.dart';
 import 'package:pethome_mobileapp/services/api/bill_api.dart';
 import 'package:pethome_mobileapp/setting/app_colors.dart';
 import 'package:pethome_mobileapp/widgets/bill/user_bill_widget.dart';
+import 'package:pethome_mobileapp/widgets/bill/user_bill_widget_no_interact.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
@@ -525,140 +525,8 @@ class _UserBillScreenState extends State<UserBillScreen>
                               },
                               child: Column(
                                 children: [
-                                  UserBillWidget(
+                                  UserBillWidgetNoInteract(
                                     billItem: ortherBills[index],
-                                    onPayment: () async {
-                                      String url = await BillApi()
-                                          .createPaymentUrl(
-                                              ortherBills[index].idBill);
-
-                                      if (url.isNotEmpty) {
-                                        Navigator.push(
-                                          // ignore: use_build_context_synchronously
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                WebPaymentScreen(url: url),
-                                          ),
-                                        ).then((value) {
-                                          setState(() {
-                                            currentPageOrther = 0;
-                                            currentPageSuccess = 0;
-                                            currentPageCancel = 0;
-
-                                            ortherBills.clear();
-                                            successBills.clear();
-                                            cancelBills.clear();
-                                          });
-                                          getBill();
-                                        });
-                                      } else {
-                                        showTopSnackBar(
-                                          // ignore: use_build_context_synchronously
-                                          Overlay.of(context),
-                                          const CustomSnackBar.error(
-                                            message:
-                                                'Thanh toán không thành công! Vui lòng thử lại sau!',
-                                          ),
-                                          displayDuration:
-                                              const Duration(seconds: 0),
-                                        );
-                                      }
-                                    },
-                                    onCancel: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text("Xác nhận"),
-                                            content: const Text(
-                                                "Bạn có chắc chắn muốn hủy đơn hàng không không?"),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: const Text("Không",
-                                                    style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 84, 84, 84))),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  if (ortherBills[index]
-                                                          .status ==
-                                                      'pending') {
-                                                    bool check = await BillApi()
-                                                        .updateStatusBillByUser(
-                                                            ortherBills[index]
-                                                                .idBill,
-                                                            'canceled');
-
-                                                    // ignore: use_build_context_synchronously
-                                                    Navigator.of(context).pop();
-
-                                                    if (check) {
-                                                      showTopSnackBar(
-                                                        // ignore: use_build_context_synchronously
-                                                        Overlay.of(context),
-                                                        const CustomSnackBar
-                                                            .success(
-                                                          message:
-                                                              'Bạn đã hủy đơn hàng thành công!',
-                                                        ),
-                                                        displayDuration:
-                                                            const Duration(
-                                                                seconds: 0),
-                                                      );
-                                                      setState(() {
-                                                        currentPageOrther = 0;
-                                                        currentPageSuccess = 0;
-                                                        currentPageCancel = 0;
-
-                                                        ortherBills.clear();
-                                                        successBills.clear();
-                                                        cancelBills.clear();
-                                                      });
-                                                      getBill();
-                                                    } else {
-                                                      showTopSnackBar(
-                                                        // ignore: use_build_context_synchronously
-                                                        Overlay.of(context),
-                                                        const CustomSnackBar
-                                                            .error(
-                                                          message:
-                                                              'Hủy đơn hàng không thành công! Vui lòng thử lại sau!',
-                                                        ),
-                                                        displayDuration:
-                                                            const Duration(
-                                                                seconds: 0),
-                                                      );
-                                                    }
-                                                  } else {
-                                                    showTopSnackBar(
-                                                      // ignore: use_build_context_synchronously
-                                                      Overlay.of(context),
-                                                      const CustomSnackBar
-                                                          .error(
-                                                        message:
-                                                            'Đơn hàng đã được xử lý, không thể hủy!',
-                                                      ),
-                                                      displayDuration:
-                                                          const Duration(
-                                                              seconds: 0),
-                                                    );
-                                                  }
-                                                },
-                                                child: const Text("Hủy",
-                                                    style: TextStyle(
-                                                        color: Color.fromARGB(
-                                                            255, 209, 87, 78))),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
                                   ),
                                   const SizedBox(height: 10),
                                 ],
@@ -718,103 +586,13 @@ class _UserBillScreenState extends State<UserBillScreen>
                                   ),
                                 );
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Container(
-                                  color: Colors.grey[100],
-                                  padding:
-                                      const EdgeInsets.only(top: 4, bottom: 4),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          ClipRRect(
-                                            child: Image.network(
-                                              successBills[index]
-                                                  .itemImage
-                                                  .toString(),
-                                              height: 100,
-                                              width: 100,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                return Image.asset(
-                                                  'lib/assets/pictures/placeholder_image.png',
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  successBills[index]
-                                                      .itemName
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  successBills[index].shopName,
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84)),
-                                                ),
-                                                Text(
-                                                  'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(successBills[index].createdAt).add(const Duration(hours: 7)))}',
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84)),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                Text(
-                                                  'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(successBills[index].totalPrice)} đ',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: priceColor,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Đã hoàn thành',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.green),
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                              child: Column(
+                                children: [
+                                  UserBillWidgetNoInteract(
+                                    billItem: successBills[index],
                                   ),
-                                ),
+                                  const SizedBox(height: 10),
+                                ],
                               ),
                             );
                           },
@@ -871,103 +649,13 @@ class _UserBillScreenState extends State<UserBillScreen>
                                   ),
                                 );
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Container(
-                                  color: Colors.grey[100],
-                                  padding:
-                                      const EdgeInsets.only(top: 4, bottom: 4),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          ClipRRect(
-                                            child: Image.network(
-                                              cancelBills[index]
-                                                  .itemImage
-                                                  .toString(),
-                                              height: 100,
-                                              width: 100,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (BuildContext context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                return Image.asset(
-                                                  'lib/assets/pictures/placeholder_image.png',
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  cancelBills[index]
-                                                      .itemName
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  cancelBills[index].shopName,
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84)),
-                                                ),
-                                                Text(
-                                                  'Ngày đặt: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(cancelBills[index].createdAt).add(const Duration(hours: 7)))}',
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      color: Color.fromARGB(
-                                                          255, 84, 84, 84)),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                Text(
-                                                  'Tổng cộng: ${NumberFormat('#,##0', 'vi').format(cancelBills[index].totalPrice)} đ',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: priceColor,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      'Đã hủy',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.red),
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                              child: Column(
+                                children: [
+                                  UserBillWidgetNoInteract(
+                                    billItem: cancelBills[index],
                                   ),
-                                ),
+                                  const SizedBox(height: 10),
+                                ],
                               ),
                             );
                           },

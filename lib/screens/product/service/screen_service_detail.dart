@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pethome_mobileapp/model/product/service/model_service_detail.dart';
 import 'package:pethome_mobileapp/model/shop/model_shop_infor.dart';
-import 'package:pethome_mobileapp/screens/cart/screen_cart_homepage.dart';
 import 'package:pethome_mobileapp/screens/chat/screen_chat_detail_with_shop.dart';
 import 'package:pethome_mobileapp/screens/product/service/screen_service_gallery.dart';
 import 'package:pethome_mobileapp/screens/screen_all_rating.dart';
@@ -155,17 +154,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   ),
                 ),
               ),
-              actions: <Widget>[
-                IconButton(
-                  icon: const Icon(Icons.shopping_cart,
-                      color: iconButtonColor, size: 30),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const CartHomePageScreen(),
-                    ));
-                  },
-                ),
-              ],
             ),
             body: SingleChildScrollView(
               child: Padding(
