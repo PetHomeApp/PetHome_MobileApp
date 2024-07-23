@@ -17,30 +17,47 @@ class ShopNewBillWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        extentRatio: 0.6,
-        children: [
-          SlidableAction(
-            onPressed: (context) {
-              onConfirm();
-            },
-            icon: Icons.edit,
-            label: "Nhận đơn",
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.green,
-          ),
-          SlidableAction(
-            onPressed: (context) {
-              onCancel();
-            },
-            icon: Icons.delete,
-            label: "Hủy đơn",
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-          ),
-        ],
-      ),
+      endActionPane: billItem.paymentStatus == 'pending' &&
+              billItem.paymentMethod == 'Ví điện tử VNPAY'
+          ? ActionPane(
+              motion: const ScrollMotion(),
+              extentRatio: 0.3,
+              children: [
+                SlidableAction(
+                  onPressed: (context) {
+                    onCancel();
+                  },
+                  icon: Icons.delete,
+                  label: "Hủy đơn",
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                ),
+              ],
+            )
+          : ActionPane(
+              motion: const ScrollMotion(),
+              extentRatio: 0.6,
+              children: [
+                SlidableAction(
+                  onPressed: (context) {
+                    onConfirm();
+                  },
+                  icon: Icons.edit,
+                  label: "Nhận đơn",
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                ),
+                SlidableAction(
+                  onPressed: (context) {
+                    onCancel();
+                  },
+                  icon: Icons.delete,
+                  label: "Hủy đơn",
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.red,
+                ),
+              ],
+            ),
       child: Container(
         color: Colors.grey[100],
         padding: const EdgeInsets.only(top: 4, bottom: 4),
